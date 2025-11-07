@@ -1,0 +1,35 @@
+/**
+ * Estilos do SettingsPanel
+ * (CSS já está no Header.css, mas mantemos separado para organização)
+ */
+
+.settings-panel {
+  position: absolute;
+  top: calc(100% + var(--space-m));
+  right: 0;
+  width: 460px;
+  max-width: calc(100vw - var(--space-l) * 2);
+  max-height: 90vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: rgba(18, 18, 18, 0.98);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 0;
+  z-index: 101;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px) scale(0.95);
+  transition: all var(--transition-medium);
+  box-shadow: var(--shadow-xl), 0 0 80px rgba(0, 0, 0, 0.7),
+    0 0 120px var(--primary-highlight, rgba(65, 255, 65, 0.1));
+}
+
+.settings-panel.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+

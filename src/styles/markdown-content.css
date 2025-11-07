@@ -1,0 +1,311 @@
+/**
+ * Estilos para conteúdo Markdown renderizado
+ */
+
+.discipline-main-content {
+  /* Typography */
+  line-height: 1.7;
+  color: var(--text-primary);
+}
+
+/* Headers */
+.discipline-main-content h1 {
+  font-size: 2.5em;
+  font-weight: 800;
+  margin: 1.5em 0 0.5em;
+  line-height: 1.2;
+  color: var(--text-primary);
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 0.3em;
+}
+
+.discipline-main-content h2 {
+  font-size: 2em;
+  font-weight: 700;
+  margin: 1.2em 0 0.5em;
+  line-height: 1.3;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.3em;
+}
+
+.discipline-main-content h3 {
+  font-size: 1.5em;
+  font-weight: 600;
+  margin: 1em 0 0.5em;
+  color: var(--text-primary);
+}
+
+.discipline-main-content h4 {
+  font-size: 1.25em;
+  font-weight: 600;
+  margin: 0.8em 0 0.4em;
+  color: var(--text-secondary);
+}
+
+.discipline-main-content h5 {
+  font-size: 1.1em;
+  font-weight: 600;
+  margin: 0.6em 0 0.3em;
+  color: var(--text-secondary);
+}
+
+.discipline-main-content h6 {
+  font-size: 1em;
+  font-weight: 600;
+  margin: 0.5em 0 0.2em;
+  color: var(--text-secondary);
+}
+
+/* Paragraphs */
+.discipline-main-content p {
+  margin: 1em 0;
+  text-align: justify;
+}
+
+/* Lists */
+.discipline-main-content ul,
+.discipline-main-content ol {
+  margin: 1em 0;
+  padding-left: 2em;
+}
+
+.discipline-main-content li {
+  margin: 0.5em 0;
+}
+
+.discipline-main-content ul li {
+  list-style-type: disc;
+}
+
+.discipline-main-content ol li {
+  list-style-type: decimal;
+}
+
+/* Nested lists */
+.discipline-main-content ul ul,
+.discipline-main-content ol ul {
+  margin: 0.25em 0;
+}
+
+.discipline-main-content ul ul li {
+  list-style-type: circle;
+}
+
+.discipline-main-content ul ul ul li {
+  list-style-type: square;
+}
+
+/* Links */
+.discipline-main-content a {
+  color: var(--primary-highlight);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.discipline-main-content a:hover {
+  border-bottom-color: var(--primary-highlight);
+}
+
+/* Inline code */
+.discipline-main-content code:not([class*="language-"]) {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9em;
+  color: var(--primary-highlight);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Code blocks */
+.discipline-main-content pre {
+  margin: 1.5em 0;
+  padding: 1.5em;
+  background: #1e1e1e;
+  border-radius: 8px;
+  overflow-x: auto;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.discipline-main-content pre code {
+  background: none;
+  padding: 0;
+  border: none;
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+
+/* Blockquotes */
+.discipline-main-content blockquote {
+  margin: 1.5em 0;
+  padding: 1em 1.5em;
+  border-left: 4px solid var(--primary-highlight);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 0 8px 8px 0;
+}
+
+.discipline-main-content blockquote p:first-child {
+  margin-top: 0;
+}
+
+.discipline-main-content blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* Special blockquotes (callouts) */
+.discipline-main-content blockquote > p:first-child strong:first-child {
+  display: block;
+  margin-bottom: 0.5em;
+  font-size: 1.1em;
+}
+
+/* Tables */
+.discipline-main-content table {
+  width: 100%;
+  margin: 1.5em 0;
+  border-collapse: collapse;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.discipline-main-content th,
+.discipline-main-content td {
+  padding: 0.75em 1em;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.discipline-main-content th {
+  background: rgba(255, 255, 255, 0.05);
+  font-weight: 600;
+  color: var(--primary-highlight);
+}
+
+.discipline-main-content tr:last-child td {
+  border-bottom: none;
+}
+
+.discipline-main-content tbody tr:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* Horizontal rules */
+.discipline-main-content hr {
+  margin: 2em 0;
+  border: none;
+  border-top: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Images */
+.discipline-main-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5em 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* KaTeX (LaTeX) */
+.discipline-main-content .katex {
+  font-size: 1.1em;
+}
+
+.discipline-main-content .katex-display {
+  margin: 1.5em 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 1em 0;
+}
+
+/* Task lists */
+.discipline-main-content input[type="checkbox"] {
+  margin-right: 0.5em;
+}
+
+/* Definition lists */
+.discipline-main-content dl {
+  margin: 1em 0;
+}
+
+.discipline-main-content dt {
+  font-weight: 600;
+  margin-top: 1em;
+  color: var(--primary-highlight);
+}
+
+.discipline-main-content dd {
+  margin-left: 2em;
+  margin-bottom: 1em;
+}
+
+/* Subscript and superscript */
+.discipline-main-content sub,
+.discipline-main-content sup {
+  font-size: 0.75em;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+.discipline-main-content sup {
+  top: -0.5em;
+}
+
+.discipline-main-content sub {
+  bottom: -0.25em;
+}
+
+/* Mark/Highlight */
+.discipline-main-content mark {
+  background: rgba(255, 255, 0, 0.3);
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .discipline-main-content h1 {
+    font-size: 2em;
+  }
+
+  .discipline-main-content h2 {
+    font-size: 1.6em;
+  }
+
+  .discipline-main-content h3 {
+    font-size: 1.3em;
+  }
+
+  .discipline-main-content pre {
+    padding: 1em;
+  }
+
+  .discipline-main-content table {
+    font-size: 0.9em;
+  }
+
+  .discipline-main-content th,
+  .discipline-main-content td {
+    padding: 0.5em 0.75em;
+  }
+}
+
+/* Error state */
+.discipline-main-content .error {
+  padding: 1em;
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  border-radius: 8px;
+  color: #ff6b6b;
+}
+
+/* Loading state */
+.discipline-main-content .loading {
+  padding: 2em;
+  text-align: center;
+  color: var(--text-secondary);
+}
+

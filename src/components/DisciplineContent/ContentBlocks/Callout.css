@@ -1,0 +1,169 @@
+/**
+ * Callout Styles
+ * Estilos para componente de destaque
+ */
+
+.callout {
+  border-left: 4px solid;
+  border-radius: var(--border-radius-small);
+  padding: var(--space-l);
+  margin: var(--space-l) 0;
+  background: rgba(255, 255, 255, 0.02);
+  border-color: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  transition: all var(--transition-fast);
+}
+
+.callout:hover {
+  background: rgba(255, 255, 255, 0.04);
+  transform: translateX(4px);
+}
+
+.callout-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+  margin-bottom: var(--space-m);
+}
+
+.callout-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.callout-icon svg {
+  stroke-width: 2.5px;
+}
+
+.callout-title {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-white);
+  line-height: 1;
+}
+
+.callout-content {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--color-light-grey);
+}
+
+.callout-content p {
+  margin: 0;
+}
+
+.callout-content p + p {
+  margin-top: var(--space-s);
+}
+
+/* Tipo: Info */
+.callout-info {
+  border-color: #4dabf7;
+  background: rgba(77, 171, 247, 0.05);
+}
+
+.callout-info .callout-icon {
+  background: rgba(77, 171, 247, 0.15);
+  color: #4dabf7;
+}
+
+.callout-info .callout-title {
+  color: #4dabf7;
+}
+
+/* Tipo: Warning */
+.callout-warning {
+  border-color: #ffd43b;
+  background: rgba(255, 212, 59, 0.05);
+}
+
+.callout-warning .callout-icon {
+  background: rgba(255, 212, 59, 0.15);
+  color: #ffd43b;
+}
+
+.callout-warning .callout-title {
+  color: #ffd43b;
+}
+
+/* Tipo: Tip */
+.callout-tip {
+  border-color: var(--primary-highlight);
+  background: rgba(65, 255, 65, 0.05);
+}
+
+.callout-tip .callout-icon {
+  background: rgba(65, 255, 65, 0.15);
+  color: var(--primary-highlight);
+}
+
+.callout-tip .callout-title {
+  color: var(--primary-highlight);
+}
+
+/* Tipo: Danger */
+.callout-danger {
+  border-color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.05);
+}
+
+.callout-danger .callout-icon {
+  background: rgba(255, 107, 107, 0.15);
+  color: #ff6b6b;
+}
+
+.callout-danger .callout-title {
+  color: #ff6b6b;
+}
+
+/* Tipo: Success */
+.callout-success {
+  border-color: #51cf66;
+  background: rgba(81, 207, 102, 0.05);
+}
+
+.callout-success .callout-icon {
+  background: rgba(81, 207, 102, 0.15);
+  color: #51cf66;
+}
+
+.callout-success .callout-title {
+  color: #51cf66;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .callout {
+    padding: var(--space-m);
+  }
+
+  .callout-header {
+    gap: var(--space-s);
+  }
+
+  .callout-icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .callout-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .callout-title {
+    font-size: 0.95rem;
+  }
+
+  .callout-content {
+    font-size: 0.9rem;
+  }
+}
+

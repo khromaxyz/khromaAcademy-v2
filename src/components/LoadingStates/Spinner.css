@@ -1,0 +1,330 @@
+/**
+ * Spinner Loading Styles
+ * Estilos para componentes de loading spinner
+ */
+
+:root {
+  --spinner-color: var(--primary-highlight, #41ff41);
+  --spinner-thickness: 3px;
+}
+
+/* Container */
+.spinner-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Screen reader only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ========================================
+   DEFAULT SPINNER (Circular)
+   ======================================== */
+
+.spinner-default {
+  border: var(--spinner-thickness) solid rgba(255, 255, 255, 0.1);
+  border-top-color: var(--spinner-color);
+  border-radius: 50%;
+  animation: spinner 1s linear infinite;
+}
+
+/* ========================================
+   DOTS SPINNER
+   ======================================== */
+
+.spinner-dots {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(var(--spinner-thickness) * 2);
+}
+
+.spinner-dot {
+  width: calc(100% / 5);
+  height: calc(100% / 5);
+  background: var(--spinner-color);
+  border-radius: 50%;
+  animation: spinnerDots 1.4s ease-in-out infinite;
+}
+
+.spinner-dot:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.spinner-dot:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+@keyframes spinnerDots {
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ========================================
+   PULSE SPINNER
+   ======================================== */
+
+.spinner-pulse {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner-pulse-ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: var(--spinner-thickness) solid var(--spinner-color);
+  border-radius: 50%;
+  animation: spinnerPulse 1.5s ease-out infinite;
+}
+
+.spinner-pulse-ring:nth-child(2) {
+  animation-delay: 0.75s;
+}
+
+@keyframes spinnerPulse {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+/* ========================================
+   BARS SPINNER
+   ======================================== */
+
+.spinner-bars {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(var(--spinner-thickness));
+}
+
+.spinner-bar {
+  width: calc(100% / 10);
+  height: 100%;
+  background: var(--spinner-color);
+  border-radius: calc(var(--spinner-thickness));
+  animation: spinnerBars 1.2s ease-in-out infinite;
+}
+
+.spinner-bar:nth-child(1) {
+  animation-delay: -1.2s;
+}
+
+.spinner-bar:nth-child(2) {
+  animation-delay: -1.1s;
+}
+
+.spinner-bar:nth-child(3) {
+  animation-delay: -1s;
+}
+
+.spinner-bar:nth-child(4) {
+  animation-delay: -0.9s;
+}
+
+.spinner-bar:nth-child(5) {
+  animation-delay: -0.8s;
+}
+
+@keyframes spinnerBars {
+  0%,
+  40%,
+  100% {
+    transform: scaleY(0.4);
+  }
+  20% {
+    transform: scaleY(1);
+  }
+}
+
+/* ========================================
+   RING SPINNER
+   ======================================== */
+
+.spinner-ring {
+  position: relative;
+  display: inline-block;
+}
+
+.spinner-ring-piece {
+  position: absolute;
+  width: 80%;
+  height: 80%;
+  margin: 10%;
+  border: var(--spinner-thickness) solid var(--spinner-color);
+  border-radius: 50%;
+  animation: spinnerRing 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: var(--spinner-color) transparent transparent transparent;
+}
+
+.spinner-ring-piece:nth-child(1) {
+  animation-delay: -0.45s;
+}
+
+.spinner-ring-piece:nth-child(2) {
+  animation-delay: -0.3s;
+}
+
+.spinner-ring-piece:nth-child(3) {
+  animation-delay: -0.15s;
+}
+
+@keyframes spinnerRing {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* ========================================
+   SPEED VARIANTS
+   ======================================== */
+
+.spinner-slow {
+  animation-duration: 1.5s !important;
+}
+
+.spinner-slow .spinner-dot,
+.spinner-slow .spinner-pulse-ring,
+.spinner-slow .spinner-bar,
+.spinner-slow .spinner-ring-piece {
+  animation-duration: 1.5s !important;
+}
+
+.spinner-normal {
+  animation-duration: 1s !important;
+}
+
+.spinner-fast {
+  animation-duration: 0.6s !important;
+}
+
+.spinner-fast .spinner-dot,
+.spinner-fast .spinner-pulse-ring,
+.spinner-fast .spinner-bar,
+.spinner-fast .spinner-ring-piece {
+  animation-duration: 0.6s !important;
+}
+
+/* ========================================
+   INLINE SPINNER
+   ======================================== */
+
+.spinner-inline {
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+/* ========================================
+   FULL PAGE OVERLAY
+   ======================================== */
+
+.spinner-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-l);
+  z-index: 999999;
+  opacity: 1;
+  transition: opacity 300ms ease;
+}
+
+.spinner-label {
+  font-family: var(--font-heading);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-white);
+  text-align: center;
+}
+
+/* ========================================
+   WITH LABEL
+   ======================================== */
+
+.spinner-with-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-m);
+}
+
+.spinner-label-text {
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-light-grey);
+  text-align: center;
+}
+
+/* ========================================
+   LOADING BUTTON
+   ======================================== */
+
+.btn-loading {
+  position: relative;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.btn-loading .spinner-container {
+  margin-right: var(--space-s);
+}
+
+/* ========================================
+   IS LOADING STATE
+   ======================================== */
+
+.is-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100px;
+}
+
+/* ========================================
+   BODY STATE
+   ======================================== */
+
+body.spinner-active {
+  overflow: hidden;
+}
+

@@ -1,0 +1,154 @@
+/**
+ * Estilos Globais
+ */
+
+/* Animated Background */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 20% 50%, rgba(255, 65, 65, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(65, 65, 255, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 40% 20%, rgba(65, 255, 65, 0.06) 0%, transparent 50%);
+  background-size: 200% 200%;
+  animation: gradientShift 15s ease infinite;
+  z-index: -1;
+  pointer-events: none;
+}
+
+body {
+  background-color: var(--color-black);
+  background-image: linear-gradient(to bottom, transparent, var(--color-black)),
+    linear-gradient(to right, rgba(255, 65, 65, 0.03) 0%, transparent 50%);
+  color: var(--color-white);
+  font-family: var(--font-body);
+  font-size: 18px;
+  line-height: 1.8;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  position: relative;
+}
+
+body.cursor-disabled {
+  cursor: auto;
+}
+
+body:not(.cursor-disabled) {
+  cursor: none;
+}
+
+body:not(.cursor-disabled) * {
+  cursor: none !important;
+}
+
+/* Elementos interativos devem mostrar cursor pointer */
+body:not(.cursor-disabled) .discipline-card,
+body:not(.cursor-disabled) .graph-node,
+body:not(.cursor-disabled) button,
+body:not(.cursor-disabled) a,
+body:not(.cursor-disabled) .link,
+body:not(.cursor-disabled) .view-btn,
+body:not(.cursor-disabled) .view-toggle,
+body:not(.cursor-disabled) .settings-btn,
+body:not(.cursor-disabled) .logo,
+body:not(.cursor-disabled) #settings-close-btn,
+body:not(.cursor-disabled) .modal-close-btn,
+body:not(.cursor-disabled) .modal-container button,
+body:not(.cursor-disabled) .modal-container .btn-primary,
+body:not(.cursor-disabled) .modal-container .btn-secondary,
+body:not(.cursor-disabled) .modal-container .btn-tertiary,
+body:not(.cursor-disabled) .modal-container .btn-start-course,
+body:not(.cursor-disabled) .discipline-sidebar .nav-item,
+body:not(.cursor-disabled) .discipline-sidebar button,
+body:not(.cursor-disabled) .sidebar-close-btn,
+body:not(.cursor-disabled) .admin-close-btn,
+body:not(.cursor-disabled) .admin-panel button,
+body:not(.cursor-disabled) .theme-btn-enhanced,
+body:not(.cursor-disabled) .cursor-option,
+body:not(.cursor-disabled) .toggle-switch-input,
+body:not(.cursor-disabled) input[type="text"],
+body:not(.cursor-disabled) input[type="number"],
+body:not(.cursor-disabled) textarea,
+body:not(.cursor-disabled) select {
+  cursor: pointer !important;
+}
+
+body.modal-open {
+  overflow: hidden;
+}
+
+/* Mostrar cursor padrão no modal */
+body.modal-open,
+body.modal-open * {
+  cursor: auto !important;
+}
+body.modal-open .cursor {
+  display: none !important;
+}
+
+/* Mostrar cursor padrão na visualização de conteúdo do curso */
+body.content-view-open,
+body.content-view-open * {
+  cursor: auto !important;
+}
+body.content-view-open .cursor {
+  display: none !important;
+}
+
+/* Enhanced Typography */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: clamp(2.5rem, 8vw, 5.5rem);
+}
+
+h2 {
+  font-size: clamp(2rem, 6vw, 3.5rem);
+}
+
+h3 {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+}
+
+a,
+button {
+  color: inherit;
+  text-decoration: none;
+  cursor: none;
+  background: none;
+  border: none;
+  font-family: inherit;
+  transition: all var(--transition-fast);
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 var(--space-l);
+}
+
+.highlight-chroma {
+  background: var(--gradient-main);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientShift 3s ease infinite;
+  transition: all var(--transition-medium);
+  position: relative;
+}
+

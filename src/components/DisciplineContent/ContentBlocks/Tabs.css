@@ -1,0 +1,206 @@
+/**
+ * Tabs Styles
+ * Estilos para componente de abas
+ */
+
+.tabs {
+  margin: var(--space-l) 0;
+}
+
+/* Tab List */
+.tabs-list {
+  display: flex;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-l);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.08);
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+.tabs-list::-webkit-scrollbar {
+  height: 4px;
+}
+
+.tabs-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tabs-list::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 2px;
+}
+
+/* Tab Button - Default */
+.tab-button {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  padding: var(--space-m) var(--space-l);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-grey);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+  position: relative;
+  margin-bottom: -2px;
+}
+
+.tab-button:hover {
+  color: var(--color-light-grey);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.tab-button.is-active {
+  color: var(--primary-highlight);
+  border-bottom-color: var(--primary-highlight);
+}
+
+.tab-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tab-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.tab-label {
+  flex: 1;
+}
+
+.tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-white);
+}
+
+.tab-button.is-active .tab-badge {
+  background: var(--primary-highlight);
+  color: var(--color-black);
+}
+
+/* Tab Panels */
+.tabs-panels {
+  position: relative;
+}
+
+.tab-panel {
+  color: var(--color-light-grey);
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
+
+.tab-panel p {
+  margin: 0;
+}
+
+.tab-panel p + p {
+  margin-top: var(--space-m);
+}
+
+/* Variant: Pills */
+.tabs-pills .tabs-list {
+  border-bottom: none;
+  gap: var(--space-s);
+  flex-wrap: wrap;
+}
+
+.tabs-pills .tab-button {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.02);
+  margin-bottom: 0;
+}
+
+.tabs-pills .tab-button:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.tabs-pills .tab-button.is-active {
+  background: rgba(65, 255, 65, 0.15);
+  border-color: rgba(65, 255, 65, 0.3);
+  color: var(--primary-highlight);
+}
+
+/* Variant: Underline */
+.tabs-underline .tab-button {
+  border-radius: 0;
+  padding: var(--space-m) var(--space-s);
+}
+
+.tabs-underline .tab-button.is-active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--gradient-main);
+  animation: slideInRight 0.3s ease-out;
+}
+
+/* Animations */
+@keyframes tabSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tab-panel.is-active {
+  animation: tabSlideIn 0.3s ease-out;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .tabs-list {
+    gap: 0;
+  }
+
+  .tab-button {
+    padding: var(--space-s) var(--space-m);
+    font-size: 0.9rem;
+  }
+
+  .tab-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .tab-badge {
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    font-size: 0.7rem;
+  }
+
+  .tabs-pills .tab-button {
+    padding: var(--space-s) var(--space-m);
+  }
+
+  .tab-panel {
+    font-size: 0.9rem;
+  }
+}
+

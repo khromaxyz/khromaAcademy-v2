@@ -1,0 +1,421 @@
+/**
+ * Estilos do Knowledge Graph
+ */
+
+/* ======================
+   Filtros
+   ====================== */
+
+.filters-container {
+  margin-bottom: var(--space-xl);
+  padding: var(--space-l);
+  background: rgba(21, 21, 21, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--border-radius);
+}
+
+.filters-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-m);
+}
+
+.filters-header h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--primary-highlight);
+  margin: 0;
+}
+
+.filters-counter {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 500;
+}
+
+.filters-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+  margin-bottom: var(--space-m);
+}
+
+.filter-btn {
+  padding: var(--space-s) var(--space-m);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius-small);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.filter-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--primary-highlight);
+  transform: translateY(-2px);
+}
+
+.filter-btn.active {
+  background: var(--primary-highlight);
+  border-color: var(--primary-highlight);
+  color: var(--color-bg);
+  box-shadow: 0 0 20px rgba(65, 255, 65, 0.3);
+}
+
+.filter-count {
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.filters-actions {
+  display: flex;
+  gap: var(--space-s);
+}
+
+.filter-action-btn {
+  padding: var(--space-xs) var(--space-m);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--border-radius-small);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.filter-action-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--primary-highlight);
+  border-color: var(--primary-highlight);
+}
+
+/* ======================
+   Grafo
+   ====================== */
+
+.knowledge-graph {
+  display: none;
+  position: relative;
+  width: 100%;
+  min-height: 800px;
+  background: radial-gradient(circle at center, rgba(65, 255, 65, 0.03) 0%, transparent 70%);
+  border-radius: var(--border-radius);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+  cursor: grab;
+}
+
+.knowledge-graph:active {
+  cursor: grabbing;
+}
+
+.graph-wrapper {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease-out;
+  will-change: transform;
+}
+
+/* ======================
+   Controles de Zoom
+   ====================== */
+
+.zoom-controls {
+  position: absolute;
+  bottom: var(--space-l);
+  right: var(--space-l);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  z-index: 100;
+  background: rgba(21, 21, 21, 0.9);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius-small);
+  padding: var(--space-xs);
+  box-shadow: var(--shadow-lg);
+}
+
+.zoom-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: var(--primary-highlight);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  padding: 0;
+}
+
+.zoom-btn:hover {
+  background: rgba(65, 255, 65, 0.15);
+  border-color: var(--primary-highlight);
+  box-shadow: 0 0 15px rgba(65, 255, 65, 0.3);
+  transform: scale(1.05);
+}
+
+.zoom-btn:active {
+  transform: scale(0.95);
+}
+
+.zoom-indicator {
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--primary-highlight);
+  padding: var(--space-xxs) 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: var(--space-xxs);
+}
+
+/* Regras de visibilidade movidas para sections.css */
+
+.graph-node {
+  position: absolute;
+  width: 180px;
+  padding: var(--space-m);
+  background: rgba(21, 21, 21, 0.9);
+  backdrop-filter: blur(10px);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--border-radius-small);
+  text-align: center;
+  transform: translate(-50%, -50%);
+  transition: all var(--transition-medium);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  z-index: 10;
+}
+
+.node-code {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--primary-highlight);
+  margin-bottom: 4px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.node-title {
+  font-size: 0.875rem;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.3;
+  margin-bottom: 6px;
+}
+
+.node-period {
+  display: inline-block;
+  padding: 2px 8px;
+  background: rgba(65, 255, 65, 0.15);
+  border: 1px solid rgba(65, 255, 65, 0.3);
+  border-radius: 12px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--primary-highlight);
+  margin-top: 4px;
+}
+
+.graph-node:hover {
+  transform: translate(-50%, -50%) scale(1.08);
+  border-color: var(--primary-highlight);
+  z-index: 20;
+  box-shadow: var(--shadow-lg), 0 0 30px rgba(65, 255, 65, 0.4);
+  background: rgba(21, 21, 21, 0.95);
+}
+
+.knowledge-graph-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.graph-line {
+  stroke: rgba(255, 255, 255, 0.15);
+  stroke-width: 2;
+  transition: all var(--transition-medium);
+  opacity: 0.6;
+}
+
+/* ======================
+   Efeito Degradê de Pré-requisitos
+   ====================== */
+
+.graph-node.highlighted {
+  border-color: var(--primary-highlight);
+  box-shadow: 0 0 40px rgba(65, 255, 65, 0.6);
+  z-index: 30;
+}
+
+.graph-node.prerequisite {
+  border-color: rgba(65, 255, 255, 0.5);
+  background: rgba(21, 21, 21, 0.95);
+  z-index: 25;
+}
+
+/* Profundidade 1: Pré-requisito direto (100% opacidade) */
+.graph-node.prerequisite[data-depth="1"] {
+  border-color: rgba(65, 255, 255, 1);
+  box-shadow: 0 0 25px rgba(65, 255, 255, 0.5);
+  opacity: 1;
+}
+
+/* Profundidade 2: Pré-requisito indireto (70% opacidade) */
+.graph-node.prerequisite[data-depth="2"] {
+  border-color: rgba(65, 255, 255, 0.7);
+  box-shadow: 0 0 15px rgba(65, 255, 255, 0.3);
+  opacity: 0.85;
+}
+
+/* Profundidade 3+: Pré-requisito transitivo (40% opacidade) */
+.graph-node.prerequisite[data-depth="3"],
+.graph-node.prerequisite[data-depth="4"],
+.graph-node.prerequisite[data-depth="5"] {
+  border-color: rgba(65, 255, 255, 0.4);
+  box-shadow: 0 0 10px rgba(65, 255, 255, 0.2);
+  opacity: 0.7;
+}
+
+.graph-line.highlighted {
+  stroke: var(--primary-highlight);
+  stroke-width: 3;
+  opacity: 1;
+}
+
+.graph-line.highlighted[data-depth="1"] {
+  stroke: rgba(65, 255, 255, 1);
+  stroke-width: 3;
+}
+
+.graph-line.highlighted[data-depth="2"] {
+  stroke: rgba(65, 255, 255, 0.7);
+  stroke-width: 2.5;
+}
+
+.graph-line.highlighted[data-depth="3"],
+.graph-line.highlighted[data-depth="4"],
+.graph-line.highlighted[data-depth="5"] {
+  stroke: rgba(65, 255, 255, 0.4);
+  stroke-width: 2;
+}
+
+/* ======================
+   Agrupamento Visual por Período
+   ====================== */
+
+.graph-node[data-period="1"] { border-left: 3px solid #41FF41; }
+.graph-node[data-period="2"] { border-left: 3px solid #41FFA1; }
+.graph-node[data-period="3"] { border-left: 3px solid #41FFD1; }
+.graph-node[data-period="4"] { border-left: 3px solid #41D1FF; }
+.graph-node[data-period="5"] { border-left: 3px solid #41A1FF; }
+.graph-node[data-period="6"] { border-left: 3px solid #4171FF; }
+.graph-node[data-period="7"] { border-left: 3px solid #7141FF; }
+.graph-node[data-period="8"] { border-left: 3px solid #A141FF; }
+.graph-node[data-period="Demo"] { border-left: 3px solid #FF41FF; }
+
+/* ======================
+   Responsividade
+   ====================== */
+
+@media (max-width: 768px) {
+  .filters-buttons {
+    gap: var(--space-xs);
+  }
+
+  .filter-btn {
+    padding: var(--space-xs) var(--space-s);
+    font-size: 0.75rem;
+  }
+
+  .graph-node {
+    width: 140px;
+    padding: var(--space-s);
+  }
+
+  .node-code {
+    font-size: 0.7rem;
+  }
+
+  .node-title {
+    font-size: 0.75rem;
+  }
+
+  .node-period {
+    font-size: 0.6rem;
+    padding: 1px 6px;
+  }
+
+  .knowledge-graph {
+    min-height: 600px;
+  }
+
+  .zoom-controls {
+    bottom: var(--space-m);
+    right: var(--space-m);
+  }
+
+  .zoom-btn {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .filters-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-xs);
+  }
+
+  .filters-buttons {
+    width: 100%;
+  }
+
+  .filter-btn {
+    flex: 1 1 calc(50% - var(--space-xs));
+  }
+
+  .graph-node {
+    width: 120px;
+  }
+
+  .zoom-controls {
+    bottom: var(--space-s);
+    right: var(--space-s);
+    padding: 4px;
+  }
+
+  .zoom-btn {
+    width: 28px;
+    height: 28px;
+  }
+
+  .zoom-indicator {
+    font-size: 0.7rem;
+  }
+}
+

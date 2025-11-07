@@ -1,0 +1,94 @@
+/**
+ * Table of Contents Styles
+ */
+
+.table-of-contents {
+  width: 240px;
+  position: sticky;
+  top: 100px;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  padding: var(--space-l);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--border-radius);
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+.table-of-contents::-webkit-scrollbar {
+  width: 4px;
+}
+
+.table-of-contents::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 2px;
+}
+
+.toc-header {
+  margin-bottom: var(--space-m);
+  padding-bottom: var(--space-m);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.toc-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-grey);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+.toc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.toc-item {
+  margin-bottom: var(--space-xs);
+}
+
+.toc-item-level-2 {
+  padding-left: 0;
+}
+
+.toc-item-level-3 {
+  padding-left: var(--space-m);
+}
+
+.toc-item-level-4 {
+  padding-left: var(--space-l);
+}
+
+.toc-link {
+  display: block;
+  padding: var(--space-xs) var(--space-s);
+  color: var(--color-grey);
+  text-decoration: none;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  border-left: 2px solid transparent;
+  transition: all var(--transition-fast);
+}
+
+.toc-link:hover {
+  color: var(--color-white);
+  border-left-color: rgba(65, 255, 65, 0.3);
+  padding-left: var(--space-m);
+}
+
+.toc-link.active {
+  color: var(--primary-highlight);
+  border-left-color: var(--primary-highlight);
+  font-weight: 600;
+  padding-left: var(--space-m);
+}
+
+@media (max-width: 1200px) {
+  .table-of-contents {
+    display: none;
+  }
+}
+

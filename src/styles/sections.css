@@ -1,0 +1,290 @@
+/**
+ * Estilos das Seções Principais
+ */
+
+/* Hero Section */
+.hero {
+  padding: var(--space-section) 0;
+  text-align: center;
+  position: relative;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(65, 255, 65, 0.05) 0%, transparent 70%);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  filter: blur(60px);
+  z-index: -1;
+  animation: pulse 4s ease-in-out infinite;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+.hero h1 {
+  font-size: clamp(2.5rem, 8vw, 5.5rem);
+  line-height: 1.1;
+  margin-bottom: var(--space-l);
+  animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+
+.hero p {
+  font-size: clamp(1.1rem, 2vw, 1.35rem);
+  color: var(--color-grey);
+  max-width: 700px;
+  margin: 0 auto;
+  animation: fadeInUp 0.8s ease-out 0.4s both;
+  line-height: 1.8;
+}
+
+/* Disciplines Section */
+.disciplines {
+  padding: var(--space-section) 0;
+}
+
+.disciplines-header {
+  text-align: center;
+  margin-bottom: var(--space-xl);
+}
+
+.disciplines-header h2 {
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  margin-bottom: var(--space-m);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  background: var(--gradient-main);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientShift 4s ease infinite;
+}
+
+.view-toggle {
+  display: inline-flex;
+  background-color: var(--color-surface);
+  border-radius: 99px;
+  padding: var(--space-xxs);
+  border: 1px solid var(--color-border);
+  position: relative;
+}
+
+.view-btn {
+  padding: var(--space-xs) var(--space-m);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 14px;
+  z-index: 2;
+  color: var(--color-grey);
+  transition: color var(--transition-medium);
+}
+
+.view-toggle-bg {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  width: calc(50% - 4px);
+  background-color: var(--color-light-grey);
+  border-radius: 99px;
+  transition: transform var(--transition-medium);
+  left: 4px;
+  /* Não bloquear eventos dos botões */
+  pointer-events: none;
+}
+
+.view-toggle[data-view='graph'] .view-toggle-bg {
+  transform: translateX(100%);
+}
+
+.view-toggle[data-view='grid'] .view-btn[data-view='grid'],
+.view-toggle[data-view='graph'] .view-btn[data-view='graph'] {
+  color: var(--color-black);
+}
+
+.disciplines-container {
+  margin-top: var(--space-xl);
+}
+
+.disciplines-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: var(--space-xl);
+  animation: fadeIn 0.6s ease-out;
+}
+
+.disciplines-container.graph-view .disciplines-grid {
+  display: none !important;
+}
+
+.disciplines-container.graph-view .knowledge-graph {
+  display: block !important;
+}
+
+.disciplines-grid .discipline-card {
+  animation: cardStagger 0.6s ease-out both;
+}
+
+.disciplines-grid .discipline-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.disciplines-grid .discipline-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.disciplines-grid .discipline-card:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.disciplines-grid .discipline-card:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+.disciplines-grid .discipline-card:nth-child(5) {
+  animation-delay: 0.5s;
+}
+
+.disciplines-grid .discipline-card:nth-child(6) {
+  animation-delay: 0.6s;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .container {
+    max-width: 100%;
+    padding: 0 var(--space-m);
+  }
+
+  .disciplines-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-m);
+  }
+
+  .career-card {
+    flex: 0 0 350px;
+    height: 480px;
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    font-size: 16px;
+    cursor: auto;
+  }
+
+  .cursor {
+    display: none;
+  }
+
+  .header-controls {
+    gap: var(--space-s);
+  }
+
+  .hero {
+    padding: var(--space-xl) 0;
+  }
+
+  .hero h1 {
+    margin-bottom: var(--space-m);
+  }
+
+  .disciplines {
+    padding: var(--space-xl) 0;
+  }
+
+  .disciplines-header h2 {
+    font-size: 2rem;
+  }
+
+  .disciplines-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-m);
+  }
+
+  .knowledge-graph {
+    height: 600px;
+  }
+
+  .career-paths {
+    padding: var(--space-xl) 0;
+  }
+
+  .career-card {
+    flex: 0 0 320px;
+    height: 420px;
+    padding: var(--space-l);
+  }
+
+  .career-card h3 {
+    font-size: 1.75rem;
+  }
+
+  .modal-container {
+    left: var(--space-s) !important;
+    top: var(--space-s) !important;
+    width: calc(100vw - var(--space-l)) !important;
+    height: calc(100vh - var(--space-l)) !important;
+  }
+
+  .modal-scroll-content {
+    padding: var(--space-l);
+  }
+
+  .modal-content-inner {
+    margin: var(--space-m) auto;
+  }
+
+  .modal-header h2 {
+    font-size: 2rem;
+  }
+
+  .settings-panel {
+    width: calc(100vw - var(--space-m));
+    max-width: calc(100vw - var(--space-m));
+    right: var(--space-s);
+  }
+}
+
+@media (max-width: 480px) {
+  .hero h1 {
+    font-size: 2rem;
+  }
+
+  .hero p {
+    font-size: 1rem;
+  }
+
+  .career-card {
+    flex: 0 0 280px;
+    height: 380px;
+  }
+
+  .modal-header h2 {
+    font-size: 1.75rem;
+  }
+
+  .modal-section h3 {
+    font-size: 1.5rem;
+  }
+}
+
+/* Smooth scroll behavior for all browsers */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+

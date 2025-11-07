@@ -1,0 +1,220 @@
+/**
+ * Sistema de Botões Moderno
+ */
+
+/* Botão Primário - Gradiente com Hover Glow */
+.btn-primary {
+  padding: var(--space-m) var(--space-xl);
+  background: var(--gradient-main);
+  background-size: 200% 200%;
+  border-radius: var(--border-radius-small);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--color-black);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-medium);
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-s);
+  box-shadow: 0 4px 16px rgba(65, 255, 65, 0.2);
+  animation: gradientShift 3s ease infinite;
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.2);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 32px rgba(65, 255, 65, 0.4), 0 0 40px rgba(65, 255, 65, 0.3);
+}
+
+.btn-primary:hover::before {
+  opacity: 1;
+}
+
+.btn-primary:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Botão Secundário - Outline com Hover Fill */
+.btn-secondary {
+  padding: var(--space-m) var(--space-xl);
+  background: transparent;
+  border: 2px solid var(--color-border);
+  border-radius: var(--border-radius-small);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--color-white);
+  cursor: pointer;
+  transition: all var(--transition-medium);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-s);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-secondary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gradient-main);
+  opacity: 0;
+  transition: opacity var(--transition-medium);
+  z-index: -1;
+}
+
+.btn-secondary:hover {
+  border-color: var(--primary-highlight);
+  color: var(--color-black);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(65, 255, 65, 0.2);
+}
+
+.btn-secondary:hover::before {
+  opacity: 1;
+}
+
+/* Botão Terciário - Texto com Underline Animado */
+.btn-tertiary {
+  padding: var(--space-s) var(--space-m);
+  background: transparent;
+  border: none;
+  border-radius: var(--border-radius-small);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--primary-highlight);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  position: relative;
+}
+
+.btn-tertiary::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--primary-highlight);
+  transition: all var(--transition-medium);
+  transform: translateX(-50%);
+}
+
+.btn-tertiary:hover {
+  color: var(--color-white);
+  transform: translateY(-2px);
+}
+
+.btn-tertiary:hover::after {
+  width: 100%;
+}
+
+/* Botão com Ícone */
+.btn-icon {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all var(--transition-fast);
+}
+
+.btn-icon:hover {
+  background: rgba(65, 255, 65, 0.1);
+  border-color: var(--primary-highlight);
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* Botão de Ação Especial - Começar Curso */
+.btn-start-course {
+  padding: var(--space-l) var(--space-xxl);
+  background: var(--gradient-main);
+  background-size: 200% 200%;
+  border-radius: var(--border-radius);
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1.125rem;
+  color: var(--color-black);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-medium);
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-m);
+  box-shadow: 0 8px 32px rgba(65, 255, 65, 0.3);
+  animation: gradientShift 3s ease infinite;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.btn-start-course::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), transparent);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.btn-start-course:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 12px 48px rgba(65, 255, 65, 0.5), 0 0 60px rgba(65, 255, 65, 0.3);
+}
+
+.btn-start-course:hover::before {
+  opacity: 1;
+}
+
+.btn-start-course svg {
+  width: 24px;
+  height: 24px;
+  transition: transform var(--transition-fast);
+}
+
+.btn-start-course:hover svg {
+  transform: translateX(4px);
+}
+
+/* Grupo de Botões */
+.btn-group {
+  display: flex;
+  gap: var(--space-m);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Estados de Desabilitado */
+.btn-primary:disabled,
+.btn-secondary:disabled,
+.btn-tertiary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+

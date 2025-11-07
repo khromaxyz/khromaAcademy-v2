@@ -1,0 +1,200 @@
+/**
+ * Estilos do Cursor Customizado
+ */
+
+body:not(.cursor-disabled) .cursor {
+  display: block !important;
+}
+
+body.cursor-disabled .cursor {
+  display: none !important;
+}
+
+/* Garantir que cursor apareça mesmo no modal e conteúdo */
+.modal-container .cursor,
+.discipline-content .cursor {
+  display: block !important;
+  z-index: 99999 !important;
+}
+
+/* Cursor Type 1: Classic Circle */
+.cursor.cursor-classic {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--color-white);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), height 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.25s, border-width 0.25s, opacity 0.2s;
+  z-index: 99999 !important;
+  mix-blend-mode: difference;
+  backdrop-filter: blur(2px);
+}
+
+.cursor.cursor-classic::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  background: var(--color-white);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: transform 0.25s;
+}
+
+.cursor.cursor-classic.grow {
+  width: 56px;
+  height: 56px;
+  background-color: var(--color-white);
+  border-width: 1px;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.cursor.cursor-classic.grow::before {
+  transform: translate(-50%, -50%) scale(0.5);
+}
+
+/* Cursor Type 2: Dot */
+.cursor.cursor-dot {
+  width: 12px;
+  height: 12px;
+  background: var(--primary-highlight);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: transform 0.2s, width 0.2s, height 0.2s;
+  z-index: 99999 !important;
+  box-shadow: 0 0 10px var(--primary-highlight);
+}
+
+.cursor.cursor-dot.grow {
+  width: 32px;
+  height: 32px;
+  background: rgba(65, 255, 65, 0.3);
+  box-shadow: 0 0 20px var(--primary-highlight);
+}
+
+/* Cursor Type 3: Square */
+.cursor.cursor-square {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--primary-highlight);
+  position: fixed;
+  pointer-events: none;
+  transform: translate(-50%, -50%) rotate(45deg);
+  transition: transform 0.25s, width 0.25s, height 0.25s;
+  z-index: 99999 !important;
+  mix-blend-mode: difference;
+}
+
+.cursor.cursor-square.grow {
+  width: 40px;
+  height: 40px;
+  background: rgba(65, 255, 65, 0.2);
+}
+
+/* Cursor Type 4: Crosshair */
+.cursor.cursor-crosshair {
+  width: 30px;
+  height: 30px;
+  position: fixed;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  z-index: 99999 !important;
+}
+
+.cursor.cursor-crosshair::before,
+.cursor.cursor-crosshair::after {
+  content: '';
+  position: absolute;
+  background: var(--primary-highlight);
+  box-shadow: 0 0 4px var(--primary-highlight);
+}
+
+.cursor.cursor-crosshair::before {
+  width: 2px;
+  height: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.cursor.cursor-crosshair::after {
+  width: 100%;
+  height: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.cursor.cursor-crosshair.grow::before {
+  height: 150%;
+}
+
+.cursor.cursor-crosshair.grow::after {
+  width: 150%;
+}
+
+/* Cursor Type 5: Glow */
+.cursor.cursor-glow {
+  width: 20px;
+  height: 20px;
+  background: radial-gradient(circle, var(--primary-highlight), transparent);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: transform 0.3s, width 0.3s, height 0.3s;
+  z-index: 99999 !important;
+  filter: blur(4px);
+  opacity: 0.8;
+}
+
+.cursor.cursor-glow.grow {
+  width: 60px;
+  height: 60px;
+  filter: blur(8px);
+  opacity: 0.6;
+}
+
+/* Cursor Type 6: Outline */
+.cursor.cursor-outline {
+  width: 30px;
+  height: 30px;
+  border: 2px solid var(--primary-highlight);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: all 0.25s;
+  z-index: 99999 !important;
+  box-shadow: 0 0 10px var(--primary-highlight);
+}
+
+.cursor.cursor-outline::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  background: var(--primary-highlight);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.cursor.cursor-outline.grow {
+  width: 50px;
+  height: 50px;
+  border-width: 3px;
+  box-shadow: 0 0 20px var(--primary-highlight);
+}
+
+.cursor.hidden {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.3);
+}
+

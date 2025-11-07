@@ -1,0 +1,217 @@
+/**
+ * CodeBlock Styles
+ * Estilos para componente de código
+ */
+
+.code-block {
+  margin: var(--space-l) 0;
+  border-radius: var(--border-radius);
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  font-family: 'Courier New', 'Consolas', 'Monaco', monospace;
+}
+
+/* Header */
+.code-block-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-m) var(--space-l);
+  background: rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.code-block-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+}
+
+.code-block-filename {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-white);
+}
+
+.code-block-language {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--primary-highlight);
+  padding: 2px 8px;
+  background: rgba(65, 255, 65, 0.1);
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+
+.code-block-copy-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-m);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius-small);
+  color: var(--color-light-grey);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.code-block-copy-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(65, 255, 65, 0.3);
+  color: var(--primary-highlight);
+}
+
+.code-block-copy-btn.copied {
+  background: rgba(65, 255, 65, 0.15);
+  border-color: rgba(65, 255, 65, 0.3);
+  color: var(--primary-highlight);
+}
+
+.code-block-copy-btn svg {
+  flex-shrink: 0;
+}
+
+/* Container */
+.code-block-container {
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+.code-block-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.code-block-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.code-block-container::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 4px;
+}
+
+.code-block-container pre {
+  margin: 0;
+  padding: var(--space-l);
+  background: transparent;
+  color: #e0e0e0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.code-block-container code {
+  display: block;
+  font-family: inherit;
+  background: transparent;
+}
+
+/* Code Lines */
+.code-line {
+  display: flex;
+  align-items: flex-start;
+  min-height: 1.6em;
+  transition: background var(--transition-fast);
+}
+
+.code-line:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.code-line.highlighted {
+  background: rgba(65, 255, 65, 0.08);
+  border-left: 3px solid var(--primary-highlight);
+  padding-left: calc(var(--space-s) - 3px);
+}
+
+.line-number {
+  display: inline-block;
+  min-width: 3em;
+  padding-right: var(--space-m);
+  margin-right: var(--space-m);
+  color: rgba(255, 255, 255, 0.3);
+  text-align: right;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.line-content {
+  flex: 1;
+  white-space: pre;
+}
+
+/* Basic Syntax Highlighting (Simplified) */
+.language-javascript .line-content,
+.language-typescript .line-content,
+.language-python .line-content {
+  color: #e0e0e0;
+}
+
+/* Pseudo syntax highlighting com cores básicas */
+.code-line:has(.line-content:contains("function")),
+.code-line:has(.line-content:contains("const")),
+.code-line:has(.line-content:contains("let")),
+.code-line:has(.line-content:contains("var")),
+.code-line:has(.line-content:contains("class")),
+.code-line:has(.line-content:contains("import")),
+.code-line:has(.line-content:contains("export")),
+.code-line:has(.line-content:contains("from")),
+.code-line:has(.line-content:contains("def")),
+.code-line:has(.line-content:contains("return")) {
+  color: #ff79c6;
+}
+
+/* Strings (simplificado - melhor com lib de highlighting) */
+.line-content {
+  /* Cores base */
+  color: #e0e0e0;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .code-block-header {
+    padding: var(--space-s) var(--space-m);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-s);
+  }
+
+  .code-block-info {
+    width: 100%;
+  }
+
+  .code-block-copy-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .code-block-container pre {
+    padding: var(--space-m);
+    font-size: 0.85rem;
+  }
+
+  .line-number {
+    min-width: 2.5em;
+    padding-right: var(--space-s);
+    margin-right: var(--space-s);
+  }
+}
+
+/* Dark theme optimized colors */
+.code-block {
+  /* Base */
+  --code-bg: rgba(0, 0, 0, 0.4);
+  --code-text: #e0e0e0;
+  --code-comment: #6a9955;
+  --code-keyword: #ff79c6;
+  --code-string: #a8ff60;
+  --code-function: #ffb86c;
+  --code-number: #bd93f9;
+  --code-operator: #ff79c6;
+}
+

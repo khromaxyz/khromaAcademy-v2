@@ -1,0 +1,149 @@
+/**
+ * Sistema de Temas
+ * Define as variáveis CSS para cada tema disponível
+ */
+
+:root,
+:root[data-theme='rgb'] {
+  --primary-highlight: #41ff41;
+  --gradient-main: linear-gradient(
+    90deg,
+    #ff4141,
+    #f2ff41,
+    #41ff41,
+    #41ffff,
+    #4141ff,
+    #ff41ff
+  );
+  --gradient-conic: conic-gradient(
+    from 180deg at 50% 50%,
+    #ff4141 0%,
+    #f2ff41 15%,
+    #41ff41 33%,
+    #41ffff 50%,
+    #4141ff 66%,
+    #ff41ff 85%,
+    #ff4141 100%
+  );
+}
+
+:root[data-theme='red'] {
+  --primary-highlight: #ff4141;
+  --gradient-main: linear-gradient(90deg, #ff4141, #ff6b6b, #ff8d8d);
+  --gradient-conic: conic-gradient(
+    from 180deg at 50% 50%,
+    #ff4141,
+    #ff6b6b,
+    #ff8d8d,
+    #ff4141
+  );
+}
+
+:root[data-theme='green'] {
+  --primary-highlight: #41ff41;
+  --gradient-main: linear-gradient(90deg, #41ff41, #6bff6b, #a3ffa3);
+  --gradient-conic: conic-gradient(
+    from 180deg at 50% 50%,
+    #41ff41,
+    #6bff6b,
+    #a3ffa3,
+    #41ff41
+  );
+}
+
+:root[data-theme='blue'] {
+  --primary-highlight: #4141ff;
+  --gradient-main: linear-gradient(90deg, #4141ff, #6b6bff, #8d8dff);
+  --gradient-conic: conic-gradient(
+    from 180deg at 50% 50%,
+    #4141ff,
+    #6b6bff,
+    #8d8dff,
+    #4141ff
+  );
+}
+
+:root[data-theme='purple'] {
+  --primary-highlight: #b441ff;
+  --gradient-main: linear-gradient(90deg, #b441ff, #c66bff, #d88dff);
+  --gradient-conic: conic-gradient(
+    from 180deg at 50% 50%,
+    #b441ff,
+    #c66bff,
+    #d88dff,
+    #b441ff
+  );
+}
+
+:root[data-theme='orange'] {
+  --primary-highlight: #ff8d41;
+  --gradient-main: linear-gradient(90deg, #ff8d41, #ffa66b, #ffc18d);
+  --gradient-conic: conic-gradient(
+    from 180deg at 50% 50%,
+    #ff8d41,
+    #ffa66b,
+    #ffc18d,
+    #ff8d41
+  );
+}
+
+:root[data-theme='cyan'] {
+  --primary-highlight: #41ffff;
+  --gradient-main: linear-gradient(90deg, #41ffff, #6bffff, #8dffff);
+  --gradient-conic: conic-gradient(
+    from 180deg at 50% 50%,
+    #41ffff,
+    #6bffff,
+    #8dffff,
+    #41ffff
+  );
+}
+
+:root[data-theme='pink'] {
+  --primary-highlight: #ff41c1;
+  --gradient-main: linear-gradient(90deg, #ff41c1, #ff6bcd, #ff8dd9);
+  --gradient-conic: conic-gradient(
+    from 180deg at 50% 50%,
+    #ff41c1,
+    #ff6bcd,
+    #ff8dd9,
+    #ff41c1
+  );
+}
+
+:root[data-theme='yellow'] {
+  --primary-highlight: #f2ff41;
+  --gradient-main: linear-gradient(90deg, #f2ff41, #f5ff6b, #f8ff8d);
+  --gradient-conic: conic-gradient(
+    from 180deg at 50% 50%,
+    #f2ff41,
+    #f5ff6b,
+    #f8ff8d,
+    #f2ff41
+  );
+}
+
+:root[data-theme='monochrome'] {
+  --primary-highlight: #ffffff;
+  --gradient-main: linear-gradient(90deg, #ffffff, #cccccc, #888888);
+  --gradient-conic: conic-gradient(
+    from 180deg at 50% 50%,
+    #ffffff,
+    #cccccc,
+    #888888,
+    #ffffff
+  );
+}
+
+:root[data-theme='neon'] {
+  --primary-highlight: #00ffff;
+  --gradient-main: linear-gradient(90deg, #ff00ff, #00ffff, #ffff00, #ff00ff);
+  --gradient-conic: conic-gradient(
+    from 180deg at 50% 50%,
+    #ff00ff 0%,
+    #00ffff 33%,
+    #ffff00 66%,
+    #ff00ff 100%
+  );
+}
+

@@ -1,0 +1,488 @@
+/**
+ * Estilos para blocos de conteúdo avançados
+ * Plotly, Chart.js, Monaco Editor, Matter.js, Fabric.js
+ */
+
+/* ========================================
+   PLOTLY CHARTS
+   ======================================== */
+
+[data-plotly] {
+  margin: 2.5em 0;
+  min-height: 400px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 16px;
+  padding: 1em;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+[data-plotly]:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 20px rgba(65, 255, 65, 0.15);
+}
+
+.plotly-chart {
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+}
+
+.plotly-error {
+  padding: 2em;
+  text-align: center;
+  color: #ff4141;
+}
+
+/* ========================================
+   CHART.JS CHARTS
+   ======================================== */
+
+[data-chart] {
+  margin: 2.5em 0;
+  min-height: 400px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 16px;
+  padding: 2em;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+[data-chart]:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 20px rgba(65, 255, 255, 0.15);
+}
+
+.chart-error {
+  padding: 2em;
+  text-align: center;
+  color: #ff4141;
+}
+
+/* ========================================
+   MATH CALCULATIONS
+   ======================================== */
+
+[data-math-calc] {
+  margin: 1.5em 0;
+  padding: 1.5em;
+  background: rgba(255, 255, 255, 0.03);
+  border-left: 4px solid #41ff41;
+  border-radius: 8px;
+  font-family: 'Fira Code', 'Cascadia Code', Consolas, monospace;
+}
+
+.math-calc-result {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  flex-wrap: wrap;
+}
+
+.math-calc-expression {
+  font-size: 1.2em;
+  color: #41ffff;
+}
+
+.math-calc-equals {
+  font-size: 1.5em;
+  font-weight: 700;
+  color: #fff;
+}
+
+.math-calc-value {
+  font-size: 1.3em;
+  font-weight: 600;
+  color: #41ff41;
+  padding: 0.5em 1em;
+  background: rgba(65, 255, 65, 0.1);
+  border-radius: 8px;
+}
+
+.math-error {
+  padding: 1.5em;
+  background: rgba(255, 65, 65, 0.1);
+  border: 2px solid #ff4141;
+  border-radius: 8px;
+  color: #ff4141;
+}
+
+/* ========================================
+   MONACO EDITOR
+   ======================================== */
+
+[data-monaco] {
+  margin: 2.5em 0;
+}
+
+.monaco-editor-container {
+  border: 2px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  transition: all 0.3s ease;
+}
+
+.monaco-editor-container:hover {
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  box-shadow: 0 4px 20px rgba(65, 255, 255, 0.15);
+}
+
+.monaco-actions {
+  display: flex;
+  gap: 0.5em;
+  margin-top: 1em;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.monaco-btn {
+  padding: 0.8em 1.5em;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.95em;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.monaco-btn-primary {
+  background: #41ff41;
+  color: #000;
+}
+
+.monaco-btn-primary:hover:not(:disabled) {
+  background: #52ff52;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(65, 255, 65, 0.3);
+}
+
+.monaco-btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.monaco-btn-secondary:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.monaco-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.monaco-output {
+  margin-top: 1em;
+  padding: 1.5em;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border-left: 4px solid #41ff41;
+  font-family: 'Fira Code', 'Cascadia Code', Consolas, monospace;
+  white-space: pre-wrap;
+  max-height: 300px;
+  overflow-y: auto;
+  transition: all 0.3s ease;
+}
+
+.monaco-output strong {
+  color: #41ff41;
+  display: block;
+  margin-bottom: 0.5em;
+}
+
+.monaco-error {
+  padding: 2em;
+  background: rgba(255, 65, 65, 0.1);
+  border: 2px solid #ff4141;
+  border-radius: 12px;
+  color: #ff4141;
+  text-align: center;
+}
+
+/* ========================================
+   MATTER.JS SIMULATIONS
+   ======================================== */
+
+[data-matter] {
+  margin: 2.5em 0;
+}
+
+[data-matter] canvas {
+  border-radius: 12px !important;
+  border: 2px solid rgba(255, 255, 255, 0.1) !important;
+  transition: all 0.3s ease;
+}
+
+[data-matter] canvas:hover {
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  box-shadow: 0 4px 20px rgba(255, 65, 255, 0.15);
+}
+
+.matter-controls {
+  display: flex;
+  gap: 0.5em;
+  margin-top: 1em;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.matter-btn {
+  padding: 0.8em 1.5em;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.95em;
+}
+
+.matter-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.matter-error {
+  padding: 2em;
+  background: rgba(255, 65, 65, 0.1);
+  border: 2px solid #ff4141;
+  border-radius: 12px;
+  color: #ff4141;
+  text-align: center;
+}
+
+/* ========================================
+   FABRIC.JS CANVAS
+   ======================================== */
+
+[data-fabric] {
+  margin: 2.5em 0;
+}
+
+[data-fabric] canvas {
+  border-radius: 12px !important;
+  border: 2px solid rgba(255, 255, 255, 0.1) !important;
+  cursor: crosshair;
+  transition: all 0.3s ease;
+}
+
+[data-fabric] canvas:hover {
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  box-shadow: 0 4px 20px rgba(65, 255, 255, 0.15);
+}
+
+.fabric-toolbar {
+  display: flex;
+  gap: 0.5em;
+  margin-top: 1em;
+  flex-wrap: wrap;
+}
+
+.fabric-btn {
+  padding: 0.8em 1.2em;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9em;
+}
+
+.fabric-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.fabric-color-picker {
+  width: 50px;
+  height: 40px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.fabric-color-picker:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: scale(1.05);
+}
+
+.fabric-error {
+  padding: 2em;
+  background: rgba(255, 65, 65, 0.1);
+  border: 2px solid #ff4141;
+  border-radius: 12px;
+  color: #ff4141;
+  text-align: center;
+}
+
+/* ========================================
+   RESPONSIVIDADE
+   ======================================== */
+
+@media (max-width: 768px) {
+  [data-plotly],
+  [data-chart],
+  [data-monaco],
+  [data-matter],
+  [data-fabric] {
+    margin: 1.5em 0;
+  }
+
+  .plotly-chart,
+  .monaco-editor-container,
+  [data-matter] canvas,
+  [data-fabric] canvas {
+    min-height: 300px !important;
+  }
+
+  .monaco-actions,
+  .matter-controls,
+  .fabric-toolbar {
+    gap: 0.4em;
+  }
+
+  .monaco-btn,
+  .matter-btn,
+  .fabric-btn {
+    padding: 0.6em 1em;
+    font-size: 0.9em;
+  }
+
+  .monaco-output {
+    max-height: 200px;
+    padding: 1em;
+    font-size: 0.9em;
+  }
+
+  .math-calc-result {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  [data-plotly],
+  [data-chart] {
+    padding: 1em;
+  }
+
+  .plotly-chart,
+  .monaco-editor-container,
+  [data-matter] canvas,
+  [data-fabric] canvas {
+    min-height: 250px !important;
+  }
+
+  .monaco-actions,
+  .matter-controls,
+  .fabric-toolbar {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .monaco-btn,
+  .matter-btn,
+  .fabric-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ========================================
+   ANIMAÇÕES
+   ======================================== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+[data-plotly],
+[data-chart],
+[data-monaco],
+[data-matter],
+[data-fabric],
+[data-math-calc] {
+  animation: fadeIn 0.5s ease;
+}
+
+/* ========================================
+   SCROLLBARS PERSONALIZADAS
+   ======================================== */
+
+.monaco-output::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.monaco-output::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.monaco-output::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
+
+.monaco-output::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* ========================================
+   ACESSIBILIDADE
+   ======================================== */
+
+.monaco-btn:focus-visible,
+.matter-btn:focus-visible,
+.fabric-btn:focus-visible {
+  outline: 3px solid var(--primary-highlight, #41ff41);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ========================================
+   MODO PRINT
+   ======================================== */
+
+@media print {
+  [data-matter],
+  [data-fabric],
+  [data-monaco],
+  .monaco-actions,
+  .matter-controls,
+  .fabric-toolbar {
+    display: none;
+  }
+
+  [data-plotly],
+  [data-chart] {
+    break-inside: avoid;
+  }
+}
+

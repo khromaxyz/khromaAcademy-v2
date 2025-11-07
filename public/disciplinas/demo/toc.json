@@ -1,0 +1,21 @@
+[
+  {
+    "id": "teste",
+    "title": "Catálogo de Funcionalidades",
+    "file": "teste.md",
+    "order": 1
+  },
+  {
+    "id": "teste-avancado",
+    "title": "Demonstração Avançada",
+    "file": "teste-avancado.md",
+    "order": 2
+  },
+  {
+    "id": "grafos",
+    "title": "🔷 Teoria dos Grafos Interativa",
+    "file": "grafos.md",
+    "order": 3
+  }
+]
+

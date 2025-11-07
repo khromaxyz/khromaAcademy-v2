@@ -1,0 +1,65 @@
+{
+  "disciplines": {
+    "algoritmos": {
+      "title": "Algoritmos & Complexidade",
+      "period": "3º",
+      "description": "O pilar da computação. Aprenda a desenhar, analisar e otimizar algoritmos eficientes.",
+      "syllabus": [
+        "Análise Assintótica",
+        "Estruturas de Dados Fundamentais",
+        "Algoritmos de Ordenação",
+        "Grafos",
+        "Programação Dinâmica"
+      ],
+      "progress": 75,
+      "color": "#41FF41",
+      "prerequisites": [],
+      "position": {
+        "x": 50,
+        "y": 10
+      },
+      "icon": "<svg viewBox=\"0 0 200 200\"><defs><marker id=\"arrow-green\" viewBox=\"0 0 10 10\" refX=\"5\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M 0 0 L 10 5 L 0 10 z\" fill=\"#41FF41\"></path></marker></defs><circle cx=\"60\" cy=\"60\" r=\"12\" fill=\"none\" stroke-width=\"10\"/><path d=\"M65,70 C70,120 100,140 145,140\" fill=\"none\" stroke-width=\"10\" marker-end=\"url(#arrow-green)\"/></svg>"
+    },
+    "estruturas-dados": {
+      "title": "Estruturas de Dados",
+      "period": "2º",
+      "description": "Organize a informação de forma inteligente para criar software performático e escalável.",
+      "syllabus": [
+        "Listas, Pilhas e Filas",
+        "Árvores Binárias e Balanceadas",
+        "Hashing",
+        "Heaps",
+        "Estruturas Avançadas"
+      ],
+      "progress": 90,
+      "color": "#4141FF",
+      "prerequisites": ["algoritmos"],
+      "position": {
+        "x": 50,
+        "y": 35
+      },
+      "icon": "<svg viewBox=\"0 0 200 200\"><circle cx=\"60\" cy=\"60\" r=\"12\" fill=\"none\" stroke-width=\"10\"/><circle cx=\"140\" cy=\"60\" r=\"12\" fill=\"none\" stroke-width=\"10\"/><circle cx=\"100\" cy=\"140\" r=\"12\" fill=\"none\" stroke-width=\"10\"/><path d=\"M68,70 L92,132 M132,70 L108,132\" fill=\"none\" stroke-width=\"10\"/></svg>"
+    },
+    "ia": {
+      "title": "Inteligência Artificial",
+      "period": "6º",
+      "description": "Explore os fundamentos da criação de sistemas que pensam, aprendem e raciocinam.",
+      "syllabus": [
+        "Busca e Otimização",
+        "Lógica Proposicional",
+        "Aprendizado de Máquina",
+        "Redes Neurais",
+        "Processamento de Linguagem Natural"
+      ],
+      "progress": 40,
+      "color": "#FF4141",
+      "prerequisites": ["estruturas-dados"],
+      "position": {
+        "x": 25,
+        "y": 60
+      },
+      "icon": "<svg viewBox=\"0 0 200 200\"><path d=\"M100,50 C40,50 40,150 100,150\" fill=\"none\" stroke-width=\"10\"/><path d=\"M100,50 C160,50 160,150 100,150\" fill=\"none\" stroke-width=\"10\"/><circle cx=\"100\" cy=\"100\" r=\"15\" fill=\"none\" stroke-width=\"10\"/></svg>"
+    }
+  }
+}
+
