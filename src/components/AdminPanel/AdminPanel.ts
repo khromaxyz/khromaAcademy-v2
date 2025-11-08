@@ -25,6 +25,13 @@ export class AdminPanel {
   }
 
   /**
+   * Abre o painel administrativo
+   */
+  open(): void {
+    this.panel?.classList.add('visible');
+  }
+
+  /**
    * Configura os event listeners
    */
   private setupEventListeners(): void {

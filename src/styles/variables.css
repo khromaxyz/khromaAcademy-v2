@@ -14,6 +14,28 @@
   --color-grey: #8a8a8a;
   --color-light-grey: #d0d0d0;
   --color-dark-grey: #555555;
+  
+  /* Superfícies por elevação (Dark) */
+  --surface-1: #151515;
+  --surface-2: #1f1f1f;
+  --surface-3: #2a2a2a;
+  
+  /* Tokens semânticos de texto (Dark) */
+  --text-primary: #f8f8f8;
+  --text-secondary: #d0d0d0;
+  --text-muted: #8a8a8a;
+  
+  /* Borders semânticas (Dark) */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.18);
+  
+  /* Interações e foco (Dark) */
+  --interactive-hover: rgba(255, 255, 255, 0.05);
+  --interactive-active: rgba(65, 255, 65, 0.1);
+  --focus-ring: rgba(65, 255, 65, 0.6);
+  
+  /* Overlay para modais (Dark) */
+  --surface-overlay: rgba(0, 0, 0, 0.9);
 
   /* Typography */
   --font-heading: 'Manrope', sans-serif;
@@ -80,8 +102,89 @@
   --z-modal: 10000;
   --z-content-view: 9999;
   --z-drawer-overlay: 9998;
+  --z-navigation: 1000;
   --z-sidebar: 100;
   --z-toc: 90;
   --z-header: 80;
+
+  /* Navigation Variables - Ultra-Moderno Minimalista */
+  --nav-width-expanded: 280px;
+  --nav-width-collapsed: 72px;
+  --nav-bg-light: rgba(250, 250, 250, 0.98);
+  --nav-bg-dark: rgba(10, 10, 10, 0.98);
+  --nav-border: rgba(0, 0, 0, 0.08);
+  --nav-item-hover-bg: rgba(0, 0, 0, 0.04);
+  --nav-item-active-bg: rgba(0, 255, 102, 0.08);
+  --nav-text-primary: rgba(0, 0, 0, 0.88);
+  --nav-text-secondary: rgba(0, 0, 0, 0.56);
+  --nav-glass-blur: 20px;
+  --nav-item-height: 44px;
+  --nav-transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Spring Physics Easings */
+  --spring-bouncy: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --spring-smooth: cubic-bezier(0.4, 0.0, 0.2, 1);
+  --spring-gentle: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  
+  /* CommandPalette Variables */
+  --palette-width: 640px;
+  --palette-max-height: 480px;
+  --palette-bg: rgba(255, 255, 255, 0.98);
+  --palette-bg-dark: rgba(15, 15, 15, 0.98);
+  --palette-border: rgba(0, 0, 0, 0.08);
+  --palette-item-hover: rgba(0, 0, 0, 0.04);
+  --palette-item-selected: rgba(0, 255, 102, 0.08);
+}
+
+:root[data-theme='light'] {
+  /* Paleta Light refinada */
+  --color-surface: #ffffff;
+  --color-surface-elevated: #ffffff;
+  --color-border: rgba(0, 0, 0, 0.12);
+  --color-border-light: rgba(0, 0, 0, 0.08);
+  /* No tema claro, 'white' representa texto principal */
+  --color-white: #111111;
+  --color-grey: #4b5563;
+  --color-light-grey: #6b7280;
+  --color-dark-grey: #111111;
+
+  /* Tokens semânticos de texto */
+  --text-primary: #111111;
+  --text-secondary: #1f2937;
+  --text-muted: #6b7280;
+
+  /* Superfícies por elevação */
+  --surface-1: #ffffff;
+  --surface-2: #fafafa;
+  --surface-3: #f5f6f8;
+  
+  /* Overlay para modais (light mode) */
+  --surface-overlay: rgba(255, 255, 255, 0.95);
+
+  /* Borders semânticas */
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  --border-strong: rgba(0, 0, 0, 0.18);
+
+  /* Navegação e paleta */
+  --nav-bg-light: rgba(255, 255, 255, 0.96);
+  --nav-border: rgba(0, 0, 0, 0.08);
+  --nav-item-hover-bg: rgba(0, 0, 0, 0.04);
+  --nav-item-active-bg: rgba(0, 102, 255, 0.10);
+  --nav-text-primary: rgba(17, 17, 17, 0.94);
+  --nav-text-secondary: rgba(17, 17, 17, 0.56);
+
+  --palette-bg: rgba(255, 255, 255, 0.98);
+  --palette-bg-dark: rgba(255, 255, 255, 0.98);
+  --palette-border: rgba(0, 0, 0, 0.08);
+  --palette-item-hover: rgba(0, 0, 0, 0.04);
+  --palette-item-selected: rgba(0, 102, 255, 0.10);
+
+  /* Interações e foco */
+  --interactive-hover: rgba(0, 0, 0, 0.04);
+  --interactive-active: rgba(0, 102, 255, 0.10);
+  --focus-ring: rgba(0, 102, 255, 0.6);
+  
+  /* Overlay para modais */
+  --surface-overlay: rgba(0, 0, 0, 0.7);
 }
 

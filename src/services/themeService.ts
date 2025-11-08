@@ -7,6 +7,21 @@ const STORAGE_KEY = 'khroma-theme';
  * Configurações de todos os temas disponíveis
  */
 const THEME_CONFIGS: ThemeConfigs = {
+  // Tema Dark (padrão)
+  dark: {
+    primaryHighlight: '#41FF41',
+    gradientMain:
+      'linear-gradient(90deg, #FF4141, #F2FF41, #41FF41, #41FFFF, #4141FF, #FF41FF)',
+    gradientConic:
+      'conic-gradient(from 180deg at 50% 50%, #FF4141 0%, #F2FF41 15%, #41FF41 33%, #41FFFF 50%, #4141FF 66%, #FF41FF 85%, #FF4141 100%)',
+  },
+  light: {
+    primaryHighlight: '#0066FF',
+    gradientMain: 'linear-gradient(90deg, #0066FF, #0052CC, #003D99)',
+    gradientConic:
+      'conic-gradient(from 180deg at 50% 50%, #0066FF, #0052CC, #003D99, #0066FF)',
+  },
+  // Mantemos rgb apenas por compatibilidade interna (não será exibido na UI)
   rgb: {
     primaryHighlight: '#41FF41',
     gradientMain:
@@ -80,14 +95,16 @@ const THEME_CONFIGS: ThemeConfigs = {
  * Serviço para gerenciamento de temas
  */
 export class ThemeService {
-  private currentTheme: ThemeType = 'rgb';
+  private currentTheme: ThemeType = 'dark';
 
   /**
    * Carrega o tema salvo do localStorage
    */
   loadTheme(): ThemeType {
     const saved = localStorage.getItem(STORAGE_KEY);
-    const theme = (saved as ThemeType) || 'rgb';
+    // Migrar usuários antigos: se estava salvo 'rgb', usar 'dark'
+    const legacy = (saved as ThemeType);
+    const theme = legacy === 'rgb' ? 'dark' : (legacy || 'dark');
     this.applyTheme(theme);
     return theme;
   }

@@ -1,0 +1,509 @@
+/**
+ * Navigation Extras - Spring Physics & Micro-interações Ultra-Modernas
+ * Animações baseadas em física natural e micro-interações impressionantes
+ */
+
+/* ===== SPRING PHYSICS ANIMATIONS ===== */
+
+/* Animação de entrada com spring bounce */
+.nav-item {
+  animation: springBounceIn 0.6s var(--spring-bouncy) backwards;
+}
+
+.nav-item:nth-child(1) { animation-delay: 0.05s; }
+.nav-item:nth-child(2) { animation-delay: 0.1s; }
+.nav-item:nth-child(3) { animation-delay: 0.15s; }
+.nav-item:nth-child(4) { animation-delay: 0.2s; }
+.nav-item:nth-child(5) { animation-delay: 0.25s; }
+.nav-item:nth-child(6) { animation-delay: 0.3s; }
+.nav-item:nth-child(7) { animation-delay: 0.35s; }
+
+@keyframes springBounceIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px) scale(0.9);
+  }
+  50% {
+    transform: translateX(2px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+/* Logo com spring bounce */
+.nav-logo {
+  animation: logoSpringEntrance 0.8s var(--spring-bouncy);
+}
+
+@keyframes logoSpringEntrance {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) rotate(-20deg);
+  }
+  60% {
+    transform: scale(1.1) rotate(5deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+/* Botão de busca com spring */
+.nav-search-btn {
+  animation: fadeInScale 0.5s var(--spring-smooth) 0.2s backwards;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ===== MICRO-INTERAÇÕES ===== */
+
+/* Hover com magnetic effect */
+.nav-item {
+  position: relative;
+  transition: transform 0.3s var(--spring-smooth);
+}
+
+.nav-item:hover::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 10px;
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 255, 102, 0.05) 0%,
+    transparent 70%
+  );
+  opacity: 0;
+  animation: magneticGlow 0.6s ease-out forwards;
+}
+
+@keyframes magneticGlow {
+  to {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+/* Indicador ativo com morphing */
+.nav-item-indicator {
+  transition: height 0.4s var(--spring-bouncy),
+              background 0.3s ease;
+}
+
+.nav-item.active .nav-item-indicator {
+  animation: indicatorPulse 2s ease-in-out infinite;
+}
+
+@keyframes indicatorPulse {
+  0%, 100% {
+    opacity: 1;
+    filter: brightness(1);
+  }
+  50% {
+    opacity: 0.8;
+    filter: brightness(1.2);
+  }
+}
+
+/* Badge com bounce physics */
+.nav-item-badge {
+  animation: badgeBounce 0.6s var(--spring-bouncy) 0.4s backwards,
+             badgeFloat 3s ease-in-out 1s infinite;
+}
+
+@keyframes badgeBounce {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes badgeFloat {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-2px) scale(1.05);
+  }
+}
+
+/* Shortcut keys com fade in */
+.nav-item-shortcut {
+  animation: fadeIn 0.3s ease 0.5s backwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ===== SEARCH BUTTON MICRO-INTERACTIONS ===== */
+
+.nav-search-btn:hover .search-icon {
+  animation: searchIconPulse 0.6s var(--spring-bouncy);
+}
+
+@keyframes searchIconPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15) rotate(5deg);
+  }
+}
+
+.nav-search-btn:active {
+  transform: scale(0.96);
+  transition: transform 0.1s ease;
+}
+
+/* ===== TOOLTIP SPRING ANIMATIONS ===== */
+
+.nav-item-tooltip {
+  transition: opacity 0.2s ease,
+              transform 0.4s var(--spring-bouncy);
+}
+
+.main-navigation.collapsed .nav-item:hover .nav-item-tooltip {
+  animation: tooltipSpring 0.4s var(--spring-bouncy);
+}
+
+@keyframes tooltipSpring {
+  0% {
+    opacity: 0;
+    transform: translateY(-50%) translateX(-12px) scale(0.9);
+  }
+  60% {
+    transform: translateY(-50%) translateX(2px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0) scale(1);
+  }
+}
+
+/* ===== USER PROFILE ANIMATIONS ===== */
+
+.user-avatar {
+  transition: transform 0.3s var(--spring-bouncy),
+              border-color 0.3s ease;
+}
+
+.user-profile:hover .user-avatar {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.status-dot {
+  animation: statusPulse 2s ease-in-out infinite,
+             statusFloat 3s ease-in-out infinite;
+}
+
+@keyframes statusPulse {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 8px rgba(0, 255, 102, 0.6);
+  }
+  50% {
+    opacity: 0.6;
+    box-shadow: 0 0 16px rgba(0, 255, 102, 0.8);
+  }
+}
+
+@keyframes statusFloat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+/* ===== SEPARATOR WITH SHINE EFFECT ===== */
+
+.nav-separator {
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-separator::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -100%;
+  width: 50%;
+  height: 200%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 255, 102, 0.2),
+    transparent
+  );
+  transform: translateY(-50%) skewX(-20deg);
+  animation: separatorShine 4s ease-in-out infinite;
+}
+
+@keyframes separatorShine {
+  0% {
+    left: -100%;
+  }
+  50%, 100% {
+    left: 200%;
+  }
+}
+
+/* ===== ICON ROTATION ON HOVER ===== */
+
+.nav-item:hover .nav-item-icon svg {
+  animation: iconWiggle 0.5s ease;
+}
+
+@keyframes iconWiggle {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-5deg) scale(1.05);
+  }
+  75% {
+    transform: rotate(5deg) scale(1.05);
+  }
+}
+
+/* ===== LOGO HOVER EFFECT ===== */
+
+.nav-logo:hover .logo-icon {
+  animation: logoFloatSpin 1s var(--spring-bouncy);
+}
+
+@keyframes logoFloatSpin {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-5px) rotate(180deg);
+  }
+}
+
+/* ===== MOBILE MENU SLIDE WITH SPRING ===== */
+
+@media (max-width: 768px) {
+  .main-navigation.mobile-open {
+    animation: mobileSlideIn 0.4s var(--spring-smooth);
+  }
+
+  @keyframes mobileSlideIn {
+    from {
+      transform: translateX(-100%);
+      opacity: 0.8;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  /* Backdrop fade */
+  body.nav-mobile-open::before {
+    animation: backdropFadeIn 0.3s ease-out;
+  }
+
+  @keyframes backdropFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+}
+
+/* ===== COLLAPSE/EXPAND ANIMATION ===== */
+
+.main-navigation {
+  transition: width 0.4s var(--spring-smooth);
+}
+
+.main-navigation.collapsed .nav-item-label,
+.main-navigation.collapsed .nav-item-badge,
+.main-navigation.collapsed .nav-item-shortcut,
+.main-navigation.collapsed .logo-text,
+.main-navigation.collapsed .user-info,
+.main-navigation.collapsed .search-text,
+.main-navigation.collapsed .search-kbd {
+  transition: opacity 0.2s ease;
+}
+
+/* ===== LOADING STATE ===== */
+
+.main-navigation.loading::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--primary-highlight) 50%,
+    transparent
+  );
+  animation: loadingBar 1.5s ease-in-out infinite;
+  z-index: 10001;
+}
+
+@keyframes loadingBar {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+/* ===== CLICK RIPPLE EFFECT (Visual Feedback) ===== */
+
+@keyframes clickRipple {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 255, 102, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 0 20px rgba(0, 255, 102, 0);
+  }
+}
+
+.nav-item:active {
+  animation: clickRipple 0.6s ease-out;
+}
+
+/* ===== FOCUS VISIBLE (ACESSIBILIDADE) ===== */
+
+.nav-item:focus-visible {
+  outline: 2px solid var(--primary-highlight);
+  outline-offset: 3px;
+  animation: focusPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes focusPulse {
+  0%, 100% {
+    outline-color: var(--primary-highlight);
+  }
+  50% {
+    outline-color: rgba(0, 255, 102, 0.5);
+  }
+}
+
+/* ===== PAGE TRANSITION HINTS ===== */
+
+.nav-item.transitioning {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.nav-item.transitioning .nav-item-icon {
+  animation: transitionSpin 0.5s linear infinite;
+}
+
+@keyframes transitionSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===== PERFORMANCE OPTIMIZATIONS ===== */
+
+.main-navigation,
+.nav-item,
+.nav-item-icon,
+.nav-item-indicator,
+.nav-search-btn,
+.user-avatar {
+  will-change: transform;
+}
+
+/* Remove will-change after animations */
+.main-navigation:not(:hover):not(.mobile-open) *,
+.nav-item:not(:hover):not(.active) * {
+  will-change: auto;
+}
+
+/* ===== REDUCED MOTION SUPPORT ===== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  .nav-item,
+  .nav-logo,
+  .nav-search-btn,
+  .nav-item-badge,
+  .status-dot {
+    animation: none !important;
+  }
+}
+
+/* ===== SMOOTH TRANSITIONS FOR ALL ===== */
+
+html {
+  scroll-behavior: smooth;
+}
+
+* {
+  transition-timing-function: var(--spring-smooth);
+}
+
+/* ===== HOVER SCALE EFFECT ===== */
+
+.nav-search-btn:hover,
+.user-profile:hover {
+  transform: scale(1.02);
+  transition: transform 0.3s var(--spring-bouncy);
+}
+
+/* ===== GLASSMORPHISM SUBTLE EFFECT ===== */
+
+.main-navigation::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 20% 40%,
+    rgba(0, 255, 102, 0.03) 0%,
+    transparent 60%
+  );
+  opacity: 0;
+  animation: glassGlow 8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes glassGlow {
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+

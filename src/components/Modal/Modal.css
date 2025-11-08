@@ -389,6 +389,53 @@
   transform: rotate(90deg) scale(1.1);
 }
 
+/* ===== THEME LIGHT OVERRIDES ===== */
+[data-theme='light'] .modal-container {
+  background: var(--surface-1);
+  border: 1px solid var(--border-strong);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.12),
+              0 8px 16px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme='light'] .modal-header {
+  border-bottom: 1px solid var(--border-subtle);
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.02) 0%, transparent 100%);
+}
+
+[data-theme='light'] .modal-description,
+[data-theme='light'] .modal-meta {
+  color: var(--text-secondary);
+}
+
+[data-theme='light'] .modal-period {
+  background: var(--interactive-hover);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+}
+
+[data-theme='light'] .modal-progress-card,
+[data-theme='light'] .modal-actions {
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+}
+
+[data-theme='light'] .modal-actions h3,
+[data-theme='light'] .modal-progress-card h3,
+[data-theme='light'] .modal-section h3,
+[data-theme='light'] .stat-value,
+[data-theme='light'] .next-module-title {
+  color: var(--text-primary);
+}
+
+[data-theme='light'] .modal-close-btn {
+  background: rgba(255,255,255,0.9);
+  border: 1px solid var(--border-subtle);
+}
+
+[data-theme='light'] .progress-bar {
+  background: var(--border-subtle);
+}
+
 /* Progress Circle */
 .progress-circle-bg {
   stroke: var(--color-border);

@@ -71,10 +71,10 @@
 
 .view-toggle {
   display: inline-flex;
-  background-color: var(--color-surface);
+  background-color: var(--surface-1);
   border-radius: 99px;
   padding: var(--space-xxs);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--border-subtle);
   position: relative;
 }
 
@@ -84,7 +84,7 @@
   font-weight: 600;
   font-size: 14px;
   z-index: 2;
-  color: var(--color-grey);
+  color: var(--text-secondary);
   transition: color var(--transition-medium);
 }
 
@@ -93,7 +93,7 @@
   top: 4px;
   bottom: 4px;
   width: calc(50% - 4px);
-  background-color: var(--color-light-grey);
+  background-color: var(--interactive-active);
   border-radius: 99px;
   transition: transform var(--transition-medium);
   left: 4px;
@@ -107,7 +107,7 @@
 
 .view-toggle[data-view='grid'] .view-btn[data-view='grid'],
 .view-toggle[data-view='graph'] .view-btn[data-view='graph'] {
-  color: var(--color-black);
+  color: var(--text-primary);
 }
 
 .disciplines-container {

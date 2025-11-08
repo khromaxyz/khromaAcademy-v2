@@ -3,7 +3,45 @@
  * Define as variáveis CSS para cada tema disponível
  */
 
+/* Tema Dark (padrão) */
 :root,
+:root[data-theme='dark'] {
+  --primary-highlight: #41ff41;
+  --gradient-main: linear-gradient(
+    90deg,
+    #ff4141,
+    #f2ff41,
+    #41ff41,
+    #41ffff,
+    #4141ff,
+    #ff41ff
+  );
+  --gradient-conic: conic-gradient(
+    from 180deg at 50% 50%,
+    #ff4141 0%,
+    #f2ff41 15%,
+    #41ff41 33%,
+    #41ffff 50%,
+    #4141ff 66%,
+    #ff41ff 85%,
+    #ff4141 100%
+  );
+}
+
+/* Tema Light */
+:root[data-theme='light'] {
+  --primary-highlight: #0066ff;
+  --gradient-main: linear-gradient(90deg, #0066ff, #0052cc, #003d99);
+  --gradient-conic: conic-gradient(
+    from 180deg at 50% 50%,
+    #0066ff,
+    #0052cc,
+    #003d99,
+    #0066ff
+  );
+}
+
+/* Tema RGB */
 :root[data-theme='rgb'] {
   --primary-highlight: #41ff41;
   --gradient-main: linear-gradient(

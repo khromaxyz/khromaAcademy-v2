@@ -2,6 +2,8 @@
  * Tipos de tema disponíveis na aplicação
  */
 export type ThemeType =
+  | 'dark'
+  | 'light'
   | 'rgb'
   | 'red'
   | 'green'

@@ -142,6 +142,10 @@
   transition: all var(--transition-fast);
 }
 
+.sidebar-section-toggle svg {
+  transition: transform 0.3s ease;
+}
+
 .sidebar-section.is-expanded .sidebar-section-toggle svg {
   transform: rotate(180deg);
 }
@@ -151,11 +155,14 @@
   list-style: none;
   padding: 0;
   margin: 0;
-  display: none;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease-out;
 }
 
 .sidebar-section.is-expanded .sidebar-items {
-  display: block;
+  max-height: 100vh; /* Adjust as needed, large enough value */
+  transition: max-height 0.5s ease-in-out;
 }
 
 .sidebar-item {
