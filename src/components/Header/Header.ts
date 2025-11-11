@@ -7,10 +7,8 @@ import './Header.css';
  */
 export class Header {
   private settingsPanel: HTMLElement | null = null;
-  private settingsCloseBtn: HTMLElement | null = null;
-  private searchBtn: HTMLElement | null = null;
+  private searchInput: HTMLInputElement | null = null;
   private themeToggleBtn: HTMLElement | null = null;
-  private viewToggleHeader: HTMLElement | null = null;
   private currentThemeIndex: number = 0;
   private themes: ThemeType[] = ['dark', 'light']; // Dark e Light
 
@@ -19,10 +17,8 @@ export class Header {
    */
   init(): void {
     this.settingsPanel = document.querySelector('.settings-panel');
-    this.settingsCloseBtn = document.getElementById('settings-close-btn');
-    this.searchBtn = document.getElementById('header-search-btn');
+    this.searchInput = document.getElementById('header-search-input') as HTMLInputElement;
     this.themeToggleBtn = document.getElementById('theme-toggle-btn');
-    this.viewToggleHeader = document.querySelector('.view-toggle-header');
 
     // Carregar tema atual
     const currentTheme = themeService.getCurrentTheme();
@@ -32,16 +28,25 @@ export class Header {
 
     this.setupEventListeners();
     this.initThemeButtons();
-    this.initViewToggle();
   }
 
   /**
    * Configura os event listeners
    */
   private setupEventListeners(): void {
-    // Botão de busca - abre CommandPalette
-    this.searchBtn?.addEventListener('click', () => {
+    // Input de busca - abre CommandPalette ao focar ou digitar
+    this.searchInput?.addEventListener('focus', () => {
       window.dispatchEvent(new CustomEvent('open-command-palette'));
+    });
+
+    this.searchInput?.addEventListener('keydown', (e) => {
+      // Se pressionar Cmd/Ctrl + K, abrir command palette
+      const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+      const modKey = isMac ? e.metaKey : e.ctrlKey;
+      if (modKey && e.key === 'k') {
+        e.preventDefault();
+        window.dispatchEvent(new CustomEvent('open-command-palette'));
+      }
     });
 
     // Toggle de tema
@@ -49,22 +54,39 @@ export class Header {
       this.toggleTheme();
     });
 
-    // Botão de fechar settings
-    this.settingsCloseBtn?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      this.settingsPanel?.classList.remove('visible');
-    });
-
-    // Fechar settings ao clicar fora
+    // Fechar settings ao clicar fora (mas não se for no toggle ou admin panel)
+    // Usar capture: false e verificar DEPOIS do event delegation do SettingsPanel
     document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      
+      // Verificar se clicou no admin panel - NÃO fechar settings se estiver no admin
+      const adminPanel = document.getElementById('admin-panel');
+      if (adminPanel && adminPanel.contains(target)) {
+        return; // Clique no admin panel, não fechar settings
+      }
+      
+      // Verificar se clicou em qualquer parte do toggle ou do container
+      const isToggle = target.closest('#cursor-enabled-toggle') || 
+                       target.closest('.toggle-switch') ||
+                       target.closest('#dark-mode-toggle') ||
+                       target.id === 'cursor-enabled-toggle' ||
+                       target.id === 'dark-mode-toggle' ||
+                       target.classList.contains('toggle-switch-input') ||
+                       target.classList.contains('toggle-switch-label');
+      
+      // Não fechar se clicou no toggle
+      if (isToggle) {
+        return;
+      }
+      
       if (
         this.settingsPanel &&
-        !this.settingsPanel.contains(e.target as Node) &&
+        !this.settingsPanel.contains(target) &&
         this.settingsPanel.classList.contains('visible')
       ) {
         this.settingsPanel.classList.remove('visible');
       }
-    });
+    }, { capture: false }); // Usar capture: false para rodar DEPOIS do SettingsPanel
   }
 
   /**
@@ -103,17 +125,21 @@ export class Header {
   }
 
   /**
-   * Atualiza o texto do botão de tema
+   * Atualiza o ícone do botão de tema
    */
   private updateThemeToggleText(): void {
-    const themeText = this.themeToggleBtn?.querySelector('.theme-toggle-text');
-    if (themeText) {
-      const themeNames: { [key: string]: string } = {
-        'dark': 'Dark',
-        'light': 'Light',
-        'rgb': 'Dark'
-      };
-      themeText.textContent = themeNames[this.themes[this.currentThemeIndex]] || 'Dark';
+    const moonIcon = this.themeToggleBtn?.querySelector('.theme-icon-moon') as HTMLElement;
+    const sunIcon = this.themeToggleBtn?.querySelector('.theme-icon-sun') as HTMLElement;
+    const currentTheme = this.themes[this.currentThemeIndex];
+    
+    if (moonIcon && sunIcon) {
+      if (currentTheme === 'dark') {
+        moonIcon.style.display = 'block';
+        sunIcon.style.display = 'none';
+      } else {
+        moonIcon.style.display = 'none';
+        sunIcon.style.display = 'block';
+      }
     }
   }
 
@@ -174,28 +200,6 @@ export class Header {
     });
   }
 
-  /**
-   * Inicializa o toggle de visualização no header
-   */
-  private initViewToggle(): void {
-    if (!this.viewToggleHeader) return;
-
-    const buttons = this.viewToggleHeader.querySelectorAll('.view-btn-header');
-    
-    buttons.forEach((button) => {
-      button.addEventListener('click', () => {
-        const view = button.getAttribute('data-view');
-        if (view && this.viewToggleHeader) {
-          this.viewToggleHeader.setAttribute('data-view', view);
-          
-          // Disparar evento para atualizar a visualização
-          window.dispatchEvent(new CustomEvent('view-toggle-change', {
-            detail: { view }
-          }));
-        }
-      });
-    });
-  }
 
   /**
    * Retorna o elemento do painel de configurações
@@ -211,6 +215,11 @@ export class Header {
     this.settingsPanel?.classList.add('visible');
     setTimeout(() => {
       this.initThemeButtons();
+      // Re-inicializar toggle do cursor quando abrir o painel
+      const settingsPanel = (window as any).settingsPanelInstance;
+      if (settingsPanel && typeof settingsPanel.initCursorToggle === 'function') {
+        settingsPanel.initCursorToggle();
+      }
     }, 100);
   }
 }

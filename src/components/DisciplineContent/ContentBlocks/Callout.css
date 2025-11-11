@@ -93,19 +93,19 @@
   color: #ffd43b;
 }
 
-/* Tipo: Tip */
+/* Tipo: Tip - Substituído verde por ciano */
 .callout-tip {
-  border-color: var(--primary-highlight);
-  background: rgba(65, 255, 65, 0.05);
+  border-color: var(--callout-tip-color);
+  background: rgba(0, 255, 249, 0.05);
 }
 
 .callout-tip .callout-icon {
-  background: rgba(65, 255, 65, 0.15);
-  color: var(--primary-highlight);
+  background: rgba(0, 255, 249, 0.15);
+  color: var(--callout-tip-color);
 }
 
 .callout-tip .callout-title {
-  color: var(--primary-highlight);
+  color: var(--callout-tip-color);
 }
 
 /* Tipo: Danger */
@@ -123,19 +123,19 @@
   color: #ff6b6b;
 }
 
-/* Tipo: Success */
+/* Tipo: Success - Substituído verde por ciano */
 .callout-success {
-  border-color: #51cf66;
-  background: rgba(81, 207, 102, 0.05);
+  border-color: #00fff9;
+  background: rgba(0, 255, 249, 0.05);
 }
 
 .callout-success .callout-icon {
-  background: rgba(81, 207, 102, 0.15);
-  color: #51cf66;
+  background: rgba(0, 255, 249, 0.15);
+  color: #00fff9;
 }
 
 .callout-success .callout-title {
-  color: #51cf66;
+  color: #00fff9;
 }
 
 /* Responsivo */

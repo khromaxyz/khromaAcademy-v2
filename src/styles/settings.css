@@ -210,15 +210,15 @@
   background: rgba(65, 255, 65, 0.08);
   color: var(--color-white);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(65, 255, 65, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 255, 249, 0.2);
 }
 
 .cursor-option.active {
   border-color: var(--primary-highlight);
-  background: rgba(65, 255, 65, 0.15);
+  background: rgba(0, 255, 249, 0.15);
   color: var(--primary-highlight);
   font-weight: 600;
-  box-shadow: 0 0 20px rgba(65, 255, 65, 0.3);
+  box-shadow: 0 0 20px rgba(0, 255, 249, 0.3);
 }
 
 .cursor-option.active::before {
@@ -297,13 +297,70 @@
   pointer-events: none; /* Não bloquear cliques */
 }
 
-.toggle-switch-input.active {
+/* ========================================
+   REGRAS ESPECÍFICAS PARA CADA TOGGLE
+   ======================================== */
+
+/* CURSOR ENABLED TOGGLE - SEMPRE VERDE quando ativo */
+/* REGRA COM MÁXIMA ESPECIFICIDADE - DEVE VENCER TODAS AS OUTRAS */
+#cursor-enabled-toggle.active,
+div#cursor-enabled-toggle.active,
+.toggle-switch #cursor-enabled-toggle.active,
+.toggle-switch-input#cursor-enabled-toggle.active {
+  background: #00fff9 !important;
+  background-color: #00fff9 !important;
+  border-color: #00fff9 !important;
+  border: 1px solid #00fff9 !important;
+  box-shadow: 0 0 20px rgba(0, 255, 249, 0.5) !important;
+}
+
+#cursor-enabled-toggle.active::before,
+div#cursor-enabled-toggle.active::before,
+.toggle-switch #cursor-enabled-toggle.active::before {
+  transform: translateY(-50%) translateX(22px) !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* DARK MODE TOGGLE - usa primary-highlight quando ativo */
+#dark-mode-toggle.active {
+  background: var(--primary-highlight) !important;
+  background-color: var(--primary-highlight) !important;
+  border-color: var(--primary-highlight) !important;
+  box-shadow: 0 0 20px var(--primary-highlight) !important;
+}
+
+#dark-mode-toggle.active::before {
+  transform: translateY(-50%) translateX(22px) !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* TEST TOGGLE - SEMPRE VERDE quando ativo (para testes) */
+#test-toggle.active,
+div#test-toggle.active,
+.toggle-switch #test-toggle.active,
+.toggle-switch-input#test-toggle.active {
+  background: #00fff9 !important;
+  background-color: #00fff9 !important;
+  border-color: #00fff9 !important;
+  border: 1px solid #00fff9 !important;
+  box-shadow: 0 0 20px rgba(0, 255, 249, 0.5) !important;
+}
+
+#test-toggle.active::before,
+div#test-toggle.active::before,
+.toggle-switch #test-toggle.active::before {
+  transform: translateY(-50%) translateX(22px) !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Regra genérica para outros toggles (fallback) */
+.toggle-switch-input.active:not(#cursor-enabled-toggle):not(#dark-mode-toggle):not(#test-toggle) {
   background: var(--primary-highlight);
   box-shadow: 0 0 20px var(--primary-highlight);
   border-color: var(--primary-highlight);
 }
 
-.toggle-switch-input.active::before {
+.toggle-switch-input.active:not(#cursor-enabled-toggle):not(#dark-mode-toggle):not(#test-toggle)::before {
   transform: translateY(-50%) translateX(22px);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
 }
@@ -314,9 +371,26 @@
   border: 1px solid var(--border-subtle);
 }
 
-[data-theme='light'] .toggle-switch-input {
+/* Light mode - estados inativos */
+[data-theme='light'] .toggle-switch-input:not(.active) {
   background: var(--border-subtle);
   border-color: var(--border-subtle);
+}
+
+/* Light mode - garantir que toggles ativos mantenham suas cores */
+[data-theme='light'] #cursor-enabled-toggle.active {
+  background: #00fff9 !important;
+  background-color: #00fff9 !important;
+  border-color: #00fff9 !important;
+  border: 1px solid #00fff9 !important;
+  box-shadow: 0 0 20px rgba(0, 255, 249, 0.5) !important;
+}
+
+[data-theme='light'] #dark-mode-toggle.active {
+  background: var(--primary-highlight) !important;
+  background-color: var(--primary-highlight) !important;
+  border-color: var(--primary-highlight) !important;
+  box-shadow: 0 0 20px var(--primary-highlight) !important;
 }
 
 [data-theme='light'] .toggle-switch-label {
@@ -372,7 +446,7 @@
 .btn-admin-settings:hover {
   border-color: var(--primary-highlight);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(65, 255, 65, 0.3);
+  box-shadow: 0 8px 24px rgba(0, 255, 249, 0.3);
 }
 
 .btn-admin-settings:hover::before {
@@ -485,5 +559,42 @@
 :root[data-theme='light'] .btn-admin-settings svg,
 :root[data-theme='light'] .btn-admin-settings span {
   color: inherit;
+}
+
+/* ========================================
+   REGRA FINAL - GARANTIR QUE CURSOR TOGGLE FIQUE VERDE
+   Máxima especificidade no final do arquivo
+   ======================================== */
+body .settings-panel .settings-section .toggle-switch #cursor-enabled-toggle.active,
+html body .settings-panel .settings-section .toggle-switch #cursor-enabled-toggle.active,
+.settings-panel.visible .settings-section .toggle-switch #cursor-enabled-toggle.active {
+  background: #00fff9 !important;
+  background-color: #00fff9 !important;
+  border-color: #00fff9 !important;
+  border: 1px solid #00fff9 !important;
+  box-shadow: 0 0 20px rgba(0, 255, 249, 0.5) !important;
+}
+
+body .settings-panel .settings-section .toggle-switch #cursor-enabled-toggle.active::before,
+html body .settings-panel .settings-section .toggle-switch #cursor-enabled-toggle.active::before {
+  transform: translateY(-50%) translateX(22px) !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Regra final para test-toggle também - Substituído verde por ciano */
+body .settings-panel .settings-section .toggle-switch #test-toggle.active,
+html body .settings-panel .settings-section .toggle-switch #test-toggle.active,
+.settings-panel.visible .settings-section .toggle-switch #test-toggle.active {
+  background: #00fff9 !important;
+  background-color: #00fff9 !important;
+  border-color: #00fff9 !important;
+  border: 1px solid #00fff9 !important;
+  box-shadow: 0 0 20px rgba(0, 255, 249, 0.5) !important;
+}
+
+body .settings-panel .settings-section .toggle-switch #test-toggle.active::before,
+html body .settings-panel .settings-section .toggle-switch #test-toggle.active::before {
+  transform: translateY(-50%) translateX(22px) !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4) !important;
 }
 

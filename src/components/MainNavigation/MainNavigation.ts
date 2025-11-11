@@ -91,23 +91,6 @@ export class MainNavigation {
     nav.className = `main-navigation ${this.isCollapsed ? 'collapsed' : ''}`;
     nav.setAttribute('role', 'navigation');
     nav.setAttribute('aria-label', 'Navegação principal');
-    
-
-    // Header minimalista com logo limpo
-    const header = document.createElement('div');
-    header.className = 'nav-header';
-    header.innerHTML = `
-      <div class="nav-logo">
-        <div class="logo-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
-            <path d="M2 17l10 5 10-5"></path>
-            <path d="M2 12l10 5 10-5"></path>
-          </svg>
-        </div>
-        <span class="logo-text">Khroma</span>
-      </div>
-    `;
 
     // Items do menu
     const menuItems = document.createElement('div');
@@ -143,7 +126,6 @@ export class MainNavigation {
     `;
 
     // Montar estrutura
-    nav.appendChild(header);
     nav.appendChild(menuItems);
     nav.appendChild(footer);
 
@@ -164,7 +146,7 @@ export class MainNavigation {
       menuItem.setAttribute('aria-current', 'page');
     }
 
-    const shortcutHtml = item.shortcut ? `<span class="nav-item-shortcut">${item.shortcut}</span>` : '';
+    const shortcutHtml = ''; // Shortcuts removidos
     const badgeHtml = item.badge ? `<span class="nav-item-badge">${item.badge}</span>` : '';
 
     menuItem.innerHTML = `
@@ -177,7 +159,6 @@ export class MainNavigation {
       <div class="nav-item-indicator"></div>
       <div class="nav-item-tooltip">
         <span>${item.label}</span>
-        ${item.shortcut ? `<span class="tooltip-shortcut">${item.shortcut}</span>` : ''}
       </div>
     `;
 

@@ -108,15 +108,19 @@
   border-bottom-color: var(--primary-highlight);
 }
 
-/* Inline code */
-.discipline-main-content code:not([class*="language-"]) {
-  background: rgba(255, 255, 255, 0.05);
-  padding: 0.2em 0.4em;
-  border-radius: 3px;
-  font-family: 'Courier New', monospace;
-  font-size: 0.9em;
-  color: var(--primary-highlight);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+/* Inline code - igual ao teste1.html */
+.discipline-main-content code:not([class*="language-"]):not(pre code) {
+  padding: 2px 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  font-family: var(--font-code);
+  font-size: 0.875em;
+  color: var(--k-rgb-1);
+  font-weight: 600;
+  display: inline;
+  vertical-align: baseline;
+  line-height: 1.5;
 }
 
 /* Code blocks */

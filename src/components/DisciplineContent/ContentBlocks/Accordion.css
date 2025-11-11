@@ -24,8 +24,8 @@
 }
 
 .accordion-item.is-open {
-  border-color: rgba(65, 255, 65, 0.2);
-  box-shadow: 0 0 0 1px rgba(65, 255, 65, 0.1);
+  border-color: rgba(0, 255, 249, 0.2);
+  box-shadow: 0 0 0 1px rgba(0, 255, 249, 0.1);
 }
 
 .accordion-header {
@@ -47,7 +47,7 @@
 }
 
 .accordion-item.is-open .accordion-header {
-  background: rgba(65, 255, 65, 0.05);
+  background: rgba(0, 255, 249, 0.05);
 }
 
 .accordion-icon {
@@ -92,8 +92,8 @@
 }
 
 .accordion-item.is-open .accordion-arrow {
-  background: rgba(65, 255, 65, 0.1);
-  color: var(--primary-highlight);
+  background: rgba(0, 255, 249, 0.1);
+  color: var(--callout-tip-color);
 }
 
 .accordion-item.is-open .accordion-arrow svg {

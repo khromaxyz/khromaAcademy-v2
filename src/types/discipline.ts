@@ -65,6 +65,10 @@ export interface ModuleMetadata {
   title: string;
   file: string;
   order: number;
+  /** Ícone Lucide para exibir na sidebar (opcional, extraído do front matter) */
+  icon?: string;
+  /** Seção da sidebar onde o módulo deve aparecer (opcional, extraído do front matter) */
+  section?: string;
 }
 
 /**

@@ -8,18 +8,29 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: var(--surface-overlay);
-  backdrop-filter: blur(20px);
+  background: radial-gradient(circle at 20% 50%, rgba(255, 65, 65, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(65, 65, 255, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 40% 20%, rgba(65, 255, 65, 0.04) 0%, transparent 50%),
+    linear-gradient(135deg, rgba(10, 10, 10, 0.95) 0%, rgba(15, 15, 15, 0.98) 100%);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
   z-index: 10000;
   opacity: 0;
   visibility: hidden;
+  pointer-events: none;
   transition: all var(--transition-medium);
   overflow-y: auto;
+  /* Permitir seleção de texto e print */
+  -webkit-user-select: text;
+  user-select: text;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
 }
 
 .admin-panel.visible {
   opacity: 1;
   visibility: visible;
+  pointer-events: auto;
 }
 
 .admin-panel-content {
@@ -27,6 +38,8 @@
   margin: 0 auto;
   padding: var(--space-xl);
   animation: fadeInUp 0.5s ease-out;
+  position: relative;
+  z-index: 1;
 }
 
 .admin-header {
@@ -35,7 +48,7 @@
   align-items: center;
   margin-bottom: var(--space-xl);
   padding-bottom: var(--space-l);
-  border-bottom: 2px solid var(--color-border);
+  border-bottom: 2px solid var(--border-subtle);
 }
 
 .admin-header h2 {
@@ -52,17 +65,41 @@
   width: 44px;
   height: 44px;
   background: rgba(255, 65, 65, 0.2);
-  border: 1px solid rgba(255, 65, 65, 0.5);
+  border: 2px solid rgba(255, 65, 65, 0.5);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all var(--transition-fast);
+  transition: all var(--transition-medium);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.admin-close-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  background: var(--gradient-conic);
+  border-radius: 50%;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity var(--transition-medium);
+  z-index: 0;
 }
 
 .admin-close-btn:hover {
   background: rgba(255, 65, 65, 0.3);
   transform: rotate(90deg) scale(1.1);
+  box-shadow: 0 0 20px rgba(255, 65, 65, 0.5), 0 4px 16px rgba(255, 65, 65, 0.3);
+}
+
+.admin-close-btn:hover::before {
+  opacity: 1;
 }
 
 .admin-actions {
@@ -71,74 +108,212 @@
   margin-bottom: var(--space-xl);
 }
 
-.btn-primary {
-  padding: var(--space-m) var(--space-xl);
-  background: var(--gradient-main);
-  border-radius: var(--border-radius-small);
-  font-family: var(--font-heading);
-  font-weight: 600;
-  font-size: 1rem;
-  color: var(--color-black);
-  border: none;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  position: relative;
-  overflow: hidden;
+/* Botão Nova Disciplina - Estilo idêntico ao Excluir, mas verde */
+.admin-panel .btn-primary,
+.admin-panel-content .btn-primary,
+#admin-panel .btn-primary {
+  padding: var(--space-xs) var(--space-m) !important;
+  background: rgba(65, 255, 65, 0.2) !important;
+  border: 2px solid rgba(65, 255, 65, 0.5) !important;
+  border-radius: var(--border-radius-small) !important;
+  font-family: var(--font-heading) !important;
+  font-weight: 600 !important;
+  font-size: 0.9rem !important;
+  color: #41ff41 !important;
+  cursor: pointer !important;
+  transition: all var(--transition-medium) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  /* Remover gradiente e animação do estilo global */
+  background-image: none !important;
+  background-size: auto !important;
+  animation: none !important;
+  box-shadow: none !important;
 }
 
-.btn-primary::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: rgba(255, 255, 255, 0.2);
-  opacity: 0;
-  transition: opacity var(--transition-fast);
+.admin-panel .btn-primary::before,
+.admin-panel-content .btn-primary::before,
+#admin-panel .btn-primary::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  padding: 2px !important;
+  background: linear-gradient(135deg, #41ff41, #6bff6b, #a3ffa3, #41ff41) !important;
+  background-size: 200% 200% !important;
+  border-radius: inherit !important;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0) !important;
+  -webkit-mask-composite: xor !important;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0) !important;
+  mask-composite: exclude !important;
+  opacity: 0 !important;
+  transition: opacity var(--transition-medium) !important;
+  z-index: 0 !important;
+  animation: gradientShift 3s ease infinite !important;
 }
 
-.btn-primary:hover::before {
-  opacity: 1;
+.admin-panel .btn-primary:hover,
+.admin-panel-content .btn-primary:hover,
+#admin-panel .btn-primary:hover {
+  background: rgba(65, 255, 65, 0.3) !important;
+  transform: translateY(-2px) scale(1.05) !important;
+  box-shadow: 0 4px 16px rgba(65, 255, 65, 0.4), 0 0 20px rgba(65, 255, 65, 0.3) !important;
+  /* Garantir que não tenha gradiente no hover */
+  background-image: none !important;
 }
 
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(65, 255, 65, 0.3);
+.admin-panel .btn-primary:hover::before,
+.admin-panel-content .btn-primary:hover::before,
+#admin-panel .btn-primary:hover::before {
+  opacity: 1 !important;
 }
 
-.btn-secondary {
-  padding: var(--space-m) var(--space-xl);
-  background: transparent;
-  border: 1.5px solid var(--color-border);
-  border-radius: var(--border-radius-small);
-  font-family: var(--font-heading);
-  font-weight: 600;
-  font-size: 1rem;
-  color: var(--color-white);
-  cursor: pointer;
-  transition: all var(--transition-fast);
+/* Botões Secundários - Estilo com borda RGB dinâmica */
+.admin-panel .btn-secondary,
+.admin-panel-content .btn-secondary,
+#admin-panel .btn-secondary {
+  padding: var(--space-m) var(--space-xl) !important;
+  background: rgba(21, 21, 21, 0.8) !important;
+  border: 2px solid var(--border-subtle) !important;
+  border-radius: var(--border-radius-small) !important;
+  font-family: var(--font-heading) !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  color: var(--text-primary) !important;
+  cursor: pointer !important;
+  transition: all var(--transition-medium) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: var(--space-s) !important;
+  backdrop-filter: blur(10px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(180%) !important;
+  z-index: 1 !important;
 }
 
-.btn-secondary:hover {
-  border-color: var(--primary-highlight);
-  background: rgba(65, 255, 65, 0.1);
-  transform: translateY(-2px);
+.admin-panel .btn-secondary::before,
+.admin-panel-content .btn-secondary::before,
+#admin-panel .btn-secondary::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  padding: 1px !important;
+  background: linear-gradient(
+    135deg,
+    #FF4141,
+    #41FF41,
+    #4141FF,
+    #FF4141
+  ) !important;
+  background-size: 300% 300% !important;
+  background-position: 0% 50% !important;
+  border-radius: inherit !important;
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0) !important;
+  -webkit-mask-composite: xor !important;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0) !important;
+  mask-composite: exclude !important;
+  opacity: 0 !important;
+  transition: opacity 0.3s ease !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+  box-sizing: border-box !important;
+}
+
+.admin-panel .btn-secondary::after,
+.admin-panel-content .btn-secondary::after,
+#admin-panel .btn-secondary::after {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background: radial-gradient(circle at center, rgba(65, 255, 65, 0.15) 0%, transparent 70%) !important;
+  opacity: 0 !important;
+  transition: opacity var(--transition-medium) !important;
+  z-index: -1 !important;
+  border-radius: inherit !important;
+}
+
+.admin-panel .btn-secondary:hover,
+.admin-panel-content .btn-secondary:hover,
+#admin-panel .btn-secondary:hover {
+  border-color: transparent !important;
+  background: rgba(21, 21, 21, 0.9) !important;
+  color: var(--text-primary) !important;
+  transform: translateY(-2px) scale(1.02) !important;
+  box-shadow: 0 4px 16px rgba(65, 255, 65, 0.3), 0 0 30px rgba(65, 255, 65, 0.2) !important;
+}
+
+.admin-panel .btn-secondary:hover::before,
+.admin-panel-content .btn-secondary:hover::before,
+#admin-panel .btn-secondary:hover::before {
+  opacity: 1 !important;
+  animation: chromaGlow 3s ease infinite !important;
+}
+
+@keyframes chromaGlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.admin-panel .btn-secondary:hover::after,
+.admin-panel-content .btn-secondary:hover::after,
+#admin-panel .btn-secondary:hover::after {
+  opacity: 1 !important;
 }
 
 .btn-danger {
   padding: var(--space-xs) var(--space-m);
   background: rgba(255, 65, 65, 0.2);
-  border: 1px solid rgba(255, 65, 65, 0.5);
+  border: 2px solid rgba(255, 65, 65, 0.5);
   border-radius: var(--border-radius-small);
   font-family: var(--font-heading);
   font-weight: 600;
   font-size: 0.9rem;
   color: #ff4141;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all var(--transition-medium);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-danger::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  background: linear-gradient(135deg, #ff4141, #ff6b6b, #ff8d8d, #ff4141);
+  background-size: 200% 200%;
+  border-radius: inherit;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity var(--transition-medium);
+  z-index: 0;
+  animation: gradientShift 3s ease infinite;
 }
 
 .btn-danger:hover {
   background: rgba(255, 65, 65, 0.3);
-  transform: scale(1.05);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 4px 16px rgba(255, 65, 65, 0.4), 0 0 20px rgba(255, 65, 65, 0.3);
+}
+
+.btn-danger:hover::before {
+  opacity: 1;
 }
 
 .disciplines-list {
@@ -148,44 +323,177 @@
 }
 
 .discipline-item {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  background: rgba(21, 21, 21, 0.6);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--border-radius);
   padding: var(--space-l);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: all var(--transition-fast);
+  transition: all var(--transition-medium);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+.discipline-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--transition-medium);
+  padding: 2px;
+  background: var(--gradient-conic);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  z-index: 0;
 }
 
 .discipline-item:hover {
-  border-color: var(--color-border-light);
-  transform: translateX(4px);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: var(--shadow-xl), var(--glow-md), 0 0 60px rgba(65, 255, 65, 0.15);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.discipline-item:hover::before {
+  opacity: 1;
+}
+
+.discipline-item-info {
+  position: relative;
+  z-index: 1;
 }
 
 .discipline-item-info h3 {
   font-size: 1.5rem;
   margin-bottom: var(--space-xs);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--text-primary);
+  transition: color var(--transition-medium);
+}
+
+.discipline-item:hover .discipline-item-info h3 {
+  color: var(--primary-highlight);
 }
 
 .discipline-item-info p {
-  color: var(--color-grey);
+  color: var(--text-secondary);
   font-size: 0.9rem;
+  font-family: var(--font-body);
 }
 
 .discipline-item-actions {
   display: flex;
   gap: var(--space-s);
+  position: relative;
+  z-index: 1;
+}
+
+/* Botão Editar - Borda RGB animada igual ao DisciplineCard */
+/* Desabilitar estilos do btn-secondary para botões com data-edit-id */
+.discipline-item-actions [data-edit-id].btn-secondary::before,
+.admin-panel [data-edit-id].btn-secondary::before,
+#admin-panel [data-edit-id].btn-secondary::before {
+  display: none !important;
+}
+
+.discipline-item-actions [data-edit-id].btn-secondary::after,
+.admin-panel [data-edit-id].btn-secondary::after,
+#admin-panel [data-edit-id].btn-secondary::after {
+  display: none !important;
+}
+
+.discipline-item-actions [data-edit-id],
+.admin-panel [data-edit-id],
+#admin-panel [data-edit-id] {
+  position: relative !important;
+  overflow: hidden !important;
+  background: rgba(21, 21, 21, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: var(--border-radius-small) !important;
+  padding: var(--space-xs) var(--space-m) !important;
+  color: var(--text-primary) !important;
+  font-family: var(--font-heading) !important;
+  font-weight: 600 !important;
+  font-size: 0.9rem !important;
+  cursor: pointer !important;
+  transition: all var(--transition-medium) !important;
+  z-index: 1 !important;
+  /* Remover estilos do btn-secondary */
+  backdrop-filter: blur(10px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(180%) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.discipline-item-actions [data-edit-id]::before,
+.admin-panel [data-edit-id]::before,
+#admin-panel [data-edit-id]::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  border-radius: inherit !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+  transition: opacity var(--transition-medium) !important;
+  padding: 2px !important;
+  background: var(--gradient-conic) !important;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0) !important;
+  -webkit-mask-composite: xor !important;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0) !important;
+  mask-composite: exclude !important;
+  z-index: 0 !important;
+  box-sizing: border-box !important;
+  animation: rotateConicGradient 4s linear infinite !important;
+}
+
+.discipline-item-actions [data-edit-id]:hover,
+.admin-panel [data-edit-id]:hover,
+#admin-panel [data-edit-id]:hover {
+  transform: translateY(-2px) scale(1.05) !important;
+  box-shadow: 0 4px 16px rgba(65, 255, 65, 0.3), 0 0 30px rgba(65, 255, 65, 0.2) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  background: rgba(21, 21, 21, 0.9) !important;
+}
+
+.discipline-item-actions [data-edit-id]:hover::before,
+.admin-panel [data-edit-id]:hover::before,
+#admin-panel [data-edit-id]:hover::before {
+  opacity: 1 !important;
+}
+
+@keyframes rotateConicGradient {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .admin-form {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  background: rgba(21, 21, 21, 0.6);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--border-radius);
   padding: var(--space-xl);
   margin-bottom: var(--space-xl);
   display: none;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: var(--shadow-md);
 }
 
 .admin-form.visible {
@@ -202,7 +510,7 @@
   font-family: var(--font-heading);
   font-weight: 600;
   font-size: 0.9rem;
-  color: var(--color-light-grey);
+  color: var(--text-secondary);
   margin-bottom: var(--space-xs);
 }
 
@@ -217,7 +525,7 @@
   color: var(--text-primary);
   font-family: var(--font-body);
   font-size: 1rem;
-  transition: all var(--transition-fast);
+  transition: all var(--transition-medium);
 }
 
 .form-group input:focus,
@@ -225,7 +533,8 @@
 .form-group select:focus {
   outline: none;
   border-color: var(--primary-highlight);
-  box-shadow: 0 0 0 3px rgba(65, 255, 65, 0.1);
+  box-shadow: 0 0 0 3px var(--focus-ring), 0 4px 12px rgba(65, 255, 65, 0.2);
+  background: var(--surface-3);
 }
 
 .form-group textarea {
@@ -233,50 +542,126 @@
   resize: vertical;
 }
 
-.syllabus-inputs {
-  display: grid;
-  gap: var(--space-s);
-  margin-top: var(--space-s);
+#admin-panel .syllabus-inputs,
+.admin-panel .syllabus-inputs {
+  display: grid !important;
+  gap: var(--space-s) !important;
+  margin-top: var(--space-s) !important;
+  margin-bottom: var(--space-s) !important;
+  min-height: 50px !important;
+  width: 100% !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+  z-index: 1 !important;
 }
 
-.syllabus-item {
+#admin-panel .syllabus-item,
+.admin-panel .syllabus-item {
   display: flex;
   gap: var(--space-s);
   align-items: center;
+  width: 100%;
 }
 
-.syllabus-item input {
+#admin-panel .syllabus-item input,
+.admin-panel .syllabus-item input {
   flex: 1;
+  width: 100% !important;
+  min-width: 200px !important;
+  padding: var(--space-m) !important;
+  background: var(--surface-2) !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: var(--border-radius-small);
+  color: var(--text-primary) !important;
+  font-family: var(--font-body);
+  font-size: 1rem !important;
+  transition: all var(--transition-medium);
+  box-sizing: border-box;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  cursor: text !important;
 }
 
-.btn-remove {
+#admin-panel .syllabus-item input:focus,
+.admin-panel .syllabus-item input:focus {
+  outline: none;
+  border-color: var(--primary-highlight);
+  box-shadow: 0 0 0 3px var(--focus-ring), 0 4px 12px rgba(65, 255, 65, 0.2);
+  background: var(--surface-3);
+}
+
+#admin-panel .btn-remove,
+.admin-panel .btn-remove {
   padding: var(--space-xs);
   background: rgba(255, 65, 65, 0.2);
-  border: 1px solid rgba(255, 65, 65, 0.5);
+  border: 2px solid rgba(255, 65, 65, 0.5);
   border-radius: var(--border-radius-small);
   color: #ff4141;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all var(--transition-medium);
+  position: relative;
+  overflow: hidden;
+  font-weight: 600;
+  min-width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.btn-remove:hover {
+#admin-panel .btn-remove:hover,
+.admin-panel .btn-remove:hover {
   background: rgba(255, 65, 65, 0.3);
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(255, 65, 65, 0.4);
 }
 
-.btn-add {
+#admin-panel .btn-add,
+.admin-panel .btn-add {
   padding: var(--space-xs) var(--space-m);
   background: rgba(65, 255, 65, 0.2);
-  border: 1px solid rgba(65, 255, 65, 0.5);
+  border: 2px solid rgba(65, 255, 65, 0.5);
   border-radius: var(--border-radius-small);
   color: var(--primary-highlight);
   cursor: pointer;
   font-family: var(--font-heading);
   font-weight: 600;
-  transition: all var(--transition-fast);
+  transition: all var(--transition-medium);
+  position: relative;
+  overflow: hidden;
+  margin-top: var(--space-m);
 }
 
-.btn-add:hover {
+#admin-panel .btn-add::before,
+.admin-panel .btn-add::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  background: var(--gradient-conic);
+  border-radius: inherit;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity var(--transition-medium);
+  z-index: 0;
+}
+
+#admin-panel .btn-add:hover,
+.admin-panel .btn-add:hover {
   background: rgba(65, 255, 65, 0.3);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 4px 12px rgba(65, 255, 65, 0.3), 0 0 16px rgba(65, 255, 65, 0.2);
+}
+
+#admin-panel .btn-add:hover::before,
+.admin-panel .btn-add:hover::before {
+  opacity: 1;
 }
 
 .form-actions {
@@ -285,15 +670,203 @@
   justify-content: flex-end;
   margin-top: var(--space-xl);
   padding-top: var(--space-l);
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid var(--border-subtle);
 }
 
-.prerequisites-select {
-  min-height: 100px;
+/* Color Picker Grid */
+#admin-panel .color-picker-grid,
+.admin-panel .color-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: var(--space-s);
+  margin-top: var(--space-xs);
 }
 
-.prerequisites-select option {
-  padding: var(--space-xs);
+#admin-panel .color-option,
+.admin-panel .color-option {
+  width: 100%;
+  aspect-ratio: 1;
+  border: 2px solid var(--border-subtle);
+  border-radius: var(--border-radius-small);
+  cursor: pointer;
+  transition: all var(--transition-medium);
+  position: relative;
+  padding: 0;
+  background: none;
+  min-height: 40px;
+}
+
+#admin-panel .color-option:hover,
+.admin-panel .color-option:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.3), 0 4px 12px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  z-index: 1;
+}
+
+#admin-panel .color-option.selected,
+.admin-panel .color-option.selected {
+  border: 3px solid var(--text-primary);
+  box-shadow: 0 0 16px rgba(65, 255, 65, 0.6), 0 0 24px rgba(65, 255, 65, 0.4), inset 0 0 8px rgba(255, 255, 255, 0.2);
+  transform: scale(1.15);
+  z-index: 2;
+}
+
+#admin-panel .color-option.selected::after,
+.admin-panel .color-option.selected::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.8), 0 2px 4px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+}
+
+/* Prerequisites Selector */
+#admin-panel .prerequisites-selector,
+.admin-panel .prerequisites-selector {
+  position: relative;
+  margin-top: var(--space-xs);
+}
+
+#admin-panel .prerequisites-search-input,
+.admin-panel .prerequisites-search-input {
+  width: 100%;
+  padding: var(--space-m);
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--border-radius-small);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  transition: all var(--transition-medium);
+}
+
+#admin-panel .prerequisites-search-input:focus,
+.admin-panel .prerequisites-search-input:focus {
+  outline: none;
+  border-color: var(--primary-highlight);
+  box-shadow: 0 0 0 3px var(--focus-ring), 0 4px 12px rgba(65, 255, 65, 0.2);
+  background: var(--surface-3);
+}
+
+#admin-panel .prerequisites-dropdown,
+.admin-panel .prerequisites-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-top: none;
+  border-radius: 0 0 var(--border-radius-small) var(--border-radius-small);
+  margin-top: -1px;
+  z-index: 100;
+  display: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+#admin-panel .prerequisites-dropdown.visible,
+.admin-panel .prerequisites-dropdown.visible {
+  display: block;
+}
+
+#admin-panel .prerequisites-dropdown-item,
+.admin-panel .prerequisites-dropdown-item {
+  padding: var(--space-m);
+  cursor: pointer;
+  transition: all var(--transition-medium);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+}
+
+#admin-panel .prerequisites-dropdown-item:last-child,
+.admin-panel .prerequisites-dropdown-item:last-child {
+  border-bottom: none;
+}
+
+#admin-panel .prerequisites-dropdown-item:hover,
+.admin-panel .prerequisites-dropdown-item:hover {
+  background: var(--surface-3);
+  color: var(--primary-highlight);
+}
+
+#admin-panel .prerequisites-dropdown-item.selected,
+.admin-panel .prerequisites-dropdown-item.selected {
+  background: rgba(65, 255, 65, 0.1);
+  color: var(--primary-highlight);
+}
+
+#admin-panel .prerequisites-dropdown-item input[type="checkbox"],
+.admin-panel .prerequisites-dropdown-item input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--primary-highlight);
+}
+
+#admin-panel .prerequisites-dropdown-empty,
+.admin-panel .prerequisites-dropdown-empty {
+  padding: var(--space-m);
+  text-align: center;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+#admin-panel .prerequisites-selected,
+.admin-panel .prerequisites-selected {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin-top: var(--space-s);
+  min-height: 40px;
+}
+
+#admin-panel .prerequisite-tag,
+.admin-panel .prerequisite-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-s);
+  background: rgba(65, 255, 65, 0.15);
+  border: 1px solid rgba(65, 255, 65, 0.3);
+  border-radius: var(--border-radius-small);
+  color: var(--primary-highlight);
+  font-size: 0.9rem;
+  font-family: var(--font-body);
+}
+
+#admin-panel .prerequisite-tag-remove,
+.admin-panel .prerequisite-tag-remove {
+  background: none;
+  border: none;
+  color: var(--primary-highlight);
+  cursor: pointer;
+  padding: 0;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all var(--transition-medium);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+#admin-panel .prerequisite-tag-remove:hover,
+.admin-panel .prerequisite-tag-remove:hover {
+  background: rgba(255, 65, 65, 0.3);
+  color: #ff4141;
+  transform: scale(1.2);
 }
 
 /* ========================================
@@ -301,7 +874,11 @@
    ======================================== */
 
 :root[data-theme='light'] .admin-panel {
-  background: rgba(255, 255, 255, 0.95);
+  background: radial-gradient(circle at 20% 50%, rgba(0, 102, 255, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(0, 102, 255, 0.03) 0%, transparent 50%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(250, 250, 250, 0.98) 100%);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
 }
 
 :root[data-theme='light'] .admin-header {
@@ -321,7 +898,11 @@
 :root[data-theme='light'] .discipline-item:hover {
   background: var(--interactive-hover);
   border-color: var(--border-strong);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 0 40px rgba(0, 102, 255, 0.15);
+}
+
+:root[data-theme='light'] .discipline-item:hover::before {
+  opacity: 1;
 }
 
 :root[data-theme='light'] .discipline-item-info h3 {
@@ -352,5 +933,144 @@
   background: var(--interactive-hover);
   border-color: var(--primary-highlight);
   color: var(--primary-highlight);
+}
+
+:root[data-theme='light'] #admin-panel .color-option,
+:root[data-theme='light'] .admin-panel .color-option {
+  border-color: var(--border-strong);
+}
+
+:root[data-theme='light'] #admin-panel .color-option:hover,
+:root[data-theme='light'] .admin-panel .color-option:hover {
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+:root[data-theme='light'] #admin-panel .color-option.selected,
+:root[data-theme='light'] .admin-panel .color-option.selected {
+  box-shadow: 0 0 16px rgba(0, 102, 255, 0.4), 0 0 24px rgba(0, 102, 255, 0.3), inset 0 0 8px rgba(0, 0, 0, 0.1);
+  border-color: var(--primary-highlight);
+}
+
+:root[data-theme='light'] #admin-panel .prerequisites-search-input,
+:root[data-theme='light'] .admin-panel .prerequisites-search-input {
+  background: var(--surface-1);
+  border-color: var(--border-strong);
+}
+
+:root[data-theme='light'] #admin-panel .prerequisites-search-input:focus,
+:root[data-theme='light'] .admin-panel .prerequisites-search-input:focus {
+  border-color: var(--primary-highlight);
+  box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.1);
+}
+
+:root[data-theme='light'] #admin-panel .prerequisites-dropdown,
+:root[data-theme='light'] .admin-panel .prerequisites-dropdown {
+  background: var(--surface-1);
+  border-color: var(--border-strong);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+:root[data-theme='light'] #admin-panel .prerequisites-dropdown-item:hover,
+:root[data-theme='light'] .admin-panel .prerequisites-dropdown-item:hover {
+  background: var(--interactive-hover);
+}
+
+:root[data-theme='light'] #admin-panel .prerequisite-tag,
+:root[data-theme='light'] .admin-panel .prerequisite-tag {
+  background: rgba(0, 102, 255, 0.1);
+  border-color: rgba(0, 102, 255, 0.3);
+  color: var(--primary-highlight);
+}
+
+:root[data-theme='light'] #admin-panel .syllabus-item input,
+:root[data-theme='light'] .admin-panel .syllabus-item input {
+  background: var(--surface-1);
+  border-color: var(--border-strong);
+}
+
+:root[data-theme='light'] #admin-panel .syllabus-item input:focus,
+:root[data-theme='light'] .admin-panel .syllabus-item input:focus {
+  border-color: var(--primary-highlight);
+  box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.1);
+}
+
+/* ========================================
+   PRINT STYLES - Permitir print do admin panel
+   ======================================== */
+
+@media print {
+  .admin-panel {
+    position: static;
+    background: white;
+    backdrop-filter: none;
+    opacity: 1;
+    visibility: visible;
+    overflow: visible;
+    height: auto;
+    page-break-inside: avoid;
+  }
+  
+  .admin-panel-content {
+    max-width: 100%;
+    padding: 0;
+    animation: none;
+  }
+  
+  .admin-close-btn,
+  .admin-actions button {
+    display: none;
+  }
+  
+  .admin-form {
+    page-break-inside: avoid;
+    margin-bottom: 1rem;
+  }
+  
+  .disciplines-list {
+    page-break-inside: avoid;
+  }
+  
+  .discipline-item {
+    page-break-inside: avoid;
+    border: 1px solid #ccc;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* Garantir que todo conteúdo do admin panel seja selecionável */
+#admin-panel *,
+.admin-panel * {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* Exceções: botões e inputs devem manter comportamento padrão */
+#admin-panel button,
+#admin-panel input,
+#admin-panel textarea,
+#admin-panel select,
+.admin-panel button,
+.admin-panel input,
+.admin-panel textarea,
+.admin-panel select {
+  -webkit-user-select: auto;
+  user-select: auto;
+}
+
+/* Garantir que inputs do syllabus sejam sempre interativos */
+#admin-panel .syllabus-inputs,
+#admin-panel .syllabus-item,
+#admin-panel .syllabus-item input,
+.admin-panel .syllabus-inputs,
+.admin-panel .syllabus-item,
+.admin-panel .syllabus-item input {
+  pointer-events: auto !important;
+  -webkit-user-select: text !important;
+  user-select: text !important;
+}
+
+#admin-panel .syllabus-item input,
+.admin-panel .syllabus-item input {
+  cursor: text !important;
 }
 

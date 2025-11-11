@@ -207,10 +207,20 @@ async function initializeApp(): Promise<void> {
   });
   document.body.insertBefore(mainNavigation.getElement(), document.body.firstChild);
 
+  // Escutar eventos de navegação de outros componentes
+  window.addEventListener('navigation-change', ((e: CustomEvent) => {
+    if (e.detail?.itemId) {
+      handleNavigation(e.detail.itemId);
+    }
+  }) as EventListener);
+
   // Inicializar outros componentes
   settingsPanel = new SettingsPanel();
   settingsPanel.setHeaderInstance(header);
   settingsPanel.init();
+  
+  // Expor instância globalmente para acesso do Header
+  (window as any).settingsPanelInstance = settingsPanel;
 
   knowledgeGraph = new KnowledgeGraph();
   knowledgeGraph.init();
@@ -220,6 +230,9 @@ async function initializeApp(): Promise<void> {
 
   adminPanel = new AdminPanel();
   adminPanel.init();
+  
+  // Expor instância globalmente para acesso do SettingsPanel
+  (window as any).adminPanelInstance = adminPanel;
 
   disciplineContent = DisciplineContent.getInstance();
   disciplineContent.init();
@@ -348,15 +361,6 @@ function showSettingsPage(): void {
 
   // Renderizar conteúdo (reutilizando estrutura do painel)
   settingsPage.innerHTML = `
-    <div class="settings-header">
-      <div class="settings-header-title">Configurações</div>
-      <button class="settings-close-btn" id="settings-close-btn">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
-    </div>
     <div class="settings-content">
       <div class="settings-section">
         <div class="settings-section-header">
@@ -388,7 +392,7 @@ function showSettingsPage(): void {
             </svg>
           </div>
           <div class="settings-section-title">
-            <h4>Cursor Customizado</h4>
+            <h4>Cursor Personalizado</h4>
             <p>Personalize o ponteiro do mouse</p>
           </div>
         </div>
@@ -433,15 +437,13 @@ function showSettingsPage(): void {
   `;
 
   // Reativar binds dos componentes
-  // - Dark Mode Toggle, Cursor e Admin (SettingsPanel)
+  // - Event delegation já está configurado, apenas atualizar estados
   // Usar setTimeout para garantir que o DOM esteja completamente renderizado
   setTimeout(() => {
-    settingsPanel.initDarkModeToggle();
-    settingsPanel.initCursorToggle();
+    // Event delegation já cuida dos toggles e botões, apenas atualizar estados visuais
+    settingsPanel.updateToggleStates();
     settingsPanel.initCursorOptions();
-    const adminBtn = document.getElementById('btn-admin-settings');
-    adminBtn?.addEventListener('click', () => adminPanel.open());
-    document.getElementById('settings-close-btn')?.addEventListener('click', () => handleNavigation('home'));
+    // Botão admin é tratado por event delegation no SettingsPanel
     // Atualizar targets de cursor na nova página
     cursorService.updateCursorTargets();
   }, 100);

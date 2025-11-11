@@ -20,18 +20,37 @@ body::before {
 }
 
 body {
-  background-color: var(--color-black);
-  background-image: linear-gradient(to bottom, transparent, var(--color-black)),
+  background-color: var(--k-black-0);
+  background-image: linear-gradient(to bottom, transparent, var(--k-black-0)),
     linear-gradient(to right, rgba(255, 65, 65, 0.03) 0%, transparent 50%);
-  color: var(--color-white);
+  color: var(--k-text-primary);
   font-family: var(--font-body);
-  font-size: 18px;
+  font-size: 16px;
   line-height: 1.8;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
   position: relative;
   transition: background-color var(--transition-medium), color var(--transition-medium);
+}
+
+/* Custom Scrollbar (global como no teste1.html) */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--k-gray-3);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--k-gray-4);
 }
 
 /* Light mode */
@@ -72,7 +91,25 @@ body[data-theme='light'] .user-name {
 }
 
 body.cursor-disabled {
-  cursor: auto;
+  cursor: auto !important;
+}
+
+body.cursor-disabled * {
+  cursor: auto !important;
+}
+
+body.cursor-disabled *:hover {
+  cursor: auto !important;
+}
+
+/* Garantir que elementos interativos tenham cursor apropriado quando cursor customizado está desabilitado */
+body.cursor-disabled button,
+body.cursor-disabled a,
+body.cursor-disabled .link,
+body.cursor-disabled input,
+body.cursor-disabled textarea,
+body.cursor-disabled select {
+  cursor: pointer !important;
 }
 
 body:not(.cursor-disabled) {
@@ -152,9 +189,14 @@ h4,
 h5,
 h6 {
   font-family: var(--font-heading);
-  font-weight: 800;
-  letter-spacing: -0.03em;
+  font-weight: 600;
+  letter-spacing: -0.02em;
   line-height: 1.2;
+  color: var(--k-text-primary);
+}
+
+code, pre {
+  font-family: var(--font-code);
 }
 
 h1 {

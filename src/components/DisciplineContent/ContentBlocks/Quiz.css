@@ -94,9 +94,9 @@
 }
 
 .quiz-option.correct {
-  background: rgba(81, 207, 102, 0.1);
-  border-color: #51cf66;
-  color: #51cf66;
+  background: rgba(0, 255, 249, 0.1);
+  border-color: #00fff9;
+  color: #00fff9;
 }
 
 .quiz-option.wrong {
@@ -120,7 +120,7 @@
 }
 
 .quiz-option.correct .quiz-option-letter {
-  background: #51cf66;
+  background: #00fff9;
   color: #000;
 }
 

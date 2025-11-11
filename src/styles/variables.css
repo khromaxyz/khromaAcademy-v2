@@ -29,17 +29,18 @@
   --border-subtle: rgba(255, 255, 255, 0.08);
   --border-strong: rgba(255, 255, 255, 0.18);
   
-  /* Interações e foco (Dark) */
+  /* Interações e foco (Dark) - Substituído verde por ciano */
   --interactive-hover: rgba(255, 255, 255, 0.05);
-  --interactive-active: rgba(65, 255, 65, 0.1);
-  --focus-ring: rgba(65, 255, 65, 0.6);
+  --interactive-active: rgba(0, 255, 249, 0.1);
+  --focus-ring: rgba(0, 255, 249, 0.5);
   
   /* Overlay para modais (Dark) */
   --surface-overlay: rgba(0, 0, 0, 0.9);
 
   /* Typography */
-  --font-heading: 'Manrope', sans-serif;
-  --font-body: 'Lora', serif;
+  --font-heading: 'Inter', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-code: 'JetBrains Mono', monospace;
 
   /* Enhanced Spacing System */
   --space-xxs: 4px;
@@ -65,8 +66,8 @@
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
   --shadow-xl: 0 16px 64px rgba(0, 0, 0, 0.6);
-  --glow-sm: 0 0 20px rgba(65, 255, 65, 0.2);
-  --glow-md: 0 0 40px rgba(65, 255, 65, 0.3);
+  --glow-sm: 0 0 20px rgba(0, 255, 249, 0.15);
+  --glow-md: 0 0 40px rgba(0, 255, 249, 0.2);
 
   /* Code Block Variables */
   --code-bg: rgba(15, 15, 15, 0.95);
@@ -83,17 +84,17 @@
   --toc-bg: rgba(21, 21, 21, 0.95);
   --toc-border: rgba(255, 255, 255, 0.08);
   --toc-item-hover: rgba(255, 255, 255, 0.05);
-  --toc-item-active: rgba(65, 255, 65, 0.1);
+  --toc-item-active: rgba(0, 255, 249, 0.1);
 
   /* Sidebar Variables */
   --sidebar-width: 300px;
   --sidebar-bg: rgba(21, 21, 21, 0.95);
   --sidebar-border: rgba(255, 255, 255, 0.1);
   --sidebar-item-hover: rgba(255, 255, 255, 0.05);
-  --sidebar-item-active: rgba(65, 255, 65, 0.1);
-
-  /* Callout Variables */
-  --callout-tip-color: #41ff41;
+  --sidebar-item-active: rgba(0, 255, 249, 0.1);
+  
+  /* Callout Variables - Substituído verde por ciano */
+  --callout-tip-color: #00fff9;
   --callout-warning-color: #ff8d41;
   --callout-danger-color: #ff4141;
   --callout-info-color: #4141ff;
@@ -134,6 +135,44 @@
   --palette-border: rgba(0, 0, 0, 0.08);
   --palette-item-hover: rgba(0, 0, 0, 0.04);
   --palette-item-selected: rgba(0, 255, 102, 0.08);
+
+  /* KHROMA RGB NEON/CYBERPUNK PALETTE (from teste1.html) */
+  --k-black-0: #000000;
+  --k-black-1: #050505;
+  --k-black-2: #0a0a0a;
+  --k-black-3: #111111;
+  --k-gray-1: #1a1a1a;
+  --k-gray-2: #262626;
+  --k-gray-3: #333333;
+  --k-gray-4: #4d4d4d;
+  --k-gray-5: #666666;
+  --k-text-primary: #ffffff;
+  --k-text-secondary: #a3a3a3;
+  --k-text-tertiary: #737373;
+
+  /* RGB Accents - Neon/Cyberpunk */
+  --k-rgb-1: #ff00c1; /* Magenta Neon */
+  --k-rgb-2: #00fff9; /* Cyan Cyber */
+  --k-rgb-3: #9400ff; /* Deep Purple */
+  --k-rgb-4: #00fff9; /* Cyan (substituído Acid Lime verde) */
+  
+  /* RGB Gradients */
+  --k-gradient-main: linear-gradient(135deg, var(--k-rgb-1), var(--k-rgb-3));
+  --k-gradient-glow: conic-gradient(from 180deg at 50% 50%, var(--k-rgb-1) 0deg, var(--k-rgb-2) 180deg, var(--k-rgb-3) 360deg);
+
+  /* UI Metrics (from teste1.html) */
+  --header-height: 70px;
+  --sidebar-width: 280px;
+  --toc-width: 240px;
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-xl: 24px;
+
+  /* Animation Curves (from teste1.html) */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quint: cubic-bezier(0.83, 0, 0.17, 1);
+  --ease-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 :root[data-theme='light'] {
@@ -186,5 +225,62 @@
   
   /* Overlay para modais */
   --surface-overlay: rgba(0, 0, 0, 0.7);
+
+  /* KHROMA Light Mode Palette - Variáveis semânticas para DisciplineContent */
+  --k-black-0: #ffffff;
+  --k-black-1: #fafafa;
+  --k-black-2: #f5f5f5;
+  --k-black-3: #eeeeee;
+  --k-gray-1: #e5e5e5;
+  --k-gray-2: #d4d4d4;
+  --k-gray-3: #a3a3a3;
+  --k-gray-4: #737373;
+  --k-gray-5: #525252;
+  --k-text-primary: #111111;
+  --k-text-secondary: #4b5563;
+  --k-text-tertiary: #6b7280;
+
+  /* RGB Accents - Light Mode (cores mais suaves e profissionais) */
+  --k-rgb-1: #0066ff; /* Azul principal */
+  --k-rgb-2: #0052cc; /* Azul médio */
+  --k-rgb-3: #003d99; /* Azul escuro */
+  --k-rgb-4: #0066ff; /* Azul (consistente) */
+  
+  /* RGB Gradients - Light Mode */
+  --k-gradient-main: linear-gradient(135deg, var(--k-rgb-1), var(--k-rgb-3));
+  --k-gradient-glow: conic-gradient(from 180deg at 50% 50%, var(--k-rgb-1) 0deg, var(--k-rgb-2) 180deg, var(--k-rgb-3) 360deg);
+
+  /* Shadows - Light Mode (mais sutis) */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.16);
+  --shadow-xl: 0 16px 64px rgba(0, 0, 0, 0.2);
+  --glow-sm: 0 0 20px rgba(0, 102, 255, 0.1);
+  --glow-md: 0 0 40px rgba(0, 102, 255, 0.15);
+
+  /* Code Block Variables - Light Mode */
+  --code-bg: rgba(250, 250, 250, 0.95);
+  --code-border: rgba(0, 0, 0, 0.1);
+  --code-header-bg: rgba(245, 245, 245, 0.8);
+  --code-line-number: rgba(0, 0, 0, 0.3);
+  --code-highlight-bg: rgba(0, 0, 0, 0.04);
+
+  /* Table of Contents Variables - Light Mode */
+  --toc-bg: rgba(255, 255, 255, 0.95);
+  --toc-border: rgba(0, 0, 0, 0.08);
+  --toc-item-hover: rgba(0, 0, 0, 0.04);
+  --toc-item-active: rgba(0, 102, 255, 0.1);
+
+  /* Sidebar Variables - Light Mode */
+  --sidebar-bg: rgba(255, 255, 255, 0.95);
+  --sidebar-border: rgba(0, 0, 0, 0.08);
+  --sidebar-item-hover: rgba(0, 0, 0, 0.04);
+  --sidebar-item-active: rgba(0, 102, 255, 0.1);
+  
+  /* Callout Variables - Light Mode (cores ajustadas para melhor contraste) */
+  --callout-tip-color: #0066ff;
+  --callout-warning-color: #ff8d41;
+  --callout-danger-color: #ff4141;
+  --callout-info-color: #4141ff;
 }
 

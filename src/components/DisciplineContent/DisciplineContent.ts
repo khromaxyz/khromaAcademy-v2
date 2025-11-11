@@ -1,5 +1,5 @@
 import type { Discipline, ModuleMetadata, ModuleContent } from '@/types';
-import { dataService } from '@/services';
+import { dataService, themeService } from '@/services';
 import { markdownService } from '@/services/markdownService';
 import { mermaidService } from '@/services/mermaidService';
 import { plotlyService } from '@/services/plotlyService';
@@ -12,6 +12,7 @@ import { QuizBlock } from './ContentBlocks/QuizBlock';
 import { MonacoEditorBlock } from './ContentBlocks/MonacoEditor';
 import { MatterSimulation } from './ContentBlocks/MatterSimulation';
 import { FabricCanvas } from './ContentBlocks/FabricCanvas';
+import { GeminiChatbot } from './GeminiChatbot';
 import './DisciplineContent.css';
 
 /**
@@ -43,6 +44,7 @@ export class DisciplineContent {
   private currentModule: ModuleContent | null = null;
   private moduleCache: Map<string, ModuleContent> = new Map();
   private currentDiscipline: Discipline | null = null;
+  private chatbot: GeminiChatbot | null = null;
 
   /**
    * Singleton instance
@@ -89,6 +91,7 @@ export class DisciplineContent {
       // Carregar TOC
       this.modules = await dataService.loadModuleToc(discipline.contentPath);
       console.log(`📚 Carregados ${this.modules.length} módulos`);
+      console.log('📋 Módulos com metadata:', this.modules.map(m => ({ id: m.id, icon: m.icon, section: m.section })));
 
       // Renderizar estrutura PRIMEIRO (com HTML vazio)
       this.renderStructure(discipline);
@@ -184,11 +187,9 @@ export class DisciplineContent {
     console.log('🎮 Processando blocos especiais...');
     this.processSpecialBlocks(contentArea);
 
-    // Atualizar TOC
-    this.updateTableOfContents();
-
-    // Scroll spy
-    this.setupScrollSpy();
+    // TOC removido - substituído por chatbot
+    // this.updateTableOfContents();
+    // this.setupScrollSpy();
 
     // Scroll to top
     if (contentArea.scrollTo) {
@@ -248,7 +249,121 @@ export class DisciplineContent {
     // 9. Processar grafos (Cytoscape.js)
     cytoscapeService.processAll(container);
 
+    // 10. Processar code blocks do markdown
+    this.processCodeBlocks(container);
+
     console.log('✅ Blocos especiais processados');
+  }
+
+  /**
+   * Transforma code blocks do markdown em estrutura com header (igual ao teste1.html)
+   */
+  private processCodeBlocks(container: HTMLElement): void {
+    const codeBlocks = container.querySelectorAll('pre[class*="language-"]');
+    
+    codeBlocks.forEach((preElement) => {
+      // Verificar se já foi processado
+      if (preElement.closest('.code-block')) {
+        return;
+      }
+
+      const codeElement = preElement.querySelector('code');
+      if (!codeElement) return;
+
+      // Extrair linguagem da classe
+      const languageMatch = preElement.className.match(/language-(\w+)/);
+      const language = languageMatch ? languageMatch[1] : 'text';
+      
+      // Obter código original
+      const codeText = codeElement.textContent || '';
+
+      // Criar estrutura igual ao teste1.html
+      const codeBlock = document.createElement('div');
+      codeBlock.className = 'code-block';
+
+      // Header
+      const header = document.createElement('div');
+      header.className = 'code-block-header';
+      const langSpan = document.createElement('span');
+      langSpan.className = 'code-block-language';
+      langSpan.textContent = language;
+      
+      const actionsDiv = document.createElement('div');
+      actionsDiv.className = 'code-actions';
+      
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'code-block-copy-btn';
+      copyBtn.type = 'button';
+      copyBtn.setAttribute('aria-label', 'Copiar código');
+      
+      const icon = document.createElement('i');
+      icon.setAttribute('data-lucide', 'copy');
+      icon.setAttribute('size', '14');
+      
+      copyBtn.appendChild(icon);
+      copyBtn.appendChild(document.createTextNode(' Copy'));
+      
+      actionsDiv.appendChild(copyBtn);
+      
+      header.appendChild(langSpan);
+      header.appendChild(actionsDiv);
+
+      // Container de conteúdo (igual ao .k-code-content do teste1.html)
+      const contentContainer = document.createElement('div');
+      contentContainer.className = 'code-block-container';
+
+      // Mover o pre/code para dentro do container
+      const newPre = document.createElement('pre');
+      newPre.className = preElement.className;
+      const newCode = document.createElement('code');
+      newCode.className = codeElement.className;
+      newCode.innerHTML = codeElement.innerHTML;
+      newPre.appendChild(newCode);
+      contentContainer.appendChild(newPre);
+
+      // Montar estrutura
+      codeBlock.appendChild(header);
+      codeBlock.appendChild(contentContainer);
+
+      // Substituir o pre original
+      preElement.parentNode?.replaceChild(codeBlock, preElement);
+
+      // Adicionar funcionalidade de copiar
+      if (copyBtn) {
+        // Salvar o conteúdo original do botão (ícone + texto)
+        const originalContent = copyBtn.innerHTML;
+        
+        copyBtn.addEventListener('click', () => {
+          navigator.clipboard.writeText(codeText).then(() => {
+            copyBtn.classList.add('copied');
+            // Manter o ícone e mudar apenas o texto
+            const icon = copyBtn.querySelector('i[data-lucide]');
+            if (icon) {
+              copyBtn.innerHTML = icon.outerHTML + ' Copied!';
+            } else {
+              copyBtn.textContent = 'Copied!';
+            }
+            setTimeout(() => {
+              copyBtn.classList.remove('copied');
+              copyBtn.innerHTML = originalContent;
+              // Re-inicializar o ícone Lucide
+              if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+              }
+            }, 2000);
+          }).catch(err => {
+            console.error('Erro ao copiar código:', err);
+          });
+        });
+      }
+    });
+
+    // Inicializar ícones Lucide após processar todos os blocos de código
+    if (typeof lucide !== 'undefined') {
+      requestAnimationFrame(() => {
+        lucide.createIcons();
+      });
+    }
   }
 
   /**
@@ -259,63 +374,204 @@ export class DisciplineContent {
 
     const html = `
       <div class="discipline-content-wrapper">
+        ${this.renderHeader()}
         ${this.renderSidebar(discipline)}
         ${this.renderMainContent()}
-        ${this.renderTableOfContents()}
       </div>
     `;
 
     this.container.innerHTML = html;
     
+    // Inicializar ícones Lucide após inserir no DOM
+    if (typeof lucide !== 'undefined') {
+      // Aguardar um frame para garantir que o DOM está atualizado
+      requestAnimationFrame(() => {
+        lucide.createIcons();
+        // Verificar se os ícones foram renderizados
+        const icons = this.container?.querySelectorAll('[data-lucide]');
+        console.log(`🎨 Ícones Lucide inicializados: ${icons?.length || 0} encontrados`);
+      });
+    }
+    
     // Setup event listeners
     this.setupSidebarListeners(discipline);
-    this.setupCloseButton();
+    this.setupBackToMenu();
+    this.setupThemeToggle();
+    
+    // Aguardar um frame para garantir que o DOM está pronto
+    requestAnimationFrame(() => {
+      this.setupChatbotToggle();
+      // Inicializar chatbot (mas não mostrar ainda)
+      this.initializeChatbot();
+    });
+  }
+
+  /**
+   * Renderiza o header (docs-header)
+   */
+  private renderHeader(): string {
+    return `
+      <header class="docs-header">
+        <div class="header-left">
+          <button 
+            id="back-to-menu-btn" 
+            class="back-to-menu-btn" 
+            title="Voltar ao Menu Principal" 
+            type="button"
+            aria-label="Voltar ao Menu Principal"
+          >
+            ${getIcon('arrow-left', { size: 20 })}
+          </button>
+          <a href="#" class="logo link" aria-label="Khroma Academy - Página Inicial">
+            <svg class="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M7 9L11 12L7 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M13 16H17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span class="logo-text">khroma.academy</span>
+          </a>
+          <div class="header-search-target"></div>
+        </div>
+        <div class="header-right">
+          <button class="icon-btn" title="Toggle Theme" type="button">
+            ${getIcon('sun', { size: 20 })}
+          </button>
+          <button class="icon-btn" title="Github" type="button">
+            ${getIcon('github', { size: 20 })}
+          </button>
+          <div style="width: 1px; height: 24px; background: var(--k-gray-2); margin: 0 8px;"></div>
+          <button 
+            id="chatbot-toggle-btn" 
+            class="icon-btn chatbot-toggle-btn" 
+            title="Abrir Chat Gemini" 
+            type="button"
+            aria-label="Abrir/Fechar Chat Gemini"
+          >
+            ${getIcon('message-circle', { size: 20 })}
+          </button>
+        </div>
+      </header>
+    `;
   }
 
   /**
    * Renderiza a sidebar com módulos
    */
   private renderSidebar(discipline: Discipline): string {
+    // Obter ícone do módulo (prioriza icon do toc.json, fallback automático)
+    const getModuleIcon = (module: ModuleMetadata, index: number): string => {
+      // Priorizar ícone do toc.json
+      if (module.icon) {
+        const iconHtml = getIcon(module.icon, { size: 16 });
+        console.log(`🎯 Ícone para ${module.title}: ${module.icon}`, iconHtml.substring(0, 100));
+        return iconHtml;
+      }
+
+      // Fallback: detecção automática baseada no título
+      const lowerTitle = module.title.toLowerCase();
+      if (lowerTitle.includes('introdução') || lowerTitle.includes('introduction') || lowerTitle.includes('começando')) {
+        return getIcon('sparkles', { size: 16 });
+      } else if (lowerTitle.includes('quick') || lowerTitle.includes('rápido') || lowerTitle.includes('início')) {
+        return getIcon('zap', { size: 16 });
+      } else if (lowerTitle.includes('instalação') || lowerTitle.includes('installation') || lowerTitle.includes('setup')) {
+        return getIcon('package', { size: 16 });
+      } else if (lowerTitle.includes('arquitetura') || lowerTitle.includes('architecture')) {
+        return getIcon('cpu', { size: 16 });
+      } else if (lowerTitle.includes('estado') || lowerTitle.includes('state') || lowerTitle.includes('gerenciamento')) {
+        return getIcon('layers', { size: 16 });
+      } else if (lowerTitle.includes('rota') || lowerTitle.includes('routing') || lowerTitle.includes('navegação')) {
+        return getIcon('workflow', { size: 16 });
+      } else if (lowerTitle.includes('api') || lowerTitle.includes('rest')) {
+        return getIcon('webhook', { size: 16 });
+      } else if (lowerTitle.includes('database') || lowerTitle.includes('banco') || lowerTitle.includes('graphql')) {
+        return getIcon('database', { size: 16 });
+      } else if (lowerTitle.includes('auth') || lowerTitle.includes('autenticação') || lowerTitle.includes('segurança')) {
+        return getIcon('shield', { size: 16 });
+      } else if (lowerTitle.includes('avançado') || lowerTitle.includes('advanced') || lowerTitle.includes('pro')) {
+        return getIcon('lock', { size: 16 });
+      }
+      // Ícones padrão baseados na posição
+      const defaultIcons = ['sparkles', 'zap', 'package', 'cpu', 'layers', 'workflow', 'webhook', 'database', 'shield'];
+      return getIcon(defaultIcons[index % defaultIcons.length] || 'book-open', { size: 16 });
+    };
+
+    // Agrupar módulos por seção
+    const groupModulesBySection = (): Array<{ title: string; modules: ModuleMetadata[] }> => {
+      // Verificar se algum módulo tem section definida
+      const hasCustomSections = this.modules.some(m => m.section);
+      
+      if (hasCustomSections) {
+        // Agrupar por section do toc.json
+        const sectionMap = new Map<string, ModuleMetadata[]>();
+        
+        this.modules.forEach(module => {
+          const sectionName = module.section || 'Other';
+          if (!sectionMap.has(sectionName)) {
+            sectionMap.set(sectionName, []);
+          }
+          sectionMap.get(sectionName)!.push(module);
+        });
+
+        // Converter para array e ordenar por ordem dos módulos
+        return Array.from(sectionMap.entries())
+          .map(([title, modules]) => ({
+            title,
+            modules: modules.sort((a, b) => a.order - b.order)
+          }))
+          .sort((a, b) => {
+            // Ordenar seções: Getting Started primeiro, depois Core Concepts, depois API Reference, depois outras
+            const order = ['Getting Started', 'Core Concepts', 'API Reference'];
+            const aIndex = order.indexOf(a.title);
+            const bIndex = order.indexOf(b.title);
+            if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;
+            if (aIndex !== -1) return -1;
+            if (bIndex !== -1) return 1;
+            return a.title.localeCompare(b.title);
+          });
+      } else {
+        // Fallback: agrupamento automático
+        return [
+          {
+            title: 'Getting Started',
+            modules: this.modules.slice(0, Math.min(3, this.modules.length))
+          },
+          {
+            title: 'Core Concepts',
+            modules: this.modules.slice(3, Math.min(6, this.modules.length))
+          },
+          {
+            title: 'API Reference',
+            modules: this.modules.slice(6)
+          }
+        ].filter(section => section.modules.length > 0);
+      }
+    };
+
+    const sections = groupModulesBySection();
+
     return `
-        <aside class="discipline-sidebar">
-          <div class="sidebar-header">
-          <button class="sidebar-close-btn" id="sidebar-close-btn" aria-label="Voltar">
-            ${getIcon('arrow-left', { size: 20 })}
-            </button>
-            <h2>${discipline.title}</h2>
-          </div>
-
-        <nav class="sidebar-nav" aria-label="Navegação do curso">
-            <div class="nav-section">
-              <h3 class="nav-section-title">
-              ${getIcon('book-open', { size: 16 })}
-              Módulos do Curso
-              </h3>
-            <ul class="nav-list" role="list">
-              ${this.modules.map((module, index) => `
-                <li class="nav-item ${index === 0 ? 'active' : ''}" 
-                    data-module-id="${module.id}" 
-                    tabindex="0" 
-                    role="button"
-                    aria-label="Módulo ${index + 1}: ${module.title}">
-                  <span class="nav-item-number">${String(index + 1).padStart(2, '0')}</span>
-                  <span class="nav-item-text">${module.title}</span>
-                  <span class="nav-item-status">○</span>
-                </li>
-              `).join('')}
-              </ul>
-            </div>
+        <aside class="docs-sidebar">
+          <nav class="sidebar-nav" aria-label="Navegação do curso">
+            ${sections.map((section) => `
+              <div class="nav-group">
+                <div class="nav-label">${section.title}</div>
+                ${section.modules.map((module, moduleIndex) => {
+                  // Verificar se é o módulo atual
+                  const isActive = this.currentModule?.metadata.id === module.id || 
+                                  (moduleIndex === 0 && section === sections[0] && !this.currentModule);
+                  return `
+                    <a href="#" class="nav-item ${isActive ? 'active' : ''}" 
+                        data-module-id="${module.id}" 
+                        tabindex="0" 
+                        role="button"
+                        aria-label="${module.title}">
+                      ${getModuleIcon(module, moduleIndex)}
+                      ${module.title}
+                    </a>
+                  `;
+                }).join('')}
+              </div>
+            `).join('')}
           </nav>
-
-          <div class="sidebar-progress">
-            <div class="sidebar-progress-info">
-              <span>Progresso Geral</span>
-              <span class="sidebar-progress-percentage">${discipline.progress}%</span>
-            </div>
-            <div class="sidebar-progress-bar">
-              <div class="sidebar-progress-fill" style="width: ${discipline.progress}%"></div>
-            </div>
-          </div>
         </aside>
     `;
   }
@@ -325,40 +581,25 @@ export class DisciplineContent {
    */
   private renderMainContent(): string {
     return `
-        <main class="discipline-main">
-          <header class="discipline-main-header">
-          <nav class="breadcrumb" aria-label="Breadcrumb">
-            <a href="#" class="breadcrumb-item" id="breadcrumb-home">Home</a>
-              <span class="breadcrumb-separator">/</span>
-            <a href="#" class="breadcrumb-item" id="breadcrumb-disciplines">Disciplinas</a>
-              <span class="breadcrumb-separator">/</span>
-            <span class="breadcrumb-item active">${this.currentDiscipline?.title || ''}</span>
-            </nav>
-          </header>
-
-        <div class="discipline-main-content" id="main-content">
+      <div class="docs-content-wrapper">
+        <main class="main-scroll-area" id="main-content">
           <div class="loading">
             <p>Carregando conteúdo...</p>
           </div>
-        </div>
-      </main>
+        </main>
+        <aside class="docs-toc" id="docs-toc">
+          <div id="chatbot-container"></div>
+        </aside>
+      </div>
     `;
   }
 
   /**
-   * Renderiza o Table of Contents
+   * Renderiza o Chatbot Gemini (substitui o Table of Contents)
    */
   private renderTableOfContents(): string {
-    return `
-      <aside class="discipline-toc" id="discipline-toc">
-        <div class="toc-header">
-          <h3>Nesta Página</h3>
-        </div>
-        <nav class="toc-content" id="toc-content" aria-label="Table of contents">
-          <ul class="toc-list" id="toc-list"></ul>
-        </nav>
-      </aside>
-    `;
+    // Retorna um placeholder que será substituído pelo chatbot
+    return `<aside class="docs-toc"><div id="chatbot-container"></div></aside>`;
   }
 
   /**
@@ -514,17 +755,32 @@ export class DisciplineContent {
 
     const html = `
       <div class="discipline-content-wrapper">
+        ${this.renderHeader()}
         ${this.renderSidebar(discipline)}
         ${this.renderMainContentFallback(discipline)}
-        ${this.renderTableOfContents()}
       </div>
     `;
 
     this.container.innerHTML = html;
-
-    this.setupCloseButton();
-    this.updateTableOfContents();
-    this.setupScrollSpy();
+    
+    // Inicializar ícones Lucide após inserir no DOM
+    if (typeof lucide !== 'undefined') {
+      requestAnimationFrame(() => {
+        lucide.createIcons();
+      });
+    }
+    
+    // Setup event listeners
+    this.setupSidebarListeners(discipline);
+    this.setupBackToMenu();
+    this.setupThemeToggle();
+    
+    // Aguardar um frame para garantir que o DOM está pronto
+    requestAnimationFrame(() => {
+      this.setupChatbotToggle();
+      // Inicializar chatbot
+      this.initializeChatbot();
+    });
   }
 
   /**
@@ -532,18 +788,23 @@ export class DisciplineContent {
    */
   private renderMainContentFallback(discipline: Discipline): string {
     return `
-      <main class="discipline-main">
-        <div class="discipline-main-content" id="main-content">
-          <h1>${discipline.title}</h1>
-          <p>${discipline.description}</p>
-          <h2>Conteúdo em Desenvolvimento</h2>
-          <p>O conteúdo detalhado desta disciplina está sendo preparado.</p>
-          <h2>Syllabus</h2>
-          <ul>
-            ${discipline.syllabus.map((item) => `<li>${item}</li>`).join('')}
-          </ul>
-        </div>
-      </main>
+      <div class="docs-content-wrapper">
+        <main class="main-scroll-area" id="main-content">
+          <h1 class="k-doc-title">${discipline.title}</h1>
+          <p class="k-doc-lead">${discipline.description}</p>
+          <div class="k-section">
+            <h2>Conteúdo em Desenvolvimento</h2>
+            <p>O conteúdo detalhado desta disciplina está sendo preparado.</p>
+            <h2>Syllabus</h2>
+            <ul>
+              ${discipline.syllabus.map((item) => `<li>${item}</li>`).join('')}
+            </ul>
+          </div>
+        </main>
+        <aside class="docs-toc" id="docs-toc">
+          <div id="chatbot-container"></div>
+        </aside>
+      </div>
     `;
   }
 
@@ -584,6 +845,187 @@ export class DisciplineContent {
   }
 
   /**
+   * Setup do botão de voltar ao menu principal
+   */
+  private setupBackToMenu(): void {
+    const backBtn = document.getElementById('back-to-menu-btn');
+    
+    if (!backBtn) return;
+
+    backBtn.addEventListener('click', () => {
+      // Esconder o conteúdo da disciplina
+      this.hide();
+      
+      // Disparar evento para voltar ao menu principal
+      // O app.ts escuta este evento via MainNavigation
+      window.dispatchEvent(new CustomEvent('navigation-change', {
+        detail: { itemId: 'home' }
+      }));
+    });
+  }
+
+  /**
+   * Setup do botão de toggle de tema
+   */
+  private setupThemeToggle(): void {
+    const themeToggleBtn = this.container?.querySelector('.header-right .icon-btn[title="Toggle Theme"]') as HTMLElement;
+    
+    if (!themeToggleBtn) {
+      console.warn('⚠️ Botão de toggle de tema não encontrado');
+      return;
+    }
+
+    // Atualizar ícone baseado no tema atual
+    const updateThemeIcon = () => {
+      const currentTheme = themeService.getCurrentTheme();
+      const icon = themeToggleBtn.querySelector('svg, i[data-lucide]');
+      if (icon) {
+        const iconName = currentTheme === 'light' ? 'moon' : 'sun';
+        // Atualizar o ícone usando getIcon
+        const newIcon = getIcon(iconName, { size: 20 });
+        if (icon.parentElement) {
+          icon.outerHTML = newIcon;
+          // Re-inicializar ícones Lucide se necessário
+          if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+          }
+        }
+      }
+    };
+
+    // Atualizar ícone inicial
+    updateThemeIcon();
+
+    // Listener para mudanças de tema
+    themeToggleBtn.addEventListener('click', () => {
+      const currentTheme = themeService.getCurrentTheme();
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      
+      themeService.applyTheme(newTheme);
+      themeService.saveTheme();
+      
+      // Atualizar ícone
+      updateThemeIcon();
+      
+      // Feedback visual
+      themeToggleBtn.style.transform = 'scale(0.95)';
+      setTimeout(() => {
+        themeToggleBtn.style.transform = '';
+      }, 150);
+    });
+
+    // Escutar mudanças de tema de outras fontes (ex: SettingsPanel)
+    window.addEventListener('theme-changed', () => {
+      updateThemeIcon();
+    });
+  }
+
+  /**
+   * Setup do botão de toggle do chatbot
+   */
+  private setupChatbotToggle(): void {
+    const toggleBtn = document.getElementById('chatbot-toggle-btn');
+    const docsToc = this.container?.querySelector('.docs-toc') as HTMLElement;
+    
+    if (!toggleBtn) {
+      console.warn('⚠️ Botão de toggle do chatbot não encontrado');
+      return;
+    }
+    
+    if (!docsToc) {
+      console.warn('⚠️ Container docs-toc não encontrado');
+      return;
+    }
+
+    console.log('✅ Botão e docs-toc encontrados, configurando toggle...');
+
+    // Inicialmente esconder o chatbot
+    docsToc.style.display = 'none';
+    docsToc.style.visibility = 'hidden';
+
+    // Remover listeners anteriores se existirem
+    const newToggleBtn = toggleBtn.cloneNode(true) as HTMLElement;
+    toggleBtn.parentNode?.replaceChild(newToggleBtn, toggleBtn);
+
+    newToggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      
+      const isVisible = docsToc.style.display !== 'none' && docsToc.style.visibility !== 'hidden';
+      
+      console.log('🔘 Toggle clicado, estado atual:', isVisible ? 'visível' : 'escondido');
+      
+      if (isVisible) {
+        // Esconder
+        docsToc.style.display = 'none';
+        docsToc.style.visibility = 'hidden';
+        newToggleBtn.setAttribute('title', 'Abrir Chat Gemini');
+        newToggleBtn.setAttribute('aria-label', 'Abrir Chat Gemini');
+        console.log('👁️ Chatbot escondido');
+      } else {
+        // Mostrar - usar flex para garantir layout correto
+        docsToc.style.display = 'flex';
+        docsToc.style.visibility = 'visible';
+        docsToc.style.opacity = '1';
+        docsToc.style.flexDirection = 'column';
+        newToggleBtn.setAttribute('title', 'Fechar Chat Gemini');
+        newToggleBtn.setAttribute('aria-label', 'Fechar Chat Gemini');
+        console.log('👁️ Chatbot mostrado, display:', docsToc.style.display, 'visibility:', docsToc.style.visibility);
+      }
+    });
+  }
+
+  /**
+   * Inicializa o chatbot Gemini
+   */
+  private initializeChatbot(): void {
+    const container = this.container?.querySelector('#chatbot-container');
+    const docsToc = this.container?.querySelector('.docs-toc') as HTMLElement;
+    
+    if (!container) {
+      console.warn('⚠️ Container do chatbot não encontrado');
+      return;
+    }
+
+    // Destruir chatbot anterior se existir
+    if (this.chatbot) {
+      this.chatbot.destroy();
+    }
+
+    // Criar novo chatbot
+    this.chatbot = new GeminiChatbot();
+    const chatbotElement = this.chatbot.create();
+    
+    // Adicionar o chatbot dentro do container (que está dentro do docs-toc)
+    container.appendChild(chatbotElement);
+    
+    // Garantir que o docs-toc tenha a largura inicial correta
+    if (docsToc) {
+      docsToc.style.setProperty('width', '260px', 'important');
+      docsToc.style.setProperty('min-width', '200px', 'important');
+      docsToc.style.setProperty('max-width', '600px', 'important');
+    }
+    
+    // Inicializar ícones Lucide após adicionar ao DOM
+    // Usar setTimeout para garantir que o elemento esteja no DOM
+    const initIcons = () => {
+      if (typeof lucide !== 'undefined' && chatbotElement.parentElement) {
+        try {
+          lucide.createIcons({
+            baseElement: chatbotElement
+          });
+        } catch (error) {
+          console.warn('Erro ao inicializar ícones Lucide no chatbot:', error);
+        }
+      }
+    };
+    
+    requestAnimationFrame(() => {
+      setTimeout(initIcons, 100);
+    });
+  }
+
+  /**
    * Esconde o conteúdo
    */
   hide(): void {
@@ -593,6 +1035,12 @@ export class DisciplineContent {
     // Limpar observers
     if (this.intersectionObserver) {
       this.intersectionObserver.disconnect();
+    }
+    
+    // Limpar chatbot
+    if (this.chatbot) {
+      this.chatbot.destroy();
+      this.chatbot = null;
     }
   }
 }

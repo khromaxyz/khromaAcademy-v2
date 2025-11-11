@@ -62,6 +62,76 @@ class MarkdownService {
   }
 
   /**
+   * Extrai e parseia front matter YAML do markdown
+   * Retorna o front matter como objeto e o conteúdo sem o front matter
+   */
+  parseFrontMatter(markdown: string): { frontMatter: Record<string, any>; content: string } {
+    // Regex mais flexível: aceita --- no início, conteúdo YAML, e --- seguido de quebra de linha ou fim
+    const frontMatterRegex = /^---\s*\n([\s\S]*?)\n---\s*(\n|$)([\s\S]*)$/;
+    const match = markdown.match(frontMatterRegex);
+
+    if (!match) {
+      // Sem front matter, retornar conteúdo original
+      return { frontMatter: {}, content: markdown };
+    }
+
+    const yamlContent = match[1].trim();
+    const content = match[3] || '';
+
+    if (!yamlContent) {
+      // Front matter vazio
+      return { frontMatter: {}, content };
+    }
+
+    try {
+      const frontMatter = this.parseYAML(yamlContent);
+      return { frontMatter, content };
+    } catch (error) {
+      console.warn('Erro ao parsear front matter YAML:', error);
+      // Em caso de erro, retornar conteúdo sem front matter
+      const fallbackContent = markdown.replace(/^---\s*\n[\s\S]*?\n---\s*(\n|$)/, '');
+      return { frontMatter: {}, content: fallbackContent };
+    }
+  }
+
+  /**
+   * Parseia YAML simples (suporta apenas key: value básico)
+   * Para casos mais complexos, considerar usar biblioteca js-yaml
+   */
+  private parseYAML(yaml: string): Record<string, any> {
+    const result: Record<string, any> = {};
+    const lines = yaml.split('\n');
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+      
+      // Ignorar linhas vazias e comentários
+      if (!trimmed || trimmed.startsWith('#')) {
+        continue;
+      }
+
+      // Procurar padrão key: value
+      const colonIndex = trimmed.indexOf(':');
+      if (colonIndex === -1) {
+        continue;
+      }
+
+      const key = trimmed.substring(0, colonIndex).trim();
+      let value = trimmed.substring(colonIndex + 1).trim();
+
+      // Remover aspas se houver
+      if ((value.startsWith('"') && value.endsWith('"')) || 
+          (value.startsWith("'") && value.endsWith("'"))) {
+        value = value.slice(1, -1);
+      }
+
+      result[key] = value;
+    }
+
+    return result;
+  }
+
+  /**
    * Escapa HTML para evitar XSS
    */
   private escapeHtml(text: string): string {

@@ -72,7 +72,15 @@ export class CursorService {
     const savedEnabled = localStorage.getItem(STORAGE_KEY_ENABLED);
 
     this.type = (savedType as CursorType) || 'classic';
+    // enabled é true por padrão, só é false se explicitamente salvo como 'false'
     this.enabled = savedEnabled !== 'false';
+
+    console.log('📥 [CursorService] Configuração carregada do localStorage:', {
+      savedType,
+      savedEnabled,
+      type: this.type,
+      enabled: this.enabled
+    });
 
     return {
       type: this.type,
@@ -84,11 +92,22 @@ export class CursorService {
    * Atualiza o cursor baseado nas configurações
    */
   updateCursor(): void {
-    if (!this.cursorElement) return;
+    console.log('🔄 [CursorService] Atualizando cursor...');
+    
+    if (!this.cursorElement) {
+      this.cursorElement = document.querySelector('.cursor');
+      console.log('🔍 [CursorService] Elemento do cursor:', !!this.cursorElement);
+    }
+
+    const config = this.getConfig();
+    console.log('📊 [CursorService] Configuração atual:', config);
+    console.log('📊 [CursorService] Pointer fine:', window.matchMedia('(pointer: fine)').matches);
 
     if (window.matchMedia('(pointer: fine)').matches && this.enabled) {
+      console.log('✅ [CursorService] Aplicando cursor personalizado');
       this.setupCursor();
     } else {
+      console.log('❌ [CursorService] Aplicando cursor padrão');
       this.disableCursor();
     }
   }
@@ -97,16 +116,36 @@ export class CursorService {
    * Configura o cursor customizado
    */
   private setupCursor(): void {
-    if (!this.cursorElement) return;
+    console.log('🔧 [CursorService] Configurando cursor personalizado...');
+    
+    if (!this.cursorElement) {
+      this.cursorElement = document.querySelector('.cursor');
+      if (!this.cursorElement) {
+        console.error('❌ [CursorService] Elemento do cursor não encontrado!');
+        return;
+      }
+    }
 
     // Remover handlers antigos
     this.removeHandlers();
+    console.log('🔧 [CursorService] Handlers antigos removidos');
 
+    // Remover classe de desabilitado e estilo de cursor padrão
+    document.body.classList.remove('cursor-disabled');
+    const disabledStyle = document.getElementById('cursor-disabled-style');
+    if (disabledStyle) {
+      disabledStyle.remove();
+      console.log('🗑️ [CursorService] Estilo de cursor desabilitado removido');
+    }
+    
     // Configurar cursor
     this.cursorElement.className = `cursor cursor-${this.type}`;
+    this.cursorElement.classList.remove('hidden');
     this.cursorElement.style.display = 'block';
-    document.body.classList.remove('cursor-disabled');
     document.body.style.cursor = 'none';
+    document.documentElement.style.cursor = 'none';
+    
+    console.log('🎨 [CursorService] Cursor configurado com tipo:', this.type);
 
     // Criar handlers
     this.moveHandler = (e: MouseEvent) => {
@@ -209,12 +248,63 @@ export class CursorService {
    * Desabilita o cursor customizado
    */
   disableCursor(): void {
+    console.log('🔴 [CursorService] Desabilitando cursor personalizado...');
+    
+    // Esconder cursor customizado completamente
     if (this.cursorElement) {
       this.cursorElement.style.display = 'none';
+      this.cursorElement.classList.add('hidden');
+      console.log('👁️ [CursorService] Cursor element escondido');
     }
-    document.body.classList.add('cursor-disabled');
-    document.body.style.cursor = 'auto';
+    
+    // Remover handlers
     this.removeHandlers();
+    console.log('🔧 [CursorService] Handlers removidos');
+    
+    // Adicionar classe para desabilitar cursor customizado
+    document.body.classList.add('cursor-disabled');
+    
+    // Remover cursor: none e garantir cursor padrão do sistema
+    document.body.style.cursor = '';
+    document.documentElement.style.cursor = '';
+    console.log('🖱️ [CursorService] Cursor padrão restaurado no body e html');
+    
+    // Remover cursor: none de todos os elementos que possam ter sido afetados
+    document.querySelectorAll('*').forEach((el) => {
+      if (el instanceof HTMLElement) {
+        if (el.style.cursor === 'none') {
+          el.style.cursor = '';
+        }
+      }
+    });
+    
+    // Forçar cursor padrão em TODOS os elementos com estilo dinâmico
+    let style = document.getElementById('cursor-disabled-style') as HTMLStyleElement;
+    if (!style) {
+      style = document.createElement('style');
+      style.id = 'cursor-disabled-style';
+      document.head.appendChild(style);
+      console.log('📝 [CursorService] Estilo de cursor desabilitado criado');
+    }
+    
+    style.textContent = `
+      body.cursor-disabled,
+      body.cursor-disabled * {
+        cursor: auto !important;
+      }
+      body.cursor-disabled button,
+      body.cursor-disabled a,
+      body.cursor-disabled .link,
+      body.cursor-disabled input,
+      body.cursor-disabled textarea,
+      body.cursor-disabled select,
+      body.cursor-disabled [role="button"],
+      body.cursor-disabled .toggle-switch-input {
+        cursor: pointer !important;
+      }
+    `;
+    
+    console.log('✅ [CursorService] Cursor personalizado DESABILITADO - usando cursor padrão do Windows');
   }
 
   /**
@@ -230,9 +320,39 @@ export class CursorService {
    * Habilita ou desabilita o cursor
    */
   setEnabled(enabled: boolean): void {
+    console.log('🔧 [CursorService] setEnabled chamado com:', enabled);
+    
+    // Atualizar estado interno
+    const wasEnabled = this.enabled;
     this.enabled = enabled;
-    this.updateCursor();
+    
+    console.log('📊 [CursorService] Estado anterior:', wasEnabled);
+    console.log('📊 [CursorService] Estado novo:', this.enabled);
+    
+    // Garantir que o elemento do cursor existe
+    if (!this.cursorElement) {
+      this.cursorElement = document.querySelector('.cursor');
+      console.log('🔍 [CursorService] Elemento do cursor encontrado:', !!this.cursorElement);
+    }
+    
+    // Aplicar mudanças imediatamente
+    if (window.matchMedia('(pointer: fine)').matches && this.enabled) {
+      console.log('✅ [CursorService] Habilitando cursor personalizado...');
+      this.setupCursor();
+      console.log('✅ [CursorService] Cursor personalizado HABILITADO');
+    } else {
+      console.log('❌ [CursorService] Desabilitando cursor personalizado - usando cursor padrão...');
+      this.disableCursor();
+      console.log('❌ [CursorService] Cursor personalizado DESABILITADO');
+    }
+    
+    // Salvar no localStorage após atualizar
     this.saveConfig();
+    console.log('💾 [CursorService] Configuração salva no localStorage');
+    
+    // Verificar se foi salvo corretamente
+    const savedEnabled = localStorage.getItem(STORAGE_KEY_ENABLED);
+    console.log('🔍 [CursorService] Verificação localStorage:', savedEnabled, '===', String(this.enabled));
   }
 
   /**
@@ -248,6 +368,12 @@ export class CursorService {
   saveConfig(): void {
     localStorage.setItem(STORAGE_KEY_TYPE, this.type);
     localStorage.setItem(STORAGE_KEY_ENABLED, String(this.enabled));
+    console.log('💾 [CursorService] Configuração salva:', {
+      type: this.type,
+      enabled: this.enabled,
+      storageType: localStorage.getItem(STORAGE_KEY_TYPE),
+      storageEnabled: localStorage.getItem(STORAGE_KEY_ENABLED)
+    });
   }
 
   /**

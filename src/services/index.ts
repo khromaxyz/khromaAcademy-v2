@@ -10,4 +10,5 @@ export * from './plotlyService';
 export * from './chartService';
 export * from './mathService';
 export * from './cytoscapeService';
+export * from './geminiService';
 
