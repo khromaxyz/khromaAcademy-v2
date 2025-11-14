@@ -10,15 +10,17 @@ export interface Discipline {
   period: number | string;
   /** Descrição da disciplina */
   description: string;
-  /** Lista de tópicos do syllabus */
+  /** Lista de tópicos do syllabus (mantido para compatibilidade) */
   syllabus: string[];
+  /** Estrutura hierárquica de módulos e submódulos (nova estrutura) */
+  modules?: ModuleStructure[];
   /** Progresso da disciplina (0-100) */
   progress: number;
   /** Cor principal da disciplina em formato hexadecimal */
   color: string;
   /** Códigos das disciplinas pré-requisitas */
   prerequisites: string[];
-  /** Posição no grafo de conhecimento */
+  /** Posição no grafo de conhecimento (mantido para compatibilidade, mas não editável) */
   position: {
     x: number;
     y: number;
@@ -29,6 +31,12 @@ export interface Discipline {
   contentPath?: string;
   /** Categoria da disciplina (opcional) */
   category?: string;
+  /** Contexto completo gerado pela IA (opcional) */
+  context?: string;
+  /** Data de geração do contexto (opcional) */
+  contextGeneratedAt?: string;
+  /** Conteúdo gerado por submódulo (opcional) - mapeia submoduleId -> conteúdo markdown */
+  subModuleContent?: Record<string, string>;
 }
 
 /**
@@ -78,5 +86,30 @@ export interface ModuleContent {
   metadata: ModuleMetadata;
   rawMarkdown: string;
   renderedHtml: string;
+}
+
+/**
+ * Estrutura de um submódulo dentro de um módulo
+ */
+export interface SubModule {
+  id: string;
+  title: string;
+  description?: string;
+  order: number;
+  /** Conteúdo markdown gerado para este submódulo (opcional) */
+  content?: string;
+  /** Data de geração do conteúdo (opcional) */
+  contentGeneratedAt?: string;
+}
+
+/**
+ * Estrutura de um módulo com submódulos
+ */
+export interface ModuleStructure {
+  id: string;
+  title: string;
+  description?: string;
+  order: number;
+  subModules: SubModule[];
 }
 

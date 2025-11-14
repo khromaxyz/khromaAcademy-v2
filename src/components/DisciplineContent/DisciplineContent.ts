@@ -44,7 +44,9 @@ export class DisciplineContent {
   private currentModule: ModuleContent | null = null;
   private moduleCache: Map<string, ModuleContent> = new Map();
   private currentDiscipline: Discipline | null = null;
+  private currentDisciplineId: string | null = null;
   private chatbot: GeminiChatbot | null = null;
+  private currentSubModuleId: string | null = null;
 
   /**
    * Singleton instance
@@ -77,9 +79,21 @@ export class DisciplineContent {
   /**
    * Renderiza o conteúdo da disciplina
    */
-  async render(discipline: Discipline): Promise<void> {
+  async render(discipline: Discipline, disciplineId?: string): Promise<void> {
     console.log('🎨 DisciplineContent.render() chamado para:', discipline.title);
     this.currentDiscipline = discipline;
+    
+    // Tentar encontrar o ID da disciplina se não foi fornecido
+    if (!disciplineId) {
+      const allDisciplines = dataService.getAllDisciplines();
+      const foundId = Object.keys(allDisciplines).find(id => {
+        const d = allDisciplines[id];
+        return d.title === discipline.title && d.code === discipline.code;
+      });
+      this.currentDisciplineId = foundId || null;
+    } else {
+      this.currentDisciplineId = disciplineId;
+    }
 
     if (!discipline.contentPath) {
       // Fallback para conteúdo gerado
@@ -457,6 +471,103 @@ export class DisciplineContent {
    * Renderiza a sidebar com módulos
    */
   private renderSidebar(discipline: Discipline): string {
+    // Verificar se a disciplina tem estrutura de módulos/submódulos
+    if (discipline.modules && discipline.modules.length > 0) {
+      return this.renderSidebarWithModules(discipline);
+    }
+
+    // Fallback para estrutura antiga (ModuleMetadata)
+    return this.renderSidebarWithMetadata(discipline);
+  }
+
+  /**
+   * Renderiza sidebar usando a estrutura de módulos/submódulos da disciplina
+   */
+  private renderSidebarWithModules(discipline: Discipline): string {
+    const getModuleIcon = (title: string, index: number): string => {
+      const lowerTitle = title.toLowerCase();
+      if (lowerTitle.includes('introdução') || lowerTitle.includes('introduction') || lowerTitle.includes('começando')) {
+        return getIcon('sparkles', { size: 16 });
+      } else if (lowerTitle.includes('quick') || lowerTitle.includes('rápido') || lowerTitle.includes('início')) {
+        return getIcon('zap', { size: 16 });
+      } else if (lowerTitle.includes('instalação') || lowerTitle.includes('installation') || lowerTitle.includes('setup')) {
+        return getIcon('package', { size: 16 });
+      } else if (lowerTitle.includes('arquitetura') || lowerTitle.includes('architecture')) {
+        return getIcon('cpu', { size: 16 });
+      } else if (lowerTitle.includes('estado') || lowerTitle.includes('state') || lowerTitle.includes('gerenciamento')) {
+        return getIcon('layers', { size: 16 });
+      } else if (lowerTitle.includes('rota') || lowerTitle.includes('routing') || lowerTitle.includes('navegação')) {
+        return getIcon('workflow', { size: 16 });
+      } else if (lowerTitle.includes('api') || lowerTitle.includes('rest')) {
+        return getIcon('webhook', { size: 16 });
+      } else if (lowerTitle.includes('database') || lowerTitle.includes('banco') || lowerTitle.includes('graphql')) {
+        return getIcon('database', { size: 16 });
+      } else if (lowerTitle.includes('auth') || lowerTitle.includes('autenticação') || lowerTitle.includes('segurança')) {
+        return getIcon('shield', { size: 16 });
+      } else if (lowerTitle.includes('avançado') || lowerTitle.includes('advanced') || lowerTitle.includes('pro')) {
+        return getIcon('lock', { size: 16 });
+      }
+      const defaultIcons = ['sparkles', 'zap', 'package', 'cpu', 'layers', 'workflow', 'webhook', 'database', 'shield'];
+      return getIcon(defaultIcons[index % defaultIcons.length] || 'book-open', { size: 16 });
+    };
+
+    // Ordenar módulos por ordem
+    const sortedModules = [...discipline.modules].sort((a, b) => a.order - b.order);
+
+    return `
+        <aside class="docs-sidebar">
+          <nav class="sidebar-nav" aria-label="Navegação do curso">
+            <div class="nav-group">
+              ${sortedModules.map((module, moduleIndex) => {
+                const hasSubModules = module.subModules && module.subModules.length > 0;
+                const sortedSubModules = hasSubModules 
+                  ? [...module.subModules].sort((a, b) => a.order - b.order)
+                  : [];
+                
+                return `
+                  <div class="nav-module-wrapper" data-module-id="${module.id}">
+                    <div class="nav-module-header ${hasSubModules ? 'has-submodules' : ''}" 
+                         ${hasSubModules ? 'role="button" tabindex="0" aria-expanded="true"' : ''}>
+                      ${hasSubModules ? `
+                        <button class="nav-module-toggle" aria-label="Expandir/Colapsar módulo" type="button">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                          </svg>
+                        </button>
+                      ` : '<span class="nav-module-spacer"></span>'}
+                      ${getModuleIcon(module.title, moduleIndex)}
+                      <span class="nav-module-title">${this.escapeHtml(module.title)}</span>
+                    </div>
+                    ${hasSubModules ? `
+                      <div class="nav-submodules-container">
+                        <div class="nav-submodules-list">
+                          ${sortedSubModules.map((subModule) => `
+                            <a href="#" class="nav-submodule-item" 
+                               data-module-id="${module.id}"
+                               data-submodule-id="${subModule.id}"
+                               tabindex="0"
+                               role="button"
+                               aria-label="${subModule.title}">
+                              <span class="nav-submodule-indicator"></span>
+                              <span class="nav-submodule-title">${this.escapeHtml(subModule.title)}</span>
+                            </a>
+                          `).join('')}
+                        </div>
+                      </div>
+                    ` : ''}
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </nav>
+        </aside>
+    `;
+  }
+
+  /**
+   * Renderiza sidebar usando estrutura antiga (ModuleMetadata) - fallback
+   */
+  private renderSidebarWithMetadata(discipline: Discipline): string {
     // Obter ícone do módulo (prioriza icon do toc.json, fallback automático)
     const getModuleIcon = (module: ModuleMetadata, index: number): string => {
       // Priorizar ícone do toc.json
@@ -577,6 +688,16 @@ export class DisciplineContent {
   }
 
   /**
+   * Escapa HTML para prevenir XSS
+   */
+  private escapeHtml(text: string): string {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  /**
    * Renderiza o conteúdo principal
    */
   private renderMainContent(): string {
@@ -606,6 +727,104 @@ export class DisciplineContent {
    * Setup listeners para troca de módulo
    */
   private setupSidebarListeners(discipline: Discipline): void {
+    // Verificar se está usando a nova estrutura de módulos/submódulos
+    if (discipline.modules && discipline.modules.length > 0) {
+      this.setupModuleExpandCollapse(discipline);
+      this.setupSubmoduleListeners(discipline);
+    } else {
+      // Fallback para estrutura antiga
+      this.setupMetadataListeners(discipline);
+    }
+  }
+
+  /**
+   * Configura expandir/colapsar de módulos
+   */
+  private setupModuleExpandCollapse(discipline: Discipline): void {
+    const moduleHeaders = document.querySelectorAll('.nav-module-header.has-submodules');
+    
+    moduleHeaders.forEach((header) => {
+      const toggleBtn = header.querySelector('.nav-module-toggle');
+      const wrapper = header.closest('.nav-module-wrapper');
+      const submodulesContainer = wrapper?.querySelector('.nav-submodules-container') as HTMLElement;
+      
+      if (!toggleBtn || !wrapper || !submodulesContainer) return;
+
+      // Inicialmente expandido
+      wrapper.classList.add('expanded');
+      submodulesContainer.style.maxHeight = submodulesContainer.scrollHeight + 'px';
+
+      const toggleExpand = (e: Event) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const isExpanded = wrapper.classList.contains('expanded');
+        
+        if (isExpanded) {
+          // Colapsar
+          wrapper.classList.remove('expanded');
+          submodulesContainer.style.maxHeight = '0px';
+          header.setAttribute('aria-expanded', 'false');
+        } else {
+          // Expandir
+          wrapper.classList.add('expanded');
+          submodulesContainer.style.maxHeight = submodulesContainer.scrollHeight + 'px';
+          header.setAttribute('aria-expanded', 'true');
+        }
+      };
+
+      toggleBtn.addEventListener('click', toggleExpand);
+      header.addEventListener('click', (e) => {
+        // Se clicar no header mas não no botão, também expandir/colapsar
+        if (e.target !== toggleBtn && !toggleBtn.contains(e.target as Node)) {
+          toggleExpand(e);
+        }
+      });
+    });
+  }
+
+  /**
+   * Configura listeners para submódulos
+   */
+  private setupSubmoduleListeners(discipline: Discipline): void {
+    const submoduleItems = document.querySelectorAll('.nav-submodule-item');
+    
+    submoduleItems.forEach((item) => {
+      item.addEventListener('click', async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const moduleId = item.getAttribute('data-module-id');
+        const submoduleId = item.getAttribute('data-submodule-id');
+        
+        if (!moduleId || !submoduleId) return;
+
+        // Atualizar estado ativo
+        submoduleItems.forEach((subItem) => subItem.classList.remove('active'));
+        item.classList.add('active');
+
+        // Expandir o módulo pai se estiver colapsado
+        const wrapper = item.closest('.nav-module-wrapper');
+        if (wrapper && !wrapper.classList.contains('expanded')) {
+          const header = wrapper.querySelector('.nav-module-header') as HTMLElement;
+          const submodulesContainer = wrapper.querySelector('.nav-submodules-container') as HTMLElement;
+          if (header && submodulesContainer) {
+            wrapper.classList.add('expanded');
+            submodulesContainer.style.maxHeight = submodulesContainer.scrollHeight + 'px';
+            header.setAttribute('aria-expanded', 'true');
+          }
+        }
+
+        // Carregar conteúdo do submódulo
+        await this.loadAndRenderSubModule(discipline, moduleId, submoduleId);
+      });
+    });
+  }
+
+  /**
+   * Configura listeners para estrutura antiga (ModuleMetadata)
+   */
+  private setupMetadataListeners(discipline: Discipline): void {
     const navItems = document.querySelectorAll('.nav-item');
 
     navItems.forEach((item) => {
@@ -757,7 +976,7 @@ export class DisciplineContent {
       <div class="discipline-content-wrapper">
         ${this.renderHeader()}
         ${this.renderSidebar(discipline)}
-        ${this.renderMainContentFallback(discipline)}
+        ${this.renderMainContent()}
       </div>
     `;
 
@@ -780,13 +999,301 @@ export class DisciplineContent {
       this.setupChatbotToggle();
       // Inicializar chatbot
       this.initializeChatbot();
+      
+      // Carregar automaticamente o primeiro submódulo se houver
+      if (discipline.modules && discipline.modules.length > 0) {
+        const sortedModules = [...discipline.modules].sort((a, b) => a.order - b.order);
+        const firstModule = sortedModules[0];
+        if (firstModule.subModules && firstModule.subModules.length > 0) {
+          const sortedSubModules = [...firstModule.subModules].sort((a, b) => a.order - b.order);
+          const firstSubModule = sortedSubModules[0];
+          
+          // Marcar como ativo na sidebar
+          const firstSubModuleItem = document.querySelector(
+            `.nav-submodule-item[data-module-id="${firstModule.id}"][data-submodule-id="${firstSubModule.id}"]`
+          );
+          if (firstSubModuleItem) {
+            document.querySelectorAll('.nav-submodule-item').forEach(item => item.classList.remove('active'));
+            firstSubModuleItem.classList.add('active');
+          }
+          
+          // Carregar conteúdo do primeiro submódulo
+          this.loadAndRenderSubModule(discipline, firstModule.id, firstSubModule.id);
+        } else {
+          // Se não houver submódulos, mostrar mensagem
+          this.renderEmptyContent(discipline);
+        }
+      } else {
+        // Se não houver módulos, mostrar mensagem
+        this.renderEmptyContent(discipline);
+      }
+    });
+    
+    // Adicionar listener para atualização de conteúdo
+    this.setupContentUpdateListener(discipline);
+  }
+
+  /**
+   * Carrega e renderiza um submódulo específico
+   */
+  private async loadAndRenderSubModule(discipline: Discipline, moduleId: string, submoduleId: string): Promise<void> {
+    console.log(`📖 Carregando submódulo: ${submoduleId} do módulo: ${moduleId}`);
+    
+    // Recarregar disciplina do dataService para garantir dados atualizados
+    let updatedDiscipline: Discipline | undefined;
+    
+    if (this.currentDisciplineId) {
+      updatedDiscipline = dataService.getDiscipline(this.currentDisciplineId);
+    } else {
+      // Fallback: tentar encontrar por título e código
+      const allDisciplines = dataService.getAllDisciplines();
+      const foundId = Object.keys(allDisciplines).find(id => {
+        const d = allDisciplines[id];
+        return d.title === discipline.title && d.code === discipline.code;
+      });
+      if (foundId) {
+        this.currentDisciplineId = foundId;
+        updatedDiscipline = dataService.getDiscipline(foundId);
+      }
+    }
+    
+    const currentDiscipline = updatedDiscipline || discipline;
+    this.currentDiscipline = currentDiscipline;
+    this.currentSubModuleId = submoduleId;
+    
+    // Encontrar o módulo e submódulo
+    const module = currentDiscipline.modules?.find(m => m.id === moduleId);
+    if (!module) {
+      console.error(`❌ Módulo ${moduleId} não encontrado`);
+      this.showError('Módulo não encontrado');
+      return;
+    }
+    
+    const subModule = module.subModules.find(sm => sm.id === submoduleId);
+    if (!subModule) {
+      console.error(`❌ Submódulo ${submoduleId} não encontrado`);
+      this.showError('Submódulo não encontrado');
+      return;
+    }
+    
+    // Buscar conteúdo do submódulo
+    let content = currentDiscipline.subModuleContent?.[submoduleId] || subModule.content || '';
+    
+    // Remover títulos de módulo e submódulo do conteúdo markdown
+    if (content) {
+      // Remover linhas que começam com "Módulo" ou "Submódulo" seguido de número
+      content = content
+        .split('\n')
+        .filter(line => {
+          const trimmed = line.trim();
+          // Ignorar linhas que começam com "Módulo" ou "Submódulo" seguido de número
+          if (/^#*\s*Módulo\s+\d+:/i.test(trimmed)) return false;
+          if (/^#*\s*Submódulo\s+[\d.]+:/i.test(trimmed)) return false;
+          // Também remover se contiver apenas o título do submódulo duplicado
+          if (trimmed === subModule.title) return false;
+          return true;
+        })
+        .join('\n');
+    }
+    
+    const contentArea = document.getElementById('main-content');
+    if (!contentArea) {
+      console.error('❌ Elemento #main-content não encontrado!');
+      return;
+    }
+    
+    // Renderizar apenas o título do submódulo como h1
+    let html = '';
+    
+    if (content) {
+      // Renderizar markdown do conteúdo gerado
+      console.log(`✅ Conteúdo encontrado para submódulo ${submoduleId}, renderizando...`);
+      const renderedContent = markdownService.render(content);
+      html = `
+        <h1 class="k-doc-title">${this.escapeHtml(subModule.title)}</h1>
+        ${subModule.description ? `<p class="k-doc-lead">${this.escapeHtml(subModule.description)}</p>` : ''}
+        <div class="submodule-content" data-submodule-id="${submoduleId}">
+          <div class="submodule-body">
+            ${renderedContent}
+          </div>
+        </div>
+      `;
+    } else {
+      // Mostrar mensagem de conteúdo não gerado
+      html = `
+        <h1 class="k-doc-title">${this.escapeHtml(subModule.title)}</h1>
+        ${subModule.description ? `<p class="k-doc-lead">${this.escapeHtml(subModule.description)}</p>` : ''}
+        <div class="submodule-content" data-submodule-id="${submoduleId}">
+          <div class="content-placeholder">
+            <p>Conteúdo ainda não gerado. Use o botão de geração no painel administrativo.</p>
+          </div>
+        </div>
+      `;
+    }
+    
+    contentArea.innerHTML = html;
+    
+    // Re-aplicar Prism.js para syntax highlighting
+    if (typeof window !== 'undefined' && (window as any).Prism) {
+      console.log('🎨 Aplicando Prism.js...');
+      (window as any).Prism.highlightAllUnder(contentArea);
+    }
+    
+    // Renderizar diagramas Mermaid
+    console.log('🔷 Processando diagramas Mermaid...');
+    await mermaidService.render(contentArea);
+    
+    // Processar blocos especiais (quizzes, visualizações 3D)
+    console.log('🎮 Processando blocos especiais...');
+    this.processSpecialBlocks(contentArea);
+    
+    // Scroll to top
+    if (contentArea.scrollTo) {
+      contentArea.scrollTo(0, 0);
+    }
+    
+    console.log('✅ Submódulo carregado e renderizado com sucesso');
+  }
+  
+  /**
+   * Renderiza conteúdo vazio quando não há módulos/submódulos
+   */
+  private renderEmptyContent(discipline: Discipline): void {
+    const contentArea = document.getElementById('main-content');
+    if (!contentArea) return;
+    
+    contentArea.innerHTML = `
+      <h1 class="k-doc-title">${this.escapeHtml(discipline.title)}</h1>
+      <p class="k-doc-lead">${this.escapeHtml(discipline.description || '')}</p>
+      <div class="k-section">
+        <h2>Conteúdo em Desenvolvimento</h2>
+        <p>O conteúdo detalhado desta disciplina está sendo preparado.</p>
+        <h2>Syllabus</h2>
+        <ul>
+          ${discipline.syllabus.map((item) => `<li>${this.escapeHtml(item)}</li>`).join('')}
+        </ul>
+      </div>
+    `;
+  }
+  
+  /**
+   * Configura listener para atualização automática de conteúdo
+   */
+  private setupContentUpdateListener(discipline: Discipline): void {
+    // Remover listener anterior se existir
+    const handler = (event: CustomEvent) => {
+      const updatedDisciplineId = event.detail?.disciplineId;
+      const updatedSubModuleId = event.detail?.subModuleId;
+      
+      // Verificar se é a disciplina atual
+      const disciplineId = this.currentDisciplineId || discipline.code || Object.keys(dataService.getAllDisciplines()).find(id => {
+        const d = dataService.getDiscipline(id);
+        return d?.title === discipline.title && d?.code === discipline.code;
+      });
+      
+      if (updatedDisciplineId && disciplineId && updatedDisciplineId === disciplineId) {
+        // Se o submódulo atual foi atualizado, recarregar
+        if (updatedSubModuleId && this.currentSubModuleId === updatedSubModuleId) {
+          console.log(`🔄 Conteúdo do submódulo ${updatedSubModuleId} foi atualizado, recarregando...`);
+          const updatedDiscipline = dataService.getDiscipline(updatedDisciplineId);
+          if (updatedDiscipline) {
+            const module = updatedDiscipline.modules?.find(m => 
+              m.subModules.some(sm => sm.id === updatedSubModuleId)
+            );
+            if (module) {
+              this.loadAndRenderSubModule(updatedDiscipline, module.id, updatedSubModuleId);
+            }
+          }
+        }
+      }
+    };
+    
+    // Adicionar listener para evento de atualização de conteúdo
+    window.addEventListener('submodule-content-updated', handler as EventListener);
+    
+    // Também escutar eventos de atualização de disciplinas
+    window.addEventListener('disciplines-updated', () => {
+      // Recarregar disciplina atualizada
+      const disciplineId = this.currentDisciplineId || discipline.code || Object.keys(dataService.getAllDisciplines()).find(id => {
+        const d = dataService.getDiscipline(id);
+        return d?.title === discipline.title && d?.code === discipline.code;
+      });
+      
+      if (disciplineId && this.currentSubModuleId) {
+        const updatedDiscipline = dataService.getDiscipline(disciplineId);
+        if (updatedDiscipline) {
+          const module = updatedDiscipline.modules?.find(m => 
+            m.subModules.some(sm => sm.id === this.currentSubModuleId)
+          );
+          if (module) {
+            this.loadAndRenderSubModule(updatedDiscipline, module.id, this.currentSubModuleId);
+          }
+        }
+      }
     });
   }
 
   /**
-   * Renderiza conteúdo principal (fallback)
+   * Renderiza conteúdo principal (fallback) - DEPRECATED, não usado mais
    */
   private renderMainContentFallback(discipline: Discipline): string {
+    // Se houver módulos com conteúdo gerado, renderizar eles
+    if (discipline.modules && discipline.modules.length > 0) {
+      const modulesContent = discipline.modules
+        .sort((a, b) => a.order - b.order)
+        .map(module => {
+          const subModulesContent = module.subModules
+            .sort((a, b) => a.order - b.order)
+            .map(subModule => {
+              // Buscar conteúdo gerado
+              const content = discipline.subModuleContent?.[subModule.id] || subModule.content || '';
+              
+              if (content) {
+                // Renderizar markdown do conteúdo gerado
+                const renderedContent = markdownService.render(content);
+                return `
+                  <div class="submodule-content" data-submodule-id="${subModule.id}">
+                    <h3>${subModule.title}</h3>
+                    ${subModule.description ? `<p class="submodule-description">${subModule.description}</p>` : ''}
+                    <div class="submodule-body">
+                      ${renderedContent}
+                    </div>
+                  </div>
+                `;
+              } else {
+                return `
+                  <div class="submodule-content" data-submodule-id="${subModule.id}">
+                    <h3>${subModule.title}</h3>
+                    ${subModule.description ? `<p class="submodule-description">${subModule.description}</p>` : ''}
+                    <p class="content-placeholder">Conteúdo ainda não gerado. Use o botão de geração no painel administrativo.</p>
+                  </div>
+                `;
+              }
+            })
+            .join('');
+
+          return `
+            <div class="module-content" data-module-id="${module.id}">
+              <h2>${module.title}</h2>
+              ${module.description ? `<p class="module-description">${module.description}</p>` : ''}
+              ${subModulesContent}
+            </div>
+          `;
+        })
+        .join('');
+
+      return `
+        <div class="docs-content-wrapper">
+          <main class="main-scroll-area" id="main-content">
+            <h1 class="k-doc-title">${discipline.title}</h1>
+            <p class="k-doc-lead">${discipline.description}</p>
+            ${modulesContent}
+          </main>
+        </div>
+      `;
+    }
+
+    // Fallback para conteúdo básico
     return `
       <div class="docs-content-wrapper">
         <main class="main-scroll-area" id="main-content">

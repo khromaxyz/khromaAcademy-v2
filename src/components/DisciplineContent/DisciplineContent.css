@@ -445,6 +445,234 @@
               box-shadow var(--transition-fast);
 }
 
+/* ============================================
+   MÓDULOS E SUBMÓDULOS EXPANSÍVEIS
+============================================ */
+.nav-module-wrapper {
+  margin-bottom: 4px;
+}
+
+.nav-module-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  margin: 2px 0;
+  border-radius: 6px;
+  color: var(--k-text-secondary);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  font-family: var(--font-heading);
+  user-select: none;
+}
+
+.nav-module-header:hover {
+  background: var(--k-gray-1);
+  color: var(--k-text-primary);
+}
+
+.nav-module-header.has-submodules {
+  font-weight: 500;
+}
+
+.nav-module-toggle {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  color: inherit;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+  border-radius: 4px;
+}
+
+.nav-module-toggle:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--k-text-primary);
+}
+
+.nav-module-toggle svg {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-module-wrapper.expanded .nav-module-toggle svg {
+  transform: rotate(90deg);
+}
+
+.nav-module-spacer {
+  width: 20px;
+  flex-shrink: 0;
+}
+
+.nav-module-header svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  stroke-width: 2;
+  color: inherit;
+  display: block;
+  opacity: 1;
+}
+
+.nav-module-title {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nav-submodules-container {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+  margin-left: 0;
+}
+
+.nav-module-wrapper.expanded .nav-submodules-container {
+  opacity: 1;
+}
+
+.nav-submodules-list {
+  padding: 4px 0 8px 0;
+  margin-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav-submodule-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px 7px 8px;
+  margin: 1px 0;
+  border-radius: 6px;
+  color: var(--k-text-tertiary);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              padding-left 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  position: relative;
+  font-family: var(--font-body);
+  overflow: hidden;
+}
+
+.nav-submodule-item:hover {
+  background: var(--k-gray-1);
+  color: var(--k-text-secondary);
+  padding-left: 12px;
+}
+
+.nav-submodule-item.active {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--k-text-primary);
+  font-weight: 500;
+  padding-left: 12px;
+}
+
+[data-theme='light'] .nav-submodule-item.active {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.nav-submodule-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 15%;
+  height: 70%;
+  width: 2px;
+  background: var(--k-rgb-2);
+  border-radius: 0 2px 2px 0;
+  box-shadow: 0 0 8px var(--k-rgb-2);
+  transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-submodule-indicator {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--k-text-tertiary);
+  flex-shrink: 0;
+  transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0.5;
+}
+
+.nav-submodule-item:hover .nav-submodule-indicator,
+.nav-submodule-item.active .nav-submodule-indicator {
+  background: var(--k-rgb-2);
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+.nav-submodule-title {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Animações suaves para entrada dos submódulos */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.nav-module-wrapper.expanded .nav-submodule-item {
+  animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+}
+
+.nav-module-wrapper.expanded .nav-submodule-item:nth-child(1) {
+  animation-delay: 0.02s;
+}
+
+.nav-module-wrapper.expanded .nav-submodule-item:nth-child(2) {
+  animation-delay: 0.04s;
+}
+
+.nav-module-wrapper.expanded .nav-submodule-item:nth-child(3) {
+  animation-delay: 0.06s;
+}
+
+.nav-module-wrapper.expanded .nav-submodule-item:nth-child(4) {
+  animation-delay: 0.08s;
+}
+
+.nav-module-wrapper.expanded .nav-submodule-item:nth-child(5) {
+  animation-delay: 0.1s;
+}
+
+.nav-module-wrapper.expanded .nav-submodule-item:nth-child(n+6) {
+  animation-delay: 0.12s;
+}
+
 
 /* Sidebar Progress */
 .sidebar-progress {
@@ -1879,6 +2107,50 @@
   .callout {
     padding: var(--space-m) var(--space-l);
   }
+}
+
+/* ============================================
+   SUBMÓDULO CONTENT PLACEHOLDER
+============================================ */
+.content-placeholder {
+  margin: 48px 0;
+  padding: 32px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed var(--k-gray-2);
+  border-radius: var(--border-radius-md);
+  text-align: center;
+  color: var(--k-text-tertiary);
+  transition: background-color var(--transition-medium),
+              border-color var(--transition-medium),
+              color var(--transition-medium);
+}
+
+[data-theme='light'] .content-placeholder {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: var(--k-gray-1);
+}
+
+.content-placeholder p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--k-text-tertiary);
+}
+
+.submodule-content {
+  margin-top: 32px;
+}
+
+.submodule-description {
+  font-size: 18px;
+  color: var(--k-text-secondary);
+  margin-bottom: 24px;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+.submodule-body {
+  margin-top: 24px;
 }
 
 /* ============================================

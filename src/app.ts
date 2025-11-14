@@ -658,6 +658,46 @@ function setupCommandPalette(): void {
   commandPalette.registerItems(searchItems);
 }
 
+// Expor renderAll globalmente para acesso externo
+(window as any).renderAll = renderAll;
+
+// Função para adicionar item de teste no exemplo visual
+(window as any).addTestSyllabusItem = function() {
+  const container = document.getElementById('syllabus-test-example');
+  if (!container) return;
+
+  const div = document.createElement('div');
+  div.className = 'syllabus-item';
+  div.style.cssText = 'display: flex !important; gap: var(--space-m) !important; align-items: center !important; width: 100% !important; padding: var(--space-m) var(--space-l) !important; background: rgba(255, 255, 255, 0.02) !important; border: 1px solid var(--border-subtle) !important; border-radius: var(--border-radius-small) !important; visibility: visible !important; opacity: 1 !important;';
+  
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.value = 'Novo Item de Teste';
+  input.placeholder = 'Tópico do syllabus';
+  input.readOnly = true;
+  input.style.cssText = 'flex: 1 !important; width: 100% !important; min-width: 200px !important; padding: var(--space-m) var(--space-l) !important; background: var(--surface-2) !important; border: 1px solid var(--border-subtle) !important; border-radius: var(--border-radius-small) !important; color: var(--text-primary) !important; font-family: var(--font-body) !important; font-size: 0.95rem !important; cursor: default !important; display: block !important; visibility: visible !important; opacity: 1 !important;';
+  
+  const removeBtn = document.createElement('button');
+  removeBtn.type = 'button';
+  removeBtn.className = 'btn-remove-syllabus';
+  removeBtn.setAttribute('aria-label', 'Remover item');
+  removeBtn.style.cssText = 'width: 36px !important; height: 36px !important; min-width: 36px !important; padding: 0 !important; background: rgba(255, 65, 65, 0.15) !important; border: 2px solid rgba(255, 65, 65, 0.4) !important; border-radius: 50% !important; color: #ff4141 !important; cursor: pointer !important; display: flex !important; align-items: center !important; justify-content: center !important; flex-shrink: 0 !important; line-height: 1 !important; font-size: 0 !important; box-shadow: 0 2px 6px rgba(255, 65, 65, 0.2) !important;';
+  removeBtn.onclick = function() {
+    div.remove();
+  };
+  
+  removeBtn.innerHTML = `
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 18px !important; height: 18px !important; stroke: currentColor !important; stroke-width: 2.5 !important; pointer-events: none !important; flex-shrink: 0 !important; display: block !important; opacity: 1 !important;">
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
+    </svg>
+  `;
+  
+  div.appendChild(input);
+  div.appendChild(removeBtn);
+  container.appendChild(div);
+};
+
 // Aguardar DOM estar pronto
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {

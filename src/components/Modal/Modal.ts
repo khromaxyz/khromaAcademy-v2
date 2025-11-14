@@ -413,7 +413,7 @@ export class Modal {
           // Renderizar
           console.log('🎨 Renderizando...');
           content.init();
-          await content.render(discipline);
+          await content.render(discipline, disciplineId);
           
           // Completar progress
           progressBar.complete();

@@ -1989,6 +1989,95 @@
   padding: var(--space-s);
 }
 
+/* Input wrapper para API key */
+.chatbot-settings-input-wrapper {
+  display: flex;
+  gap: var(--space-s);
+  margin-top: var(--space-s);
+  align-items: stretch;
+}
+
+.chatbot-settings-input {
+  flex: 1;
+  padding: var(--space-m);
+  background: var(--k-black-2);
+  border: 1px solid var(--k-gray-2);
+  border-radius: var(--border-radius-md);
+  color: var(--k-text-primary);
+  font-size: 0.9375rem;
+  font-family: var(--font-body);
+  transition: all 0.2s ease;
+}
+
+.chatbot-settings-input::placeholder {
+  color: var(--k-text-tertiary);
+}
+
+.chatbot-settings-input:hover {
+  background-color: var(--k-black-3);
+  border-color: var(--k-gray-3);
+}
+
+.chatbot-settings-input:focus {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  border-color: var(--k-rgb-2);
+  background-color: var(--k-black-3);
+}
+
+.chatbot-settings-input:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.chatbot-settings-save-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-m) var(--space-l);
+  background: var(--k-rgb-2);
+  border: 1px solid var(--k-rgb-2);
+  border-radius: var(--border-radius-md);
+  color: var(--k-black-1);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.chatbot-settings-save-btn:hover {
+  background: var(--k-rgb-2);
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 255, 249, 0.3);
+}
+
+.chatbot-settings-save-btn:active {
+  transform: translateY(0);
+}
+
+.chatbot-settings-save-btn:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.chatbot-settings-save-btn svg {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2.5;
+}
+
+.chatbot-settings-hint {
+  margin: var(--space-s) 0 0 0;
+  font-size: 0.8125rem;
+  color: var(--k-text-secondary);
+  line-height: 1.5;
+  font-family: var(--font-body);
+}
+
 /* Botão de debug */
 .chatbot-settings-debug-btn {
   display: flex;

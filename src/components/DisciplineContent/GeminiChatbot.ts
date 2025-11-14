@@ -634,6 +634,22 @@ export class GeminiChatbot {
   }
 
   /**
+   * Obtém o texto de status da API key
+   */
+  private getApiKeyStatusText(): string {
+    const status = geminiService.getApiKeyStatus();
+    if (status.configured) {
+      if (status.source === 'env') {
+        return '✅ API key configurada (variável de ambiente)';
+      } else {
+        return '✅ API key configurada (localStorage)';
+      }
+    } else {
+      return '⚠️ API key não configurada. Configure para usar o chatbot.';
+    }
+  }
+
+  /**
    * Manipula o envio de mensagem
    */
   private async handleSendMessage(): Promise<void> {
@@ -1734,6 +1750,31 @@ flowchart TD
         </div>
         <div class="chatbot-settings-content">
           <div class="chatbot-settings-section">
+            <h4>API Key do Gemini</h4>
+            <p class="chatbot-settings-description">Configure sua API key do Google Gemini para usar o chatbot:</p>
+            <div class="chatbot-settings-input-wrapper">
+              <input 
+                type="password" 
+                id="chatbot-setting-api-key" 
+                class="chatbot-settings-input" 
+                placeholder="Digite sua API key do Gemini"
+                aria-label="API key do Gemini"
+              />
+              <button 
+                id="chatbot-save-api-key-btn" 
+                class="chatbot-settings-save-btn"
+                type="button"
+                aria-label="Salvar API key"
+              >
+                ${getIcon('check-circle', { size: 16 })}
+                <span>Salvar</span>
+              </button>
+            </div>
+            <p class="chatbot-settings-hint" id="chatbot-api-key-status">
+              ${this.getApiKeyStatusText()}
+            </p>
+          </div>
+          <div class="chatbot-settings-section">
             <h4>Modelo do Gemini</h4>
             <p class="chatbot-settings-description">Selecione o modelo do Gemini a ser usado nas conversas:</p>
             <div class="chatbot-settings-select-wrapper">
@@ -1790,6 +1831,9 @@ flowchart TD
       const checkbox = modal.querySelector('#chatbot-setting-current-page') as HTMLInputElement;
       const modelSelect = modal.querySelector('#chatbot-setting-model') as HTMLSelectElement;
       const debugBtn = modal.querySelector('#chatbot-debug-test-btn') as HTMLButtonElement;
+      const apiKeyInput = modal.querySelector('#chatbot-setting-api-key') as HTMLInputElement;
+      const saveApiKeyBtn = modal.querySelector('#chatbot-save-api-key-btn') as HTMLButtonElement;
+      const apiKeyStatus = modal.querySelector('#chatbot-api-key-status') as HTMLElement;
 
       const closeModal = () => {
         modal.classList.remove('chatbot-settings-modal-open');
@@ -1819,6 +1863,44 @@ flowchart TD
         this.handleDebugTest();
       });
 
+      // Handler para salvar API key
+      const handleSaveApiKey = () => {
+        const apiKey = apiKeyInput.value.trim();
+        if (apiKey) {
+          geminiService.setApiKey(apiKey);
+          apiKeyInput.value = ''; // Limpar campo após salvar
+          this.updateApiKeyStatus();
+          if (apiKeyStatus) {
+            apiKeyStatus.textContent = '✅ API key salva com sucesso!';
+            apiKeyStatus.style.color = 'var(--k-rgb-2)';
+            setTimeout(() => {
+              apiKeyStatus.textContent = this.getApiKeyStatusText();
+              apiKeyStatus.style.color = '';
+            }, 2000);
+          }
+        } else {
+          // Remover API key se campo estiver vazio
+          geminiService.setApiKey('');
+          this.updateApiKeyStatus();
+          if (apiKeyStatus) {
+            apiKeyStatus.textContent = '⚠️ API key removida';
+            apiKeyStatus.style.color = 'var(--k-text-warning)';
+            setTimeout(() => {
+              apiKeyStatus.textContent = this.getApiKeyStatusText();
+              apiKeyStatus.style.color = '';
+            }, 2000);
+          }
+        }
+      };
+
+      saveApiKeyBtn?.addEventListener('click', handleSaveApiKey);
+      apiKeyInput?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          handleSaveApiKey();
+        }
+      });
+
       // Fechar com ESC
       const handleEsc = (e: KeyboardEvent) => {
         if (e.key === 'Escape') {
@@ -1838,6 +1920,11 @@ flowchart TD
     const modelSelect = modal.querySelector('#chatbot-setting-model') as HTMLSelectElement;
     if (modelSelect) {
       modelSelect.value = geminiService.getModel();
+    }
+
+    const apiKeyStatus = modal.querySelector('#chatbot-api-key-status') as HTMLElement;
+    if (apiKeyStatus) {
+      apiKeyStatus.textContent = this.getApiKeyStatusText();
     }
 
     // Mostrar modal

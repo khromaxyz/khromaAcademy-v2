@@ -1,6 +1,7 @@
 import type { Discipline, DisciplinesData } from '@/types/discipline';
 
 const STORAGE_KEY = 'khroma-disciplines';
+// Arquivo em public/disciplinas.json - servido na raiz como /disciplinas.json
 const DATA_FILE = '/disciplinas.json';
 
 /**
@@ -22,46 +23,51 @@ export class DataService {
 
   /**
    * Carrega disciplinas do localStorage ou do arquivo JSON
+   * Prioriza o localStorage (dados do usuário) sobre o JSON
    */
   async loadDisciplines(): Promise<Record<string, Discipline>> {
-    // Primeiro tenta carregar do localStorage
+    // PRIORIDADE 1: Carregar do localStorage (dados salvos pelo usuário)
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       try {
         const data = JSON.parse(saved);
-        if ('disciplines' in data && typeof data.disciplines === 'object') {
+        if ('disciplines' in data && typeof data.disciplines === 'object' && Object.keys(data.disciplines).length > 0) {
           this.disciplines = data.disciplines;
-        } else if (isDisciplinesRecord(data)) {
+          console.log(`📚 Carregando ${Object.keys(this.disciplines).length} disciplina(s) do localStorage (prioridade)`);
+          return this.disciplines;
+        } else if (isDisciplinesRecord(data) && Object.keys(data).length > 0) {
           this.disciplines = data;
-        } else {
-          this.disciplines = {};
+          console.log(`📚 Carregando ${Object.keys(this.disciplines).length} disciplina(s) do localStorage (prioridade)`);
+          return this.disciplines;
         }
-        return this.disciplines;
       } catch (error) {
-        console.error('Erro ao carregar do localStorage:', error);
+        console.error('❌ Erro ao carregar do localStorage:', error);
       }
     }
 
-    // Se não houver no localStorage, tenta carregar do JSON
+    // PRIORIDADE 2: Se não houver no localStorage, tenta carregar do JSON
     try {
-      const response = await fetch(DATA_FILE);
+      const response = await fetch(`${DATA_FILE}?t=${Date.now()}`); // Cache bust
       if (response.ok) {
         const data: DisciplinesData = await response.json();
-        this.disciplines = data.disciplines || (data as unknown as Record<string, Discipline>);
-        this.saveDisciplines();
-        return this.disciplines;
-      } else {
-        // Fallback para dados padrão
-        this.disciplines = this.getDefaultDisciplines();
-        this.saveDisciplines();
-        return this.disciplines;
+        const jsonData = data.disciplines || (data as unknown as Record<string, Discipline>);
+        
+        if (jsonData && Object.keys(jsonData).length > 0) {
+          console.log(`📚 Carregando ${Object.keys(jsonData).length} disciplina(s) do arquivo JSON`);
+          this.disciplines = jsonData;
+          this.saveDisciplines(); // Salva no localStorage para próxima vez
+          return this.disciplines;
+        }
       }
     } catch (error) {
-      console.warn('Não foi possível carregar disciplinas.json, usando dados padrão', error);
-      this.disciplines = this.getDefaultDisciplines();
-      this.saveDisciplines();
-      return this.disciplines;
+      console.warn('⚠️ Não foi possível carregar disciplinas.json:', error);
     }
+
+    // PRIORIDADE 3: Último fallback - dados padrão
+    console.log('📚 Usando dados padrão (nenhum arquivo encontrado)');
+    this.disciplines = this.getDefaultDisciplines();
+    this.saveDisciplines();
+    return this.disciplines;
   }
 
   /**
@@ -69,9 +75,20 @@ export class DataService {
    */
   saveDisciplines(): void {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.disciplines));
+      const dataToSave = {
+        disciplines: this.disciplines
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+      console.log(`💾 [DataService] Disciplinas salvas no localStorage: ${Object.keys(this.disciplines).length} disciplina(s)`);
     } catch (error) {
-      console.error('Erro ao salvar no localStorage:', error);
+      console.error('❌ [DataService] Erro ao salvar no localStorage:', error);
+      // Tentar salvar apenas as disciplinas se o objeto completo falhar
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(this.disciplines));
+        console.log(`💾 [DataService] Disciplinas salvas diretamente (fallback)`);
+      } catch (fallbackError) {
+        console.error('❌ [DataService] Erro no fallback de salvamento:', fallbackError);
+      }
     }
   }
 
@@ -94,7 +111,9 @@ export class DataService {
    */
   saveDiscipline(id: string, discipline: Discipline): void {
     this.disciplines[id] = discipline;
+    console.log(`💾 [DataService] Salvando disciplina: ${discipline.title} (ID: ${id})`);
     this.saveDisciplines();
+    console.log(`✅ [DataService] Disciplina salva! Total no localStorage: ${Object.keys(this.disciplines).length}`);
   }
 
   /**
@@ -223,6 +242,17 @@ export class DataService {
       console.error(`Erro ao carregar módulo ${filename}:`, error);
       throw error;
     }
+  }
+
+  /**
+   * Força o recarregamento do arquivo JSON, ignorando localStorage
+   */
+  async forceReloadFromJSON(): Promise<Record<string, Discipline>> {
+    console.log('🔄 Forçando recarregamento do arquivo JSON...');
+    // Limpa localStorage temporariamente
+    localStorage.removeItem(STORAGE_KEY);
+    // Recarrega
+    return await this.loadDisciplines();
   }
 }
 

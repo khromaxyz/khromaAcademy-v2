@@ -242,104 +242,250 @@
         
         <div class="admin-actions">
           <button class="btn-primary" id="btn-add-discipline">+ Nova Disciplina</button>
+          <button class="btn-primary" id="btn-create-with-ai" style="background: rgba(65, 65, 255, 0.2) !important; border-color: rgba(65, 65, 255, 0.5) !important; color: #4141FF !important;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+              <path d="M12 2v20M2 12h20"></path>
+              <circle cx="12" cy="12" r="5"></circle>
+            </svg>
+            Criar com IA
+          </button>
           <button class="btn-secondary" id="btn-export-json">Exportar JSON</button>
           <button class="btn-secondary" id="btn-import-json">Importar JSON</button>
-        </div>
-
-        <div class="admin-form" id="discipline-form">
-          <h3 style="margin-bottom: var(--space-l);" id="form-title">Adicionar Nova Disciplina</h3>
-          <form id="discipline-form-element">
-            <input type="hidden" id="discipline-id" name="id">
-            
-            <div class="form-group">
-              <label for="discipline-title">Título *</label>
-              <input type="text" id="discipline-title" name="title" required>
-            </div>
-
-            <div class="form-group">
-              <label for="discipline-period">Período *</label>
-              <input type="text" id="discipline-period" name="period" placeholder="Ex: 3º, 4º, 5º" required>
-            </div>
-
-            <div class="form-group">
-              <label for="discipline-description">Descrição *</label>
-              <textarea id="discipline-description" name="description" required></textarea>
-            </div>
-
-            <div class="form-group">
-              <label>Cor *</label>
-              <div class="color-picker-grid" id="discipline-color-picker">
-                <button type="button" class="color-option" data-color="#41FF41" aria-label="Verde" style="background-color: #41FF41;" title="Verde"></button>
-                <button type="button" class="color-option" data-color="#4141FF" aria-label="Azul" style="background-color: #4141FF;" title="Azul"></button>
-                <button type="button" class="color-option" data-color="#FF41FF" aria-label="Magenta" style="background-color: #FF41FF;" title="Magenta"></button>
-                <button type="button" class="color-option" data-color="#41FFFF" aria-label="Ciano" style="background-color: #41FFFF;" title="Ciano"></button>
-                <button type="button" class="color-option" data-color="#F2FF41" aria-label="Amarelo" style="background-color: #F2FF41;" title="Amarelo"></button>
-                <button type="button" class="color-option" data-color="#FF4141" aria-label="Vermelho" style="background-color: #FF4141;" title="Vermelho"></button>
-              </div>
-              <input type="hidden" id="discipline-color" name="color" value="#41FF41" required>
-            </div>
-
-            <div class="form-group">
-              <label for="discipline-progress">Progresso (%) *</label>
-              <input type="number" id="discipline-progress" name="progress" min="0" max="100" value="0" required>
-            </div>
-
-            <div class="form-group">
-              <label for="discipline-position-x">Posição X no Grafo (%)</label>
-              <input type="number" id="discipline-position-x" name="positionX" min="0" max="100" value="50">
-            </div>
-
-            <div class="form-group">
-              <label for="discipline-position-y">Posição Y no Grafo (%)</label>
-              <input type="number" id="discipline-position-y" name="positionY" min="0" max="100" value="50">
-            </div>
-
-            <div class="form-group">
-              <label for="prerequisites-search">Pré-requisitos</label>
-              <div class="prerequisites-selector">
-                <input 
-                  type="text" 
-                  id="prerequisites-search" 
-                  class="prerequisites-search-input" 
-                  placeholder="Buscar disciplinas..."
-                  autocomplete="off"
-                >
-                <div class="prerequisites-dropdown" id="prerequisites-dropdown">
-                  <!-- Options will be populated by JS -->
-                </div>
-                <div class="prerequisites-selected" id="prerequisites-selected">
-                  <!-- Selected items will be shown here -->
-                </div>
-              </div>
-              <input type="hidden" id="discipline-prerequisites" name="prerequisites">
-            </div>
-
-            <div class="form-group">
-              <label>Syllabus (Conteúdo do Curso)</label>
-              <div class="syllabus-inputs" id="syllabus-inputs">
-                <!-- Syllabus items will be added here -->
-              </div>
-              <button type="button" class="btn-add" id="btn-add-syllabus">+ Adicionar Item</button>
-            </div>
-
-            <div class="form-group">
-              <label for="discipline-icon">Ícone SVG</label>
-              <textarea id="discipline-icon" name="icon" placeholder="Cole o código SVG aqui (opcional)"></textarea>
-              <small style="color: var(--color-grey); margin-top: var(--space-xs); display: block;">
-                Opcional: Cole o código SVG completo do ícone
-              </small>
-            </div>
-
-            <div class="form-actions">
-              <button type="button" class="btn-secondary" id="btn-cancel-form">Cancelar</button>
-              <button type="submit" class="btn-primary">Salvar Disciplina</button>
-            </div>
-          </form>
         </div>
 
         <div class="disciplines-list" id="disciplines-list">
           <!-- Disciplines will be listed here -->
         </div>
+      </div>
+    </div>
+
+    <!-- MODAL DE DISCIPLINA -->
+    <div class="discipline-modal-backdrop" id="discipline-modal-backdrop"></div>
+    <div class="discipline-modal" id="discipline-modal">
+      <div class="discipline-modal-header">
+        <h3 id="form-title">Adicionar Nova Disciplina</h3>
+        <button class="discipline-modal-close" id="discipline-modal-close" aria-label="Fechar">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="discipline-modal-content">
+        <form id="discipline-form-element">
+          <input type="hidden" id="discipline-id" name="id">
+          
+          <!-- Tabs Navigation -->
+          <div class="form-tabs" id="form-tabs">
+            <button type="button" class="form-tab active" data-tab="basic">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+              </svg>
+              Informações Básicas
+            </button>
+            <button type="button" class="form-tab" data-tab="modules">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+              </svg>
+              Módulos e Submódulos
+            </button>
+            <button type="button" class="form-tab" data-tab="advanced">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"></path>
+              </svg>
+              Configurações Avançadas
+            </button>
+          </div>
+
+          <!-- Tab Content: Informações Básicas -->
+          <div class="form-tab-content active" id="tab-basic">
+            <div class="form-section">
+              <h4 class="form-section-title">Identificação</h4>
+              
+              <div class="form-group">
+                <label for="discipline-title">Título da Disciplina *</label>
+                <input type="text" id="discipline-title" name="title" required placeholder="Ex: Algoritmos e Estruturas de Dados">
+                <small class="form-hint">Nome completo da disciplina</small>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="discipline-period">Período *</label>
+                  <input type="text" id="discipline-period" name="period" placeholder="Ex: 3º, 4º, 5º" required>
+                  <small class="form-hint">Período do curso</small>
+                </div>
+
+                <div class="form-group">
+                  <label for="discipline-code">Código</label>
+                  <input type="text" id="discipline-code" name="code" placeholder="Ex: ALG, ED, IA">
+                  <small class="form-hint">Código único (gerado automaticamente se vazio)</small>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="discipline-description">Descrição *</label>
+                <textarea id="discipline-description" name="description" required rows="4" placeholder="Descreva o conteúdo, objetivos e importância da disciplina..."></textarea>
+                <small class="form-hint">Ementa ou descrição detalhada da disciplina</small>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <h4 class="form-section-title">Aparência</h4>
+              
+              <div class="form-group">
+                <label>Cor da Disciplina *</label>
+                <div class="color-picker-grid" id="discipline-color-picker">
+                  <button type="button" class="color-option" data-color="#41FF41" aria-label="Verde" style="background-color: #41FF41;" title="Verde"></button>
+                  <button type="button" class="color-option" data-color="#4141FF" aria-label="Azul" style="background-color: #4141FF;" title="Azul"></button>
+                  <button type="button" class="color-option" data-color="#FF41FF" aria-label="Magenta" style="background-color: #FF41FF;" title="Magenta"></button>
+                  <button type="button" class="color-option" data-color="#41FFFF" aria-label="Ciano" style="background-color: #41FFFF;" title="Ciano"></button>
+                  <button type="button" class="color-option" data-color="#F2FF41" aria-label="Amarelo" style="background-color: #F2FF41;" title="Amarelo"></button>
+                  <button type="button" class="color-option" data-color="#FF4141" aria-label="Vermelho" style="background-color: #FF4141;" title="Vermelho"></button>
+                </div>
+                <input type="hidden" id="discipline-color" name="color" value="#41FF41" required>
+              </div>
+
+              <div class="form-group">
+                <label for="discipline-progress">Progresso (%) *</label>
+                <div class="progress-input-wrapper">
+                  <input type="range" id="discipline-progress-range" name="progressRange" min="0" max="100" value="0">
+                  <input type="number" id="discipline-progress" name="progress" min="0" max="100" value="0" required>
+                  <span class="progress-display">0%</span>
+                </div>
+                <small class="form-hint">Progresso atual da disciplina</small>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <h4 class="form-section-title">Pré-requisitos</h4>
+              
+              <div class="form-group">
+                <label for="prerequisites-search">Disciplinas Pré-requisitas</label>
+                <div class="prerequisites-selector">
+                  <input 
+                    type="text" 
+                    id="prerequisites-search" 
+                    class="prerequisites-search-input" 
+                    placeholder="Buscar disciplinas..."
+                    autocomplete="off"
+                  >
+                  <div class="prerequisites-dropdown" id="prerequisites-dropdown">
+                    <!-- Options will be populated by JS -->
+                  </div>
+                  <div class="prerequisites-selected" id="prerequisites-selected">
+                    <!-- Selected items will be shown here -->
+                  </div>
+                </div>
+                <input type="hidden" id="discipline-prerequisites" name="prerequisites">
+                <small class="form-hint">Selecione as disciplinas que são pré-requisitos para esta</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab Content: Módulos e Submódulos -->
+          <div class="form-tab-content" id="tab-modules">
+            <div class="modules-editor" id="modules-editor">
+              <div class="modules-header">
+                <h4 class="form-section-title">Estrutura de Módulos</h4>
+                <button type="button" class="btn-add-module" id="btn-add-module">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  Adicionar Módulo
+                </button>
+              </div>
+              <div class="modules-list" id="modules-list">
+                <!-- Módulos serão adicionados aqui dinamicamente -->
+                <div class="modules-empty-state">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                  </svg>
+                  <p>Nenhum módulo adicionado ainda</p>
+                  <small>Clique em "Adicionar Módulo" para começar</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab Content: Configurações Avançadas -->
+          <div class="form-tab-content" id="tab-advanced">
+            <div class="form-section">
+              <h4 class="form-section-title">Ícone Personalizado</h4>
+              
+              <div class="form-group">
+                <label for="discipline-icon">Código SVG do Ícone</label>
+                <textarea id="discipline-icon" name="icon" rows="6" placeholder="Cole o código SVG completo aqui (opcional)"></textarea>
+                <small class="form-hint">Opcional: Cole o código SVG completo do ícone personalizado</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Form Actions -->
+          <div class="form-actions">
+            <div class="form-actions-left">
+              <button type="button" class="btn-secondary" id="btn-view-context" style="background: rgba(65, 255, 65, 0.2) !important; border-color: rgba(65, 255, 65, 0.5) !important; color: #41FF41 !important; display: none;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                Ver Contexto
+              </button>
+              <button type="button" class="btn-secondary" id="btn-generate-context" style="background: rgba(65, 65, 255, 0.2) !important; border-color: rgba(65, 65, 255, 0.5) !important; color: #4141FF !important;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                </svg>
+                Gerar Contexto Completo
+              </button>
+              <button type="button" class="btn-secondary" id="btn-generate-content" style="background: rgba(255, 65, 255, 0.2) !important; border-color: rgba(255, 65, 255, 0.5) !important; color: #FF41FF !important; display: none;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <path d="M16 13H8M16 17H8M10 9H8"></path>
+                </svg>
+                Gerar Conteúdo Completo
+              </button>
+            </div>
+            <div class="form-actions-right">
+              <button type="button" class="btn-secondary" id="btn-cancel-form">Cancelar</button>
+              <button type="submit" class="btn-primary">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;">
+                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                  <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                  <polyline points="7 3 7 8 15 8"></polyline>
+                </svg>
+                Salvar Disciplina
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL DO ASSISTENTE DE IA -->
+    <div class="ai-assistant-modal-backdrop" id="ai-assistant-modal-backdrop"></div>
+    <div class="ai-assistant-modal" id="ai-assistant-modal">
+      <div class="ai-assistant-modal-header">
+        <h3 id="ai-assistant-title">Criar Disciplina com IA</h3>
+        <button class="ai-assistant-modal-close" id="ai-assistant-modal-close" aria-label="Fechar">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="ai-assistant-modal-content" id="ai-assistant-modal-content">
+        <!-- Conteúdo será injetado dinamicamente -->
       </div>
     </div>
 
