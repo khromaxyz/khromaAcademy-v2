@@ -20,10 +20,22 @@ interface GeminiResponse {
       parts: Array<{ text: string }>;
     };
   }>;
+  usageMetadata?: {
+    promptTokenCount?: number;
+    candidatesTokenCount?: number;
+    totalTokenCount?: number;
+  };
   error?: {
     message: string;
     code: number;
   };
+}
+
+interface MessageResult {
+  text: string;
+  inputTokens?: number;
+  outputTokens?: number;
+  totalTokens?: number;
 }
 
 interface CountTokensResponse {
@@ -34,13 +46,24 @@ interface CountTokensResponse {
   };
 }
 
+interface GeminiGenerationConfig {
+  temperature?: number;
+  topP?: number;
+  topK?: number;
+  maxOutputTokens?: number;
+  enableGoogleSearch?: boolean; // Toggle para ativar/desativar Google Search (embasamento com pesquisa web)
+  imageSize?: string; // Para modelos com suporte a imagens (gemini-2.5-pro): '1K', '2K', '4K'
+}
+
 class GeminiService {
   private apiKey: string;
   private model: string = 'gemini-flash-lite-latest';
   private baseUrl: string = 'https://generativelanguage.googleapis.com/v1beta';
   private readonly MODEL_STORAGE_KEY = 'gemini-chatbot-model';
   private readonly API_KEY_STORAGE_KEY = 'gemini-chatbot-api-key';
-  private readonly AVAILABLE_MODELS = ['gemini-2.5-pro', 'gemini-flash-lite-latest', 'gemini-flash-lite'];
+  private readonly CONFIG_STORAGE_KEY = 'gemini-generation-config';
+  private readonly AVAILABLE_MODELS = ['gemini-2.5-pro', 'gemini-flash-lite-latest', 'gemini-flash-latest'];
+  private generationConfig: GeminiGenerationConfig = {};
 
   constructor() {
     // Obter API key da variável de ambiente ou localStorage
@@ -56,6 +79,9 @@ class GeminiService {
 
     // Carregar modelo salvo do localStorage
     this.loadModelFromStorage();
+    
+    // Carregar configurações de geração
+    this.loadGenerationConfig();
   }
 
   /**
@@ -158,6 +184,17 @@ class GeminiService {
     systemInstruction?: string,
     pdfs?: Array<{ mimeType: string; data: string }>
   ): Promise<string> {
+    const result = await this.sendMessageWithMetrics(message, images, conversationHistory, systemInstruction, pdfs);
+    return result.text;
+  }
+
+  async sendMessageWithMetrics(
+    message: string,
+    images?: Array<{ mimeType: string; data: string }>,
+    conversationHistory: GeminiMessage[] = [],
+    systemInstruction?: string,
+    pdfs?: Array<{ mimeType: string; data: string }>
+  ): Promise<MessageResult> {
     // Atualizar API key antes de usar (pode ter sido configurada no modal)
     this.apiKey = this.getApiKey();
     
@@ -165,12 +202,18 @@ class GeminiService {
       throw new Error('API key do Gemini não configurada. Configure-a nas configurações do chatbot.');
     }
 
+    // Garantir que o modelo está atualizado do localStorage
+    this.loadModelFromStorage();
+
     // Usar apenas o modelo selecionado (sem fallback)
     const modelToUse = this.model || 'gemini-flash-lite-latest';
     
     // Verificar se o modelo é válido
     if (!this.AVAILABLE_MODELS.includes(modelToUse)) {
-      throw new Error(`Modelo inválido: ${modelToUse}. Configure um modelo válido.`);
+      console.warn(`⚠️ [GeminiService] Modelo inválido: ${modelToUse}. Usando padrão.`);
+      this.setModel('gemini-flash-lite-latest'); // Usar setModel para salvar no localStorage
+      // Recursivamente chamar com o modelo padrão
+      return this.sendMessageWithMetrics(message, images, conversationHistory, systemInstruction, pdfs);
     }
 
     console.log(`🔄 [GeminiService] Usando modelo: ${modelToUse}`);
@@ -226,7 +269,7 @@ class GeminiService {
     systemInstruction?: string,
     pdfs?: Array<{ mimeType: string; data: string }>,
     modelToUse?: string
-  ): Promise<string> {
+  ): Promise<MessageResult> {
     // Construir partes da mensagem
     const parts: Array<{ text?: string; inlineData?: { mimeType: string; data: string } }> = [];
     
@@ -268,7 +311,19 @@ class GeminiService {
       },
     ];
 
-    const requestBody: GeminiRequest = {
+    const requestBody: GeminiRequest & {
+      generationConfig?: {
+        temperature?: number;
+        topP?: number;
+        topK?: number;
+        maxOutputTokens?: number;
+        thinkingConfig?: {}; // thinkingConfig vazio ativa thinking mode dinâmico por padrão
+      };
+      tools?: Array<{ googleSearch?: {} }>; // Ferramenta Google Search para embasamento
+      imageConfig?: {
+        imageSize?: string;
+      };
+    } = {
       contents,
     };
 
@@ -279,17 +334,69 @@ class GeminiService {
       };
     }
 
-    // Usar modelo fornecido ou o atual
+    // Carregar configurações de geração do localStorage antes de usar
+    this.loadGenerationConfig();
+    
+    // Inicializar generationConfig se necessário
+    requestBody.generationConfig = {};
+    
+    // Adicionar configurações de geração se disponíveis
+    if (this.generationConfig.temperature !== undefined) {
+      requestBody.generationConfig.temperature = Math.max(0, Math.min(2, this.generationConfig.temperature));
+    }
+    if (this.generationConfig.topP !== undefined) {
+      requestBody.generationConfig.topP = Math.max(0, Math.min(1, this.generationConfig.topP));
+    }
+    if (this.generationConfig.topK !== undefined) {
+      requestBody.generationConfig.topK = Math.max(1, Math.min(40, this.generationConfig.topK));
+    }
+    if (this.generationConfig.maxOutputTokens !== undefined) {
+      // Todos os modelos suportam até 65536 tokens de saída
+      const maxLimit = 65536;
+      requestBody.generationConfig.maxOutputTokens = Math.max(1, Math.min(maxLimit, this.generationConfig.maxOutputTokens));
+    }
+
+    // Ativar thinking mode por padrão para todos os modelos compatíveis
+    // thinkingConfig vazio ativa o thinking dinâmico (o modelo decide automaticamente)
+    const supportsThinking = modelToUse && ['gemini-2.5-pro', 'gemini-flash-latest', 'gemini-flash-lite-latest'].includes(modelToUse);
+    if (supportsThinking) {
+      requestBody.generationConfig.thinkingConfig = {};
+      console.log(`🧠 [GeminiService] Thinking mode ativado por padrão (dinâmico) para ${modelToUse}`);
+    }
+
+    console.log(`⚙️ [GeminiService] Aplicando configurações de geração:`, requestBody.generationConfig);
+
+    // Adicionar Google Search (embasamento) se habilitado
+    // Compatível com todos os modelos Gemini 2.5 e 2.0
+    if (this.generationConfig.enableGoogleSearch === true) {
+      requestBody.tools = [
+        {
+          googleSearch: {},
+        },
+      ];
+      console.log(`🔍 [GeminiService] Google Search habilitado para embasamento`);
+    }
+
+    // Adicionar imageConfig apenas para gemini-2.5-pro
+    if (modelToUse === 'gemini-2.5-pro' && this.generationConfig.imageSize) {
+      requestBody.imageConfig = {
+        imageSize: this.generationConfig.imageSize,
+      };
+      console.log(`🖼️ [GeminiService] Aplicando imageConfig:`, requestBody.imageConfig);
+    }
+
+    // Usar modelo fornecido ou o atual (já atualizado do localStorage)
     let model = modelToUse || this.model || 'gemini-flash-lite-latest';
     
     // Verificar se o modelo é válido
     if (!this.AVAILABLE_MODELS.includes(model)) {
       console.error(`❌ [GeminiService] Modelo inválido: ${model}. Usando padrão.`);
       model = 'gemini-flash-lite-latest';
+      this.setModel(model); // Usar setModel para salvar no localStorage
     }
     
     const url = `${this.baseUrl}/models/${model}:generateContent?key=${this.apiKey}`;
-    console.log(`🔍 [GeminiService] Enviando requisição para modelo: ${model}`);
+    console.log(`🔍 [GeminiService] Enviando requisição para modelo: ${model} (configurações: ${JSON.stringify(requestBody.generationConfig || {})})`);
 
     const response = await fetch(url, {
       method: 'POST',
@@ -316,7 +423,16 @@ class GeminiService {
     }
 
     const text = data.candidates[0].content.parts[0]?.text || 'Sem resposta do modelo';
-    return text;
+    
+    // Extrair métricas de tokens se disponíveis
+    const result: MessageResult = {
+      text,
+      inputTokens: data.usageMetadata?.promptTokenCount,
+      outputTokens: data.usageMetadata?.candidatesTokenCount,
+      totalTokens: data.usageMetadata?.totalTokenCount,
+    };
+    
+    return result;
   }
 
   /**
@@ -398,40 +514,58 @@ class GeminiService {
     return !!currentKey;
   }
 
-  /**
-   * Carrega o modelo salvo do localStorage
-   */
-  private loadModelFromStorage(): void {
-    try {
-      const savedModel = localStorage.getItem(this.MODEL_STORAGE_KEY);
-      if (savedModel && this.AVAILABLE_MODELS.includes(savedModel)) {
-        this.model = savedModel;
-        console.log(`✅ Modelo do Gemini carregado: ${this.model}`);
-      }
-    } catch (error) {
-      console.warn('⚠️ Erro ao carregar modelo do localStorage:', error);
-    }
-  }
 
   /**
    * Define o modelo a ser usado
    * @param model - Nome do modelo (deve ser um dos modelos disponíveis)
    */
   setModel(model: string): void {
+    console.log(`🔧 [GeminiService] ========== setModel CHAMADO ==========`);
+    console.log(`🔧 [GeminiService] Modelo recebido: "${model}"`);
+    console.log(`🔧 [GeminiService] Modelos disponíveis: ${this.AVAILABLE_MODELS.join(', ')}`);
+    
     if (!this.AVAILABLE_MODELS.includes(model)) {
-      console.warn(`⚠️ Modelo inválido: ${model}. Modelos disponíveis: ${this.AVAILABLE_MODELS.join(', ')}`);
+      console.warn(`⚠️ [GeminiService] Modelo inválido: ${model}. Modelos disponíveis: ${this.AVAILABLE_MODELS.join(', ')}`);
       return;
     }
 
+    console.log(`🔧 [GeminiService] Modelo válido! Atualizando this.model...`);
     this.model = model;
+    console.log(`🔧 [GeminiService] this.model atualizado para: ${this.model}`);
     
-    // Salvar no localStorage
+    // Salvar no localStorage IMEDIATAMENTE
     try {
+      console.log(`💾 [GeminiService] Tentando salvar no localStorage com chave: "${this.MODEL_STORAGE_KEY}"`);
+      console.log(`💾 [GeminiService] Valor a salvar: "${model}"`);
+      
       localStorage.setItem(this.MODEL_STORAGE_KEY, model);
-      console.log(`✅ [GeminiService] Modelo atualizado para: ${this.model}`);
+      console.log(`✅ [GeminiService] localStorage.setItem() executado`);
+      
+      // Verificar imediatamente se foi salvo
+      const saved = localStorage.getItem(this.MODEL_STORAGE_KEY);
+      console.log(`🔍 [GeminiService] Valor lido do localStorage: "${saved}"`);
+      console.log(`🔍 [GeminiService] Comparação: "${saved}" === "${model}" = ${saved === model}`);
+      
+      if (saved !== model) {
+        console.error(`❌ [GeminiService] ERRO: Modelo não foi salvo corretamente! Esperado: "${model}", Salvo: "${saved}"`);
+        console.error(`❌ [GeminiService] Tentando salvar novamente...`);
+        localStorage.setItem(this.MODEL_STORAGE_KEY, model);
+        const retrySaved = localStorage.getItem(this.MODEL_STORAGE_KEY);
+        console.log(`🔄 [GeminiService] Após retry, valor no localStorage: "${retrySaved}"`);
+      } else {
+        console.log(`✅ [GeminiService] Modelo confirmado no localStorage: "${saved}"`);
+      }
+      
+      console.log(`✅ [GeminiService] Modelo salvo no localStorage: ${this.model}`);
     } catch (error) {
-      console.warn('⚠️ Erro ao salvar modelo no localStorage:', error);
+      console.error('❌ [GeminiService] Erro ao salvar modelo no localStorage:', error);
+      if (error instanceof Error) {
+        console.error('❌ [GeminiService] Mensagem de erro:', error.message);
+        console.error('❌ [GeminiService] Stack:', error.stack);
+      }
     }
+    
+    console.log(`✅ [GeminiService] ========== setModel CONCLUÍDO ==========`);
   }
 
   /**
@@ -439,7 +573,36 @@ class GeminiService {
    * @returns Nome do modelo atual
    */
   getModel(): string {
+    // Sempre verificar localStorage antes de retornar
+    this.loadModelFromStorage();
     return this.model;
+  }
+
+  /**
+   * Carrega o modelo do localStorage (método público para uso externo)
+   */
+  public loadModelFromStorage(): void {
+    try {
+      const savedModel = localStorage.getItem(this.MODEL_STORAGE_KEY);
+      if (savedModel && this.AVAILABLE_MODELS.includes(savedModel)) {
+        // Sempre atualizar o modelo se houver um salvo válido
+        this.model = savedModel;
+      } else if (!savedModel) {
+        // Se não houver modelo salvo, usar padrão e salvar
+        this.model = 'gemini-flash-lite-latest';
+        localStorage.setItem(this.MODEL_STORAGE_KEY, this.model);
+      } else {
+        // Modelo salvo é inválido, usar padrão
+        console.warn(`⚠️ [GeminiService] Modelo salvo inválido: ${savedModel}. Usando padrão.`);
+        this.model = 'gemini-flash-lite-latest';
+        localStorage.setItem(this.MODEL_STORAGE_KEY, this.model);
+      }
+    } catch (error) {
+      console.warn('⚠️ Erro ao carregar modelo do localStorage:', error);
+      if (!this.model) {
+        this.model = 'gemini-flash-lite-latest';
+      }
+    }
   }
 
   /**
@@ -448,6 +611,66 @@ class GeminiService {
    */
   getAvailableModels(): string[] {
     return [...this.AVAILABLE_MODELS];
+  }
+
+  /**
+   * Define configurações de geração
+   */
+  setGenerationConfig(config: GeminiGenerationConfig): void {
+    this.generationConfig = { ...this.generationConfig, ...config };
+    this.saveGenerationConfig();
+  }
+
+  /**
+   * Obtém configurações de geração
+   */
+  getGenerationConfig(): GeminiGenerationConfig {
+    return { ...this.generationConfig };
+  }
+
+  /**
+   * Carrega configurações de geração do localStorage
+   */
+  private loadGenerationConfig(): void {
+    try {
+      const stored = localStorage.getItem(this.CONFIG_STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        // Remover thinkingBudget e enableThinking se existirem (não são mais usados)
+        const { thinkingBudget, enableThinking, ...cleanConfig } = parsed;
+        // Garantir valores padrão se não existirem
+        this.generationConfig = {
+          imageSize: cleanConfig.imageSize ?? '1K',
+          maxOutputTokens: cleanConfig.maxOutputTokens ?? 65536, // Padrão 65536 para todos os modelos
+          ...cleanConfig,
+        };
+        console.log('✅ Configurações de geração carregadas:', this.generationConfig);
+      } else {
+        // Valores padrão
+        this.generationConfig = {
+          imageSize: '1K',
+          maxOutputTokens: 65536, // Padrão para todos os modelos
+        };
+      }
+    } catch (error) {
+      console.warn('⚠️ Erro ao carregar configurações de geração:', error);
+      // Valores padrão em caso de erro
+      this.generationConfig = {
+        imageSize: '1K',
+        maxOutputTokens: 65536, // Padrão para todos os modelos
+      };
+    }
+  }
+
+  /**
+   * Salva configurações de geração no localStorage
+   */
+  private saveGenerationConfig(): void {
+    try {
+      localStorage.setItem(this.CONFIG_STORAGE_KEY, JSON.stringify(this.generationConfig));
+    } catch (error) {
+      console.warn('⚠️ Erro ao salvar configurações de geração:', error);
+    }
   }
 
   /**
@@ -460,7 +683,7 @@ class GeminiService {
     contextTemplate: string;
   } | null> {
     try {
-      const response = await fetch('/system-instructions/gemini-system-instruction-discipline-creator.md');
+      const response = await fetch('/system-instructions/discipline-creator-agent/gemini-system-instruction-discipline-creator.md');
       if (!response.ok) {
         console.warn('⚠️ Não foi possível carregar system instruction, usando padrão');
         return null;
@@ -627,6 +850,8 @@ Gere entre 5 e 12 tópicos no syllabus. Os tópicos devem ser progressivos e ló
       .replace(/\{\{CORES_DISPONIVEIS\}\}/g, availableColors.join(', '));
 
     try {
+      // Garantir que o modelo está atualizado do localStorage
+      this.loadModelFromStorage();
       const currentModel = this.model || 'gemini-flash-lite-latest';
       console.log(`🔄 [GeminiService] Gerando estrutura com modelo: ${currentModel}`);
 
@@ -689,7 +914,7 @@ Gere entre 5 e 12 tópicos no syllabus. Os tópicos devem ser progressivos e ló
           .filter((m: any) => m.subModules.length > 0); // Apenas módulos com submódulos
 
         // Se não houver módulos válidos, não incluir
-        if (modules.length === 0) {
+        if (!modules || modules.length === 0) {
           modules = undefined;
         }
       }
@@ -712,7 +937,7 @@ Gere entre 5 e 12 tópicos no syllabus. Os tópicos devem ser progressivos e ló
       // Garantir que há pelo menos alguns tópicos no syllabus (compatibilidade)
       if (result.syllabus.length === 0) {
         // Se houver módulos, gerar syllabus a partir deles
-        if (result.modules && result.modules.length > 0) {
+        if (result.modules && Array.isArray(result.modules) && result.modules.length > 0) {
           result.syllabus = result.modules.map(m => m.title);
         } else {
           result.syllabus = [
@@ -825,6 +1050,8 @@ Gere entre 5 e 12 tópicos no syllabus. Os tópicos devem ser progressivos e ló
     prompt = `**IMPORTANTE: Retorne APENAS texto em MARKDOWN, NUNCA JSON. Não use blocos de código JSON.**\n\n${prompt}`;
 
     try {
+      // Garantir que o modelo está atualizado do localStorage
+      this.loadModelFromStorage();
       const currentModel = this.model || 'gemini-flash-lite-latest';
       console.log(`📝 [GeminiService] Gerando contexto completo para: ${input.nome} com modelo: ${currentModel}`);
       
@@ -884,7 +1111,7 @@ Gere entre 5 e 12 tópicos no syllabus. Os tópicos devem ser progressivos e ló
     let promptTemplate: string;
     
     try {
-      const response = await fetch('/system-instructions/gemini-prompt-content-generation.md');
+      const response = await fetch('/system-instructions/content-generation-agent/gemini-prompt-content-generation.md');
       if (response.ok) {
         const content = await response.text();
         // Separar system instruction do prompt template
@@ -989,6 +1216,8 @@ Gere um conteúdo completo que cubra TODOS os módulos e submódulos, com explic
     prompt = `**IMPORTANTE: Retorne APENAS conteúdo em MARKDOWN, NUNCA JSON. O conteúdo será usado diretamente pelos alunos.**\n\n${prompt}`;
 
     try {
+      // Garantir que o modelo está atualizado do localStorage
+      this.loadModelFromStorage();
       const currentModel = this.model || 'gemini-flash-lite-latest';
       console.log(`📚 [GeminiService] Gerando conteúdo educacional completo para: ${discipline.title} com modelo: ${currentModel}`);
       
@@ -1033,7 +1262,7 @@ Gere um conteúdo completo que cubra TODOS os módulos e submódulos, com explic
     let systemInstruction: string;
     
     try {
-      const response = await fetch('/system-instructions/gemini-prompt-content-generation.md');
+      const response = await fetch('/system-instructions/content-generation-agent/gemini-prompt-content-generation.md');
       if (response.ok) {
         const content = await response.text();
         const separatorIndex = content.indexOf('---');
@@ -1050,6 +1279,8 @@ Gere um conteúdo completo que cubra TODOS os módulos e submódulos, com explic
       systemInstruction = `Você é um assistente especializado em criar conteúdo educacional completo, didático e estruturado para SUBMÓDULOS ESPECÍFICOS de disciplinas acadêmicas. 
 
 CRÍTICO: Quando solicitado a gerar conteúdo, você deve gerar APENAS para o submódulo específico mencionado na solicitação. NÃO gere conteúdo para outros submódulos, para o módulo inteiro, ou para a disciplina completa. 
+
+COMPLETUDE OBRIGATÓRIA: Você DEVE gerar o conteúdo COMPLETO até o final do submódulo. NÃO trunque o conteúdo, NÃO pare no meio de explicações, e complete TODAS as seções planejadas (Introdução, Conceitos Fundamentais, Exemplos Práticos, Exercícios, Resumo). Seja EXTENSIVO (pelo menos 3000-6000 palavras ou mais) e desenvolva cada conceito em profundidade.
 
 Você deve retornar APENAS texto em formato MARKDOWN estruturado, NUNCA JSON. O conteúdo será usado diretamente pelos alunos quando visualizarem aquele submódulo específico na disciplina.`;
     }
@@ -1095,21 +1326,36 @@ O conteúdo para este submódulo específico deve incluir:
 5. **Resumo**: Síntese dos pontos principais deste submódulo
 
 **Diretrizes:**
-- Seja EXTENSIVO (pelo menos 1000-2000 palavras) APENAS para este submódulo
+- Seja MUITO EXTENSIVO e COMPLETO (pelo menos 3000-6000 palavras, ou mais se necessário) APENAS para este submódulo
+- Desenvolva TODAS as seções completamente até o final - NÃO trunque o conteúdo
 - Use formatação Markdown rica (títulos hierárquicos, blocos de código, tabelas, listas)
 - Mantenha equilíbrio entre clareza pedagógica e formalidade acadêmica
-- Inclua exemplos de código funcionais quando aplicável
+- Inclua exemplos de código funcionais quando aplicável (múltiplos exemplos)
 - Use diagramas Mermaid quando apropriado
 - O conteúdo deve ser autocontido e completo APENAS para este submódulo específico
 - NÃO mencione ou desenvolva conteúdo de outros submódulos
+- Desenvolva cada conceito em profundidade, não apenas superficialmente
+- Inclua múltiplos exemplos práticos para cada conceito importante
+- Garanta que o conteúdo vá até o final do submódulo - complete todas as seções planejadas
+
+**CRÍTICO - COMPLETUDE:**
+- Você DEVE gerar o conteúdo COMPLETO até o final do submódulo
+- NÃO pare no meio de uma explicação
+- NÃO trunque conceitos ou exemplos
+- Complete TODAS as seções mencionadas (Introdução, Conceitos Fundamentais, Exemplos Práticos, Exercícios, Resumo)
+- Se o conteúdo for extenso, continue gerando até completar TODAS as seções
+- O objetivo é ter um conteúdo completo e autocontido que cubra completamente o submódulo
 
 **IMPORTANTE FINAL**: 
 - Retorne APENAS o conteúdo em MARKDOWN para o submódulo "${data.subModuleTitle}"
 - NÃO inclua conteúdo de outros submódulos
 - NÃO inclua explicações adicionais, JSON ou metadados
+- Gere o conteúdo COMPLETO até o final - não trunque
 - O conteúdo será exibido diretamente quando o aluno visualizar este submódulo específico na disciplina`;
 
     try {
+      // Garantir que o modelo está atualizado do localStorage
+      this.loadModelFromStorage();
       const currentModel = this.model || 'gemini-flash-lite-latest';
       console.log(`📚 [GeminiService] Gerando conteúdo para submódulo: ${data.subModuleTitle} com modelo: ${currentModel}`);
       
@@ -1126,6 +1372,664 @@ O conteúdo para este submódulo específico deve incluir:
     } catch (error) {
       console.error('❌ [GeminiService] Erro ao gerar conteúdo do submódulo:', error);
       throw new Error(`Erro ao gerar conteúdo do submódulo: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+    }
+  }
+
+  /**
+   * Gera estrutura educacional baseada em PDF (para agente PDF to Docs)
+   * @param pdfName - Nome do arquivo PDF
+   * @param userPrompt - Prompt opcional do usuário
+   * @param pdfFiles - Arquivos PDF em base64
+   * @returns Estrutura gerada com módulos e submódulos
+   */
+  async generatePDFStructure(
+    pdfName: string,
+    userPrompt: string | undefined,
+    pdfFiles: Array<{ mimeType: string; data: string }>,
+    onDebug?: (systemInstruction: string, prompt: string, response: string) => void
+  ): Promise<{
+    title: string;
+    code: string;
+    description: string;
+    modules: Array<{
+      id: string;
+      title: string;
+      description?: string;
+      order: number;
+      subModules: Array<{
+        id: string;
+        title: string;
+        description?: string;
+        order: number;
+      }>;
+    }>;
+    color: string;
+    position: { x: number; y: number };
+  }> {
+    // Carregar system instruction completa (sem parsing)
+    let systemInstruction: string;
+    
+    try {
+      const response = await fetch('/system-instructions/pdf-to-docs-agent/gemini-prompt-pdf-to-docs-structure.md');
+      if (response.ok) {
+        systemInstruction = await response.text();
+      } else {
+        throw new Error('Arquivo não encontrado');
+      }
+    } catch (error) {
+      console.warn('⚠️ Não foi possível carregar system instruction PDF to Docs Structure, usando padrão');
+      systemInstruction = `Você é um assistente especializado em transformar documentos PDF em conteúdo educacional estruturado. Analise o PDF e gere uma estrutura proporcional ao seu tamanho. Retorne APENAS JSON válido.`;
+    }
+
+    // Construir prompt simples
+    const prompt = `Analise o PDF fornecido e gere uma estrutura educacional completa que cubra TODO o conteúdo do documento.
+
+Nome do arquivo: ${pdfName}
+${userPrompt ? `Prompt do usuário: ${userPrompt}` : 'Prompt do usuário: Nenhum'}
+
+Retorne APENAS um JSON válido (sem markdown, sem código, sem explicações) com a estrutura de módulos e submódulos.`;
+
+    // Paleta de cores disponíveis
+    const availableColors = ['#41FF41', '#4141FF', '#FF41FF', '#41FFFF', '#F2FF41', '#FF4141'];
+
+    try {
+      // Garantir que o modelo está atualizado do localStorage
+      this.loadModelFromStorage();
+      const currentModel = this.model || 'gemini-flash-lite-latest';
+      console.log(`🔄 [GeminiService] Gerando estrutura PDF to Docs com modelo: ${currentModel}`);
+
+      const response = await this.sendMessage(
+        prompt,
+        undefined, // images
+        [], // conversationHistory
+        systemInstruction,
+        pdfFiles
+      );
+
+      // Callback de debug se fornecido
+      if (onDebug) {
+        onDebug(systemInstruction, prompt, response);
+      }
+
+      // Extrair JSON
+      let jsonStr = response.trim();
+      jsonStr = jsonStr.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+      const jsonMatch = jsonStr.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        jsonStr = jsonMatch[0];
+      }
+
+      const parsed = JSON.parse(jsonStr);
+
+      // Processar módulos e submódulos
+      const modules = Array.isArray(parsed.modules) && parsed.modules.length > 0
+        ? parsed.modules
+            .filter((m: any) => m && typeof m === 'object' && typeof m.title === 'string' && m.title.trim())
+            .map((m: any, index: number) => ({
+              id: typeof m.id === 'string' && m.id.trim() ? m.id : `module-${index + 1}`,
+              title: m.title.trim(),
+              description: typeof m.description === 'string' ? m.description.trim() : undefined,
+              order: typeof m.order === 'number' ? m.order : index,
+              subModules: Array.isArray(m.subModules) && m.subModules.length > 0
+                ? m.subModules
+                    .filter((sm: any) => sm && typeof sm === 'object' && typeof sm.title === 'string' && sm.title.trim())
+                    .map((sm: any, smIndex: number) => ({
+                      id: typeof sm.id === 'string' && sm.id.trim() ? sm.id : `submodule-${index + 1}-${smIndex + 1}`,
+                      title: sm.title.trim(),
+                      description: typeof sm.description === 'string' ? sm.description.trim() : undefined,
+                      order: typeof sm.order === 'number' ? sm.order : smIndex,
+                    }))
+                : [],
+            }))
+            .filter((m: any) => m.subModules.length > 0) // Apenas módulos com submódulos
+        : [];
+
+      return {
+        title: typeof parsed.title === 'string' ? parsed.title.trim() : pdfName.replace('.pdf', ''),
+        code: typeof parsed.code === 'string' ? parsed.code.toUpperCase().trim() : pdfName.substring(0, 3).toUpperCase(),
+        description: typeof parsed.description === 'string' ? parsed.description.trim() : `Conteúdo gerado a partir do PDF: ${pdfName}`,
+        modules,
+        color: typeof parsed.color === 'string' && availableColors.includes(parsed.color.toUpperCase())
+          ? parsed.color.toUpperCase()
+          : availableColors[0],
+        position: {
+          x: typeof parsed.position?.x === 'number' ? Math.max(0, Math.min(100, parsed.position.x)) : 50,
+          y: typeof parsed.position?.y === 'number' ? Math.max(0, Math.min(100, parsed.position.y)) : 50,
+        },
+      };
+    } catch (error) {
+      console.error('Erro ao gerar estrutura PDF:', error);
+      throw new Error(`Erro ao gerar estrutura: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+    }
+  }
+
+  /**
+   * Gera conteúdo para submódulo baseado em PDF (para agente PDF to Docs)
+   * @param data - Dados do submódulo
+   * @param pdfFiles - Arquivos PDF em base64
+   * @returns Conteúdo educacional em markdown
+   */
+  async generatePDFSubModuleContent(
+    data: {
+      moduleTitle: string;
+      moduleDescription?: string;
+      subModuleTitle: string;
+      subModuleDescription?: string;
+      userPrompt?: string;
+      previousSubModulesContext?: Array<{ title: string; content: string }>;
+    },
+    pdfFiles: Array<{ mimeType: string; data: string }>,
+    onDebug?: (systemInstruction: string, prompt: string, response: string) => void
+  ): Promise<string> {
+    // Carregar system instruction completa (sem parsing)
+    let systemInstruction: string;
+    
+    try {
+      const response = await fetch('/system-instructions/pdf-to-docs-agent/gemini-prompt-pdf-to-docs-content.md');
+      if (response.ok) {
+        systemInstruction = await response.text();
+      } else {
+        throw new Error('Arquivo não encontrado');
+      }
+    } catch (error) {
+      console.warn('⚠️ Não foi possível carregar system instruction PDF to Docs Content, usando padrão');
+      systemInstruction = `Você é um assistente especializado em transformar documentos PDF em conteúdo educacional. Gere conteúdo APENAS para o submódulo específico baseado no PDF. 
+
+COMPLETUDE OBRIGATÓRIA: Você DEVE gerar o conteúdo COMPLETO até o final do submódulo. NÃO trunque o conteúdo, NÃO pare no meio de explicações, e complete TODAS as seções necessárias. Seja EXTENSIVO (pelo menos 3000-6000 palavras ou mais) e desenvolva cada conceito em profundidade.
+
+Retorne APENAS MARKDOWN, NUNCA JSON.`;
+    }
+
+    // Construir contexto dos submódulos anteriores (sem truncamento para máxima precisão)
+    let previousContextSection = '';
+    if (data.previousSubModulesContext && data.previousSubModulesContext.length > 0) {
+      const contextParts = data.previousSubModulesContext.map((subModule, index) => {
+        // Sem truncamento - manter todo o conteúdo para máxima precisão
+        return `## Submódulo ${index + 1}: ${subModule.title}\n\n${subModule.content}`;
+      }).join('\n\n---\n\n');
+      
+      previousContextSection = `\n\n**CONTEXTO DOS SUBMÓDULOS ANTERIORES:**\n\n${contextParts}\n\n**INSTRUÇÕES CRÍTICAS SOBRE O CONTEXTO:**\n- Analise completamente todo o conteúdo acima dos submódulos anteriores\n- Padronize sua linguagem (tom, estilo, terminologia) com o conteúdo já gerado\n- EVITE estritamente repetir informações, conceitos ou explicações já apresentadas\n- Mantenha coesão e fluidez narrativa com o conteúdo anterior\n- Referencie conceitos já explicados quando apropriado, mas sem reexplicá-los completamente\n`;
+    }
+
+    // Construir prompt com contexto progressivo
+    const prompt = `Gere conteúdo educacional completo em MARKDOWN para o seguinte submódulo baseado no PDF fornecido.
+
+**Módulo:** ${data.moduleTitle}
+${data.moduleDescription ? `**Descrição do módulo:** ${data.moduleDescription}` : ''}
+
+**Submódulo:** ${data.subModuleTitle}
+${data.subModuleDescription ? `**Descrição do submódulo:** ${data.subModuleDescription}` : ''}
+
+${data.userPrompt ? `**Prompt do usuário (opcional):** ${data.userPrompt}` : '**Prompt do usuário (opcional):** Nenhum'}
+${previousContextSection}
+**TAREFA:**
+Analise o conteúdo do PDF relacionado a este submódulo específico e gere conteúdo completo, didático e estruturado em MARKDOWN.
+
+**IMPORTANTE:**
+- Gere conteúdo APENAS para este submódulo específico: "${data.subModuleTitle}"
+- Baseie-se no conteúdo real do PDF fornecido
+- Seja MUITO completo e autocontido para este submódulo (pelo menos 3000-6000 palavras ou mais)
+- Use formatação Markdown rica (títulos, listas, código com linguagem especificada, tabelas)
+- NÃO gere conteúdo para outros submódulos ou módulos
+- **CRÍTICO**: NÃO inclua o título do submódulo no início do conteúdo gerado (o título já será exibido separadamente pela interface)
+- **CRÍTICO**: NÃO repita a descrição do submódulo no início do conteúdo
+- Comece diretamente com o conteúdo educacional, sem repetir o título ou descrição
+- **CRÍTICO - COMPLETUDE**: Gere o conteúdo COMPLETO até o final - NÃO trunque, complete TODAS as seções necessárias
+${data.previousSubModulesContext && data.previousSubModulesContext.length > 0 
+  ? '- **CRÍTICO**: Padronize sua linguagem com os submódulos anteriores e EVITE repetir informações já apresentadas'
+  : ''}`;
+
+    try {
+      // Garantir que o modelo está atualizado do localStorage
+      this.loadModelFromStorage();
+      const currentModel = this.model || 'gemini-flash-lite-latest';
+      console.log(`📚 [GeminiService] Gerando conteúdo PDF para submódulo: ${data.subModuleTitle} com modelo: ${currentModel}`);
+      
+      const result = await this.sendMessageWithMetrics(
+        prompt,
+        undefined, // images
+        [], // conversationHistory
+        systemInstruction,
+        pdfFiles // SEMPRE enviar PDF completo
+      );
+      
+      // Callback de debug se fornecido
+      if (onDebug) {
+        onDebug(systemInstruction, prompt, result.text);
+      }
+      
+      console.log(`✅ [GeminiService] Conteúdo do submódulo PDF gerado com sucesso (${result.text.length} caracteres)`);
+      return result.text;
+    } catch (error) {
+      console.error('❌ [GeminiService] Erro ao gerar conteúdo do submódulo PDF:', error);
+      throw new Error(`Erro ao gerar conteúdo: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+    }
+  }
+
+  /**
+   * Gera conteúdo para submódulo baseado em PDF com métricas (para agente PDF to Docs)
+   * @param data - Dados do submódulo
+   * @param pdfFiles - Arquivos PDF em base64
+   * @param onDebug - Callback opcional para debug
+   * @returns Conteúdo educacional em markdown e métricas
+   */
+  async generatePDFSubModuleContentWithMetrics(
+    data: {
+      moduleTitle: string;
+      moduleDescription?: string;
+      subModuleTitle: string;
+      subModuleDescription?: string;
+      userPrompt?: string;
+      previousSubModulesContext?: Array<{ title: string; content: string }>;
+    },
+    pdfFiles: Array<{ mimeType: string; data: string }>,
+    onDebug?: (systemInstruction: string, prompt: string, response: string) => void
+  ): Promise<{ content: string; inputTokens?: number; outputTokens?: number; totalTokens?: number }> {
+    // Reutilizar a mesma lógica do método principal
+    const systemInstruction = await this.loadPDFContentSystemInstruction();
+    const prompt = this.buildPDFSubModulePrompt(data);
+    
+    try {
+      this.loadModelFromStorage();
+      const currentModel = this.model || 'gemini-flash-lite-latest';
+      console.log(`📚 [GeminiService] Gerando conteúdo PDF com métricas para submódulo: ${data.subModuleTitle} com modelo: ${currentModel}`);
+      
+      const startTime = Date.now();
+      const result = await this.sendMessageWithMetrics(
+        prompt,
+        undefined,
+        [],
+        systemInstruction,
+        pdfFiles
+      );
+      const duration = Date.now() - startTime;
+      
+      // Callback de debug se fornecido
+      if (onDebug) {
+        onDebug(systemInstruction, prompt, result.text);
+      }
+      
+      console.log(`✅ [GeminiService] Conteúdo do submódulo PDF gerado com sucesso (${result.text.length} caracteres, ${duration}ms)`);
+      
+      return {
+        content: result.text,
+        inputTokens: result.inputTokens,
+        outputTokens: result.outputTokens,
+        totalTokens: result.totalTokens,
+      };
+    } catch (error) {
+      console.error('❌ [GeminiService] Erro ao gerar conteúdo do submódulo PDF:', error);
+      throw new Error(`Erro ao gerar conteúdo: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+    }
+  }
+
+  private async loadPDFContentSystemInstruction(): Promise<string> {
+    try {
+      const response = await fetch('/system-instructions/pdf-to-docs-agent/gemini-prompt-pdf-to-docs-content.md');
+      if (response.ok) {
+        return await response.text();
+      } else {
+        throw new Error('Arquivo não encontrado');
+      }
+    } catch (error) {
+      console.warn('⚠️ Não foi possível carregar system instruction PDF to Docs Content, usando padrão');
+      return `Você é um assistente especializado em transformar documentos PDF em conteúdo educacional. Gere conteúdo APENAS para o submódulo específico baseado no PDF. 
+
+COMPLETUDE OBRIGATÓRIA: Você DEVE gerar o conteúdo COMPLETO até o final do submódulo. NÃO trunque o conteúdo, NÃO pare no meio de explicações, e complete TODAS as seções necessárias. Seja EXTENSIVO (pelo menos 3000-6000 palavras ou mais) e desenvolva cada conceito em profundidade.
+
+Retorne APENAS MARKDOWN, NUNCA JSON.`;
+    }
+  }
+
+  private buildPDFSubModulePrompt(data: {
+    moduleTitle: string;
+    moduleDescription?: string;
+    subModuleTitle: string;
+    subModuleDescription?: string;
+    userPrompt?: string;
+    previousSubModulesContext?: Array<{ title: string; content: string }>;
+  }): string {
+    // Construir contexto dos submódulos anteriores (sem truncamento para máxima precisão)
+    let previousContextSection = '';
+    if (data.previousSubModulesContext && data.previousSubModulesContext.length > 0) {
+      const contextParts = data.previousSubModulesContext.map((subModule, index) => {
+        return `## Submódulo ${index + 1}: ${subModule.title}\n\n${subModule.content}`;
+      }).join('\n\n---\n\n');
+      
+      previousContextSection = `\n\n**CONTEXTO DOS SUBMÓDULOS ANTERIORES:**\n\n${contextParts}\n\n**INSTRUÇÕES CRÍTICAS SOBRE O CONTEXTO:**\n- Analise completamente todo o conteúdo acima dos submódulos anteriores\n- Padronize sua linguagem (tom, estilo, terminologia) com o conteúdo já gerado\n- EVITE estritamente repetir informações, conceitos ou explicações já apresentadas\n- Mantenha coesão e fluidez narrativa com o conteúdo anterior\n- Referencie conceitos já explicados quando apropriado, mas sem reexplicá-los completamente\n`;
+    }
+
+    return `Gere conteúdo educacional completo em MARKDOWN para o seguinte submódulo baseado no PDF fornecido.
+
+**Módulo:** ${data.moduleTitle}
+${data.moduleDescription ? `**Descrição do módulo:** ${data.moduleDescription}` : ''}
+
+**Submódulo:** ${data.subModuleTitle}
+${data.subModuleDescription ? `**Descrição do submódulo:** ${data.subModuleDescription}` : ''}
+
+${data.userPrompt ? `**Prompt do usuário (opcional):** ${data.userPrompt}` : '**Prompt do usuário (opcional):** Nenhum'}
+${previousContextSection}
+**TAREFA:**
+Analise o conteúdo do PDF relacionado a este submódulo específico e gere conteúdo completo, didático e estruturado em MARKDOWN.
+
+**IMPORTANTE:**
+- Gere conteúdo APENAS para este submódulo específico: "${data.subModuleTitle}"
+- Baseie-se no conteúdo real do PDF fornecido
+- Seja MUITO completo e autocontido para este submódulo (pelo menos 3000-6000 palavras ou mais)
+- Use formatação Markdown rica (títulos, listas, código com linguagem especificada, tabelas)
+- NÃO gere conteúdo para outros submódulos ou módulos
+- **CRÍTICO**: NÃO inclua o título do submódulo no início do conteúdo gerado (o título já será exibido separadamente pela interface)
+- **CRÍTICO**: NÃO repita a descrição do submódulo no início do conteúdo
+- Comece diretamente com o conteúdo educacional, sem repetir o título ou descrição
+- **CRÍTICO - COMPLETUDE**: Gere o conteúdo COMPLETO até o final - NÃO trunque, complete TODAS as seções necessárias
+${data.previousSubModulesContext && data.previousSubModulesContext.length > 0 
+  ? '- **CRÍTICO**: Padronize sua linguagem com os submódulos anteriores e EVITE repetir informações já apresentadas'
+  : ''}`;
+  }
+
+  /**
+   * Analisa conteúdo de submódulo e adiciona placeholders descritivos (etapa 1 do processo de revisão)
+   * @param data - Dados do submódulo e disciplina
+   * @param onDebug - Callback opcional para debug
+   * @returns Conteúdo analisado com placeholders em markdown e métricas
+   */
+  async analyzeSubModuleContent(
+    data: {
+      disciplineTitle: string;
+      disciplineType: string;
+      moduleTitle: string;
+      moduleDescription?: string;
+      subModuleTitle: string;
+      subModuleDescription?: string;
+      currentContent: string;
+      userPrompt?: string;
+      previousSubModulesContext?: Array<{ title: string; content: string }>;
+    },
+    onDebug?: (systemInstruction: string, prompt: string, response: string) => void
+  ): Promise<{ content: string; inputTokens?: number; outputTokens?: number; totalTokens?: number }> {
+    // Carregar system instruction de análise
+    let systemInstruction: string;
+    
+    try {
+      const response = await fetch('/system-instructions/content-review-agent/gemini-prompt-content-analysis.md');
+      if (response.ok) {
+        systemInstruction = await response.text();
+      } else {
+        throw new Error('Arquivo não encontrado');
+      }
+    } catch (error) {
+      console.warn('⚠️ Não foi possível carregar system instruction Content Analysis, usando padrão');
+      systemInstruction = `Você é um assistente especializado em analisar conteúdo educacional e identificar oportunidades para elementos interativos, inserindo placeholders descritivos. Mantenha a estrutura original e NÃO implemente os elementos, apenas marque onde devem ficar. Retorne APENAS MARKDOWN, NUNCA JSON.`;
+    }
+
+    // Construir contexto dos submódulos anteriores analisados
+    let previousContextSection = '';
+    if (data.previousSubModulesContext && data.previousSubModulesContext.length > 0) {
+      const contextParts = data.previousSubModulesContext.map((subModule, index) => {
+        return `## Submódulo ${index + 1}: ${subModule.title}\n\n${subModule.content}`;
+      }).join('\n\n---\n\n');
+      
+      previousContextSection = `\n\n**CONTEXTO DOS SUBMÓDULOS ANTERIORES JÁ ANALISADOS:**\n\n${contextParts}\n\n**INSTRUÇÕES SOBRE O CONTEXTO:**\n- Analise o padrão de placeholders já usados nos submódulos anteriores\n- Mantenha consistência nos tipos de elementos interativos sugeridos\n- Evite repetir o mesmo tipo de placeholder muito próximo\n`;
+    }
+
+    // Obter bibliotecas recomendadas com informações atualizadas
+    const { getRecommendedLibrariesWithInfo, getDisciplineTypeLabel } = await import('@/utils/disciplineTypeDetector');
+    const recommendedLibrariesInfo = await getRecommendedLibrariesWithInfo(data.disciplineType as any, true);
+    const typeLabel = getDisciplineTypeLabel(data.disciplineType as any);
+
+    // Filtrar apenas bibliotecas que existem e estão disponíveis
+    const availableLibraries = recommendedLibrariesInfo.filter(lib => lib.exists);
+    const unavailableLibraries = recommendedLibrariesInfo.filter(lib => !lib.exists);
+
+    // Construir lista de bibliotecas com versões
+    const librariesList = availableLibraries.map(lib => {
+      const versionInfo = lib.version ? ` (v${lib.version})` : '';
+      const reasonInfo = lib.reason ? ` - ${lib.reason}` : '';
+      return `- **${lib.name}**${versionInfo}${reasonInfo}`;
+    }).join('\n');
+
+    // Aviso sobre bibliotecas não disponíveis (se houver)
+    let unavailableWarning = '';
+    if (unavailableLibraries.length > 0) {
+      unavailableWarning = `\n\n⚠️ **Bibliotecas não disponíveis (use alternativas):** ${unavailableLibraries.map(lib => lib.name).join(', ')}`;
+    }
+
+    // Construir prompt de análise
+    const prompt = `Analise o conteúdo do seguinte submódulo e identifique oportunidades para elementos interativos, visuais e didáticos. Insira placeholders descritivos indicando exatamente o que deve ser implementado em cada local.
+
+**Disciplina:** ${data.disciplineTitle}
+**Tipo de Disciplina:** ${typeLabel} (${data.disciplineType})
+
+**Bibliotecas Recomendadas e Disponíveis (com versões atualizadas):**
+${librariesList}${unavailableWarning}
+
+**Módulo:** ${data.moduleTitle}
+${data.moduleDescription ? `**Descrição do módulo:** ${data.moduleDescription}` : ''}
+
+**Submódulo:** ${data.subModuleTitle}
+${data.subModuleDescription ? `**Descrição do submódulo:** ${data.subModuleDescription}` : ''}
+
+${data.userPrompt ? `**Prompt do usuário (opcional):** ${data.userPrompt}` : '**Prompt do usuário (opcional):** Nenhum'}
+${previousContextSection}
+**CONTEÚDO ORIGINAL DO SUBMÓDULO:**
+
+${data.currentContent}
+
+**TAREFA DE ANÁLISE:**
+
+1. **Mantenha a estrutura original** do conteúdo (títulos, seções, organização) - NÃO altere
+2. **Mantenha o texto original** - NÃO reescreva, apenas adicione placeholders
+3. **Identifique oportunidades** para elementos interativos:
+   - Conceitos que se beneficiam de visualização
+   - Processos que podem ser animados
+   - Exercícios que podem ser interativos
+   - Dados que podem ser visualizados em gráficos
+4. **Insira placeholders** no formato: \`<!-- PLACEHOLDER: [TIPO] - [descrição detalhada] -->\`
+   - Use os tipos: THREE_JS, PLOTLY, CHART_JS, MERMAID, CYTOSCAPE, MATTER, MONACO, QUIZ, FABRIC, GSAP, TIPPY
+   - Seja específico: inclua detalhes suficientes para implementação futura
+   - Posicione estrategicamente onde fazem mais sentido no contexto
+5. **NÃO implemente os elementos** - apenas marque onde devem ficar
+6. **Máximo 2-3 placeholders por seção principal** - não sobrecarregue
+
+**IMPORTANTE:**
+- Mantenha EXATAMENTE a estrutura e organização original (mesmos títulos \`##\`)
+- NÃO altere o texto original significativamente
+- Placeholders devem ser claros e detalhados
+- Retorne APENAS o conteúdo analisado em MARKDOWN com placeholders
+- NÃO inclua o título do submódulo (já será exibido separadamente)
+- NÃO repita a descrição do submódulo`;
+
+    try {
+      this.loadModelFromStorage();
+      const currentModel = this.model || 'gemini-flash-lite-latest';
+      console.log(`🔄 [GeminiService] Analisando conteúdo do submódulo: ${data.subModuleTitle} (tipo: ${typeLabel}) com modelo: ${currentModel}`);
+      
+      const startTime = Date.now();
+      const result = await this.sendMessageWithMetrics(
+        prompt,
+        undefined, // images
+        [], // conversationHistory
+        systemInstruction,
+        undefined // pdfs
+      );
+      const duration = Date.now() - startTime;
+      
+      // Callback de debug se fornecido
+      if (onDebug) {
+        onDebug(systemInstruction, prompt, result.text);
+      }
+      
+      console.log(`✅ [GeminiService] Conteúdo do submódulo analisado com sucesso (${result.text.length} caracteres, ${duration}ms)`);
+      
+      return {
+        content: result.text,
+        inputTokens: result.inputTokens,
+        outputTokens: result.outputTokens,
+        totalTokens: result.totalTokens,
+      };
+    } catch (error) {
+      console.error('❌ [GeminiService] Erro ao analisar conteúdo do submódulo:', error);
+      throw new Error(`Erro ao analisar conteúdo: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+    }
+  }
+
+  /**
+   * Revisa conteúdo de submódulo adicionando elementos interativos (para agente de revisão)
+   * @param data - Dados do submódulo e disciplina
+   * @param onDebug - Callback opcional para debug
+   * @returns Conteúdo revisado em markdown e métricas
+   */
+  async reviewSubModuleContent(
+    data: {
+      disciplineTitle: string;
+      disciplineType: string;
+      moduleTitle: string;
+      moduleDescription?: string;
+      subModuleTitle: string;
+      subModuleDescription?: string;
+      currentContent: string;
+      userPrompt?: string;
+      previousSubModulesContext?: Array<{ title: string; content: string }>;
+    },
+    onDebug?: (systemInstruction: string, prompt: string, response: string) => void
+  ): Promise<{ content: string; inputTokens?: number; outputTokens?: number; totalTokens?: number }> {
+    // Carregar system instruction de revisão
+    let systemInstruction: string;
+    
+    try {
+      const response = await fetch('/system-instructions/content-review-agent/gemini-prompt-content-review.md');
+      if (response.ok) {
+        systemInstruction = await response.text();
+      } else {
+        throw new Error('Arquivo não encontrado');
+      }
+    } catch (error) {
+      console.warn('⚠️ Não foi possível carregar system instruction Content Review, usando padrão');
+      systemInstruction = `Você é um assistente especializado em revisar conteúdo educacional e adicionar elementos interativos, visuais e didáticos. Mantenha a estrutura original, melhore o texto e adicione elementos interativos estrategicamente. Retorne APENAS MARKDOWN, NUNCA JSON.`;
+    }
+
+    // Construir contexto dos submódulos anteriores revisados
+    let previousContextSection = '';
+    if (data.previousSubModulesContext && data.previousSubModulesContext.length > 0) {
+      const contextParts = data.previousSubModulesContext.map((subModule, index) => {
+        return `## Submódulo ${index + 1}: ${subModule.title}\n\n${subModule.content}`;
+      }).join('\n\n---\n\n');
+      
+      previousContextSection = `\n\n**CONTEXTO DOS SUBMÓDULOS ANTERIORES JÁ REVISADOS:**\n\n${contextParts}\n\n**INSTRUÇÕES SOBRE O CONTEXTO:**\n- Analise o estilo e padrão de elementos interativos já usados nos submódulos anteriores\n- Mantenha consistência no uso de bibliotecas e tipos de elementos interativos\n- Evite repetir o mesmo tipo de elemento interativo muito próximo\n- Mantenha coesão narrativa e padronização de linguagem\n`;
+    }
+
+    // Obter bibliotecas recomendadas com informações atualizadas
+    const { getRecommendedLibrariesWithInfo, getDisciplineTypeLabel } = await import('@/utils/disciplineTypeDetector');
+    const recommendedLibrariesInfo = await getRecommendedLibrariesWithInfo(data.disciplineType as any, true);
+    const typeLabel = getDisciplineTypeLabel(data.disciplineType as any);
+
+    // Filtrar apenas bibliotecas que existem e estão disponíveis
+    const availableLibraries = recommendedLibrariesInfo.filter(lib => lib.exists);
+    const unavailableLibraries = recommendedLibrariesInfo.filter(lib => !lib.exists);
+
+    // Construir lista de bibliotecas com versões
+    const librariesList = availableLibraries.map(lib => {
+      const versionInfo = lib.version ? ` (v${lib.version})` : '';
+      const reasonInfo = lib.reason ? ` - ${lib.reason}` : '';
+      return `- **${lib.name}**${versionInfo}${reasonInfo}`;
+    }).join('\n');
+
+    // Aviso sobre bibliotecas não disponíveis (se houver)
+    let unavailableWarning = '';
+    if (unavailableLibraries.length > 0) {
+      unavailableWarning = `\n\n⚠️ **Bibliotecas não disponíveis (use alternativas):** ${unavailableLibraries.map(lib => lib.name).join(', ')}`;
+    }
+
+    // Construir prompt de revisão
+    const prompt = `Revise e enriqueça o conteúdo do seguinte submódulo adicionando elementos interativos, visuais e didáticos.
+
+**Disciplina:** ${data.disciplineTitle}
+**Tipo de Disciplina:** ${typeLabel} (${data.disciplineType})
+
+**Bibliotecas Recomendadas e Disponíveis (com versões atualizadas):**
+${librariesList}${unavailableWarning}
+
+**Módulo:** ${data.moduleTitle}
+${data.moduleDescription ? `**Descrição do módulo:** ${data.moduleDescription}` : ''}
+
+**Submódulo:** ${data.subModuleTitle}
+${data.subModuleDescription ? `**Descrição do submódulo:** ${data.subModuleDescription}` : ''}
+
+${data.userPrompt ? `**Prompt do usuário (opcional):** ${data.userPrompt}` : '**Prompt do usuário (opcional):** Nenhum'}
+${previousContextSection}
+**CONTEÚDO ORIGINAL DO SUBMÓDULO:**
+
+${data.currentContent}
+
+**TAREFA DE REVISÃO:**
+
+1. **Mantenha a estrutura original** do conteúdo (títulos, seções, organização)
+2. **Melhore o texto** tornando-o mais claro, didático e envolvente
+3. **Adicione elementos interativos estrategicamente**:
+   - Use APENAS as bibliotecas listadas acima que estão disponíveis
+   - Prefira bibliotecas com versões mais recentes
+   - Adicione visualizações para conceitos que se beneficiam de visualização
+   - Adicione animações para processos complexos
+   - Adicione quizzes em pontos de verificação
+   - Adicione gráficos para dados e comparações
+   - Máximo 2-3 elementos interativos por seção principal
+
+4. **Formato dos elementos interativos:**
+   - Use atributos \`data-*\` com JSON válido e bem formatado
+   - Exemplo: \`<div data-plotly='{"data":[{"type":"scatter","mode":"lines","x":[1,2,3],"y":[1,4,9]}],"layout":{"title":"Título"}}' style="width:100%;height:450px;"></div>\`
+   - SEMPRE inclua \`style="width:100%;height:XXXpx;margin:32px 0;"\` em elementos interativos
+   - Valide JSON antes de incluir (sem quebras de linha, aspas corretas)
+   - Consulte a system instruction para exemplos detalhados e validações de cada biblioteca
+
+5. **Validações obrigatórias:**
+   - Plotly.js: SEMPRE inclua \`"data"\` (array) e \`"layout"\`
+   - Chart.js: SEMPRE inclua \`"type"\`, \`"data"\` com \`"labels"\` e \`"datasets"\` (array)
+   - Mermaid: Use \`flowchart TD\` e \`-->|Label|\` (não \`graph TD\` ou \`-- Label -->\`)
+   - JSON: Use aspas simples \`'\` para envolver, aspas duplas \`"\` dentro do JSON
+
+**IMPORTANTE:**
+- Mantenha a estrutura e organização original (mesmos títulos \`##\`)
+- Melhore o texto sem alterar o significado
+- Adicione elementos interativos que agreguem valor educacional
+- Use APENAS bibliotecas disponíveis listadas acima
+- Valide sintaxe JSON e estruturas obrigatórias antes de incluir
+- NÃO sobrecarregue com muitos elementos interativos
+- Mantenha coesão com submódulos anteriores revisados
+- Retorne APENAS o conteúdo revisado em MARKDOWN
+- NÃO inclua o título do submódulo (já será exibido separadamente)
+- NÃO repita a descrição do submódulo`;
+
+    try {
+      this.loadModelFromStorage();
+      const currentModel = this.model || 'gemini-flash-lite-latest';
+      console.log(`🔄 [GeminiService] Revisando conteúdo do submódulo: ${data.subModuleTitle} (tipo: ${typeLabel}) com modelo: ${currentModel}`);
+      
+      const startTime = Date.now();
+      const result = await this.sendMessageWithMetrics(
+        prompt,
+        undefined, // images
+        [], // conversationHistory
+        systemInstruction,
+        undefined // pdfs
+      );
+      const duration = Date.now() - startTime;
+      
+      // Callback de debug se fornecido
+      if (onDebug) {
+        onDebug(systemInstruction, prompt, result.text);
+      }
+      
+      console.log(`✅ [GeminiService] Conteúdo do submódulo revisado com sucesso (${result.text.length} caracteres, ${duration}ms)`);
+      
+      return {
+        content: result.text,
+        inputTokens: result.inputTokens,
+        outputTokens: result.outputTokens,
+        totalTokens: result.totalTokens,
+      };
+    } catch (error) {
+      console.error('❌ [GeminiService] Erro ao revisar conteúdo do submódulo:', error);
+      throw new Error(`Erro ao revisar conteúdo: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
     }
   }
 }

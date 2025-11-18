@@ -2,7 +2,7 @@
  * Ponto de entrada da aplicação KhromaAcademy
  */
 
-import { dataService, themeService, cursorService } from '@/services';
+import { dataService, themeService, cursorService, geminiService } from '@/services';
 import { Header } from '@/components/Header/Header';
 import { MainNavigation } from '@/components/MainNavigation/MainNavigation';
 import { CommandPalette } from '@/components/CommandPalette/CommandPalette';
@@ -13,6 +13,7 @@ import { KnowledgeGraph } from '@/components/KnowledgeGraph/KnowledgeGraph';
 import { Modal } from '@/components/Modal/Modal';
 import { AdminPanel } from '@/components/AdminPanel/AdminPanel';
 import { DisciplineContent } from '@/components/DisciplineContent/DisciplineContent';
+import { AgentsPanel } from '@/components/AgentsPanel/AgentsPanel';
 import './styles/index.css';
 
 // Importar CSS dos componentes
@@ -25,6 +26,9 @@ import './components/KnowledgeGraph/KnowledgeGraph.css';
 import './components/Modal/Modal.css';
 import './components/AdminPanel/AdminPanel.css';
 import './components/DisciplineContent/DisciplineContent.css';
+import './components/AgentsPanel/AgentsPanel.css';
+import './components/AgentsPanel/PDFToDocsAgent/PDFToDocsAgent.css';
+import './components/AgentsPanel/ContentReviewAgent/ContentReviewAgent.css';
 
 // Instâncias dos componentes
 let header: Header;
@@ -35,6 +39,7 @@ let knowledgeGraph: KnowledgeGraph;
 let modal: Modal;
 let adminPanel: AdminPanel;
 let disciplineContent: DisciplineContent;
+let agentsPanel: AgentsPanel;
 
 /**
  * Renderiza todas as disciplinas
@@ -227,6 +232,9 @@ async function initializeApp(): Promise<void> {
 
   modal = Modal.getInstance();
   modal.init();
+  
+  // Expor instância globalmente para acesso de outros componentes
+  (window as any).modalInstance = modal;
 
   adminPanel = new AdminPanel();
   adminPanel.init();
@@ -236,6 +244,8 @@ async function initializeApp(): Promise<void> {
 
   disciplineContent = DisciplineContent.getInstance();
   disciplineContent.init();
+
+  agentsPanel = new AgentsPanel();
 
   // Renderizar conteúdo
   renderAll();
@@ -273,6 +283,7 @@ function handleNavigation(itemId: string): void {
   const placeholderContainer = document.getElementById('placeholder-container');
   const exploreContainer = document.getElementById('explore-container');
   const settingsPageContainer = document.getElementById('settings-page');
+  const agentsPageContainer = document.getElementById('agents-page');
   const continueSection = document.getElementById('continue-section');
   
   if (hero) hero.style.display = 'none';
@@ -281,6 +292,7 @@ function handleNavigation(itemId: string): void {
   if (placeholderContainer) placeholderContainer.style.display = 'none';
   if (exploreContainer) exploreContainer.style.display = 'none';
   if (settingsPageContainer) settingsPageContainer.style.display = 'none';
+  if (agentsPageContainer) agentsPageContainer.style.display = 'none';
   if (continueSection) (continueSection as HTMLElement).style.display = 'none';
 
   // Resetar active state
@@ -307,6 +319,11 @@ function handleNavigation(itemId: string): void {
     case 'trilhas':
       // Placeholder para trilhas
       showPlaceholder('Trilhas', 'Em breve você terá acesso a trilhas de aprendizado personalizadas!');
+      break;
+    
+    case 'agentes':
+      // Abrir página de agentes
+      showAgentsPage();
       break;
     
     case 'comunidade':
@@ -414,6 +431,95 @@ function showSettingsPage(): void {
         <div class="settings-section-header">
           <div class="settings-section-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+              <path d="M2 17l10 5 10-5"></path>
+              <path d="M2 12l10 5 10-5"></path>
+            </svg>
+          </div>
+          <div class="settings-section-title">
+            <h4>Modelo de IA</h4>
+            <p>Escolha o modelo para agentes e geração de disciplinas</p>
+          </div>
+        </div>
+        <div class="model-select" id="model-select">
+          <select class="model-select-input" id="gemini-model-select">
+            <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
+            <option value="gemini-flash-lite-latest">Gemini Flash Lite (Latest)</option>
+            <option value="gemini-flash-latest">Gemini Flash (Latest)</option>
+          </select>
+        </div>
+        <div class="model-advanced-config" id="model-advanced-config">
+          <div class="config-row">
+            <label for="config-temperature">
+              <span>Temperature</span>
+              <small>Controla aleatoriedade (0.0-2.0)</small>
+            </label>
+            <div class="config-input-group">
+              <input type="range" id="config-temperature" min="0" max="2" step="0.1" value="1.0">
+              <span class="config-value" id="config-temperature-value">1.0</span>
+            </div>
+          </div>
+          <div class="config-row">
+            <label for="config-topP">
+              <span>Top P</span>
+              <small>Nucleus sampling (0.0-1.0)</small>
+            </label>
+            <div class="config-input-group">
+              <input type="range" id="config-topP" min="0" max="1" step="0.05" value="0.95">
+              <span class="config-value" id="config-topP-value">0.95</span>
+            </div>
+          </div>
+          <div class="config-row">
+            <label for="config-topK">
+              <span>Top K</span>
+              <small>Top-K sampling (1-40)</small>
+            </label>
+            <div class="config-input-group">
+              <input type="range" id="config-topK" min="1" max="40" step="1" value="40">
+              <span class="config-value" id="config-topK-value">40</span>
+            </div>
+          </div>
+          <div class="config-row">
+            <label for="config-maxOutputTokens">
+              <span>Max Output Tokens</span>
+              <small id="maxOutputTokens-desc">Máximo de tokens na resposta (1-65536)</small>
+            </label>
+            <div class="config-input-group">
+              <input type="number" id="config-maxOutputTokens" min="1" max="65536" step="1" value="65536" class="config-number-input">
+              <input type="range" id="config-maxOutputTokens-range" min="1" max="65536" step="100" value="65536">
+              <span class="config-value" id="config-maxOutputTokens-value">65536</span>
+            </div>
+          </div>
+          <div class="config-row" id="config-enable-google-search-row">
+            <label for="config-enableGoogleSearch">
+              <span>Google Search (Embasamento)</span>
+              <small>Permite que o modelo pesquise na web para respostas mais precisas e atualizadas</small>
+            </label>
+            <div class="toggle-switch">
+              <span class="toggle-switch-label">Enable Google Search</span>
+              <div class="toggle-switch-input" id="config-enableGoogleSearch-toggle"></div>
+            </div>
+          </div>
+          <div class="config-row" id="config-image-size-row" style="display: none;">
+            <label for="config-imageSize">
+              <span>Image Size</span>
+              <small>Apenas para Gemini 2.5 Pro</small>
+            </label>
+            <div class="config-input-group">
+              <select id="config-imageSize" class="config-select">
+                <option value="1K">1K</option>
+                <option value="2K">2K</option>
+                <option value="4K">4K</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-header">
+          <div class="settings-section-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M12 20h9"></path>
               <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
             </svg>
@@ -440,14 +546,66 @@ function showSettingsPage(): void {
   // - Event delegation já está configurado, apenas atualizar estados
   // Usar setTimeout para garantir que o DOM esteja completamente renderizado
   setTimeout(() => {
-    // Event delegation já cuida dos toggles e botões, apenas atualizar estados visuais
-    settingsPanel.updateToggleStates();
-    settingsPanel.initCursorOptions();
+    settingsPanel?.updateToggleStates();
+    settingsPanel?.initModelSelect();
+    settingsPanel?.initCursorOptions();
     // Botão admin é tratado por event delegation no SettingsPanel
     // Atualizar targets de cursor na nova página
     cursorService.updateCursorTargets();
+    
+    // Garantir que as configurações avançadas sejam atualizadas
+    const currentModel = geminiService.getModel();
+    const currentConfig = geminiService.getGenerationConfig();
+    settingsPanel?.updateAdvancedConfigUI?.(currentConfig, currentModel);
+  }, 150);
+}
+
+/**
+ * Mostra página de Agentes
+ */
+function showAgentsPage(): void {
+  const main = document.querySelector('main');
+  if (!main) return;
+
+  // Esconder outras seções
+  const hero = document.querySelector('.hero') as HTMLElement;
+  const disciplines = document.querySelector('.disciplines') as HTMLElement;
+  const myCoursesContainer = document.getElementById('my-courses-container');
+  const placeholderContainer = document.getElementById('placeholder-container');
+  const exploreContainer = document.getElementById('explore-container');
+  const settingsPageContainer = document.getElementById('settings-page');
+  const continueSection = document.getElementById('continue-section');
+  if (hero) hero.style.display = 'none';
+  if (disciplines) disciplines.style.display = 'none';
+  if (myCoursesContainer) myCoursesContainer.style.display = 'none';
+  if (placeholderContainer) placeholderContainer.style.display = 'none';
+  if (exploreContainer) exploreContainer.style.display = 'none';
+  if (settingsPageContainer) settingsPageContainer.style.display = 'none';
+  if (continueSection) (continueSection as HTMLElement).style.display = 'none';
+
+  // Criar container da página de agentes, se não existir
+  let agentsPage = document.getElementById('agents-page');
+  if (!agentsPage) {
+    agentsPage = document.createElement('section');
+    agentsPage.id = 'agents-page';
+    agentsPage.className = 'agents-page container';
+    main.appendChild(agentsPage);
+  }
+
+  agentsPage.style.display = 'block';
+
+  // Renderizar AgentsPanel
+  if (agentsPanel) {
+    agentsPage.innerHTML = '';
+    agentsPage.appendChild(agentsPanel.create());
+  }
+
+  // Atualizar targets de cursor
+  setTimeout(() => {
+    cursorService.updateCursorTargets();
   }, 100);
 }
+
 /**
  * Mostra página Home com preview
  */

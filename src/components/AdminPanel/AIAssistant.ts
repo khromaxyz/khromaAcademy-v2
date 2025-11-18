@@ -966,7 +966,7 @@ Gere uma nova estrutura seguindo a instrução. Mantenha o formato JSON e retorn
    */
   private async loadSystemInstruction(): Promise<string | null> {
     try {
-      const response = await fetch('/system-instructions/gemini-system-instruction-discipline-creator.md');
+      const response = await fetch('/system-instructions/discipline-creator-agent/gemini-system-instruction-discipline-creator.md');
       if (!response.ok) {
         console.warn('⚠️ Não foi possível carregar system instruction, usando padrão');
         return null;
@@ -984,7 +984,7 @@ Gere uma nova estrutura seguindo a instrução. Mantenha o formato JSON e retorn
   private async loadModificationPromptTemplate(): Promise<string | null> {
     try {
       // Carregar o arquivo principal que contém tudo
-      const response = await fetch('/system-instructions/gemini-system-instruction-discipline-creator.md');
+      const response = await fetch('/system-instructions/discipline-creator-agent/gemini-system-instruction-discipline-creator.md');
       if (!response.ok) {
         console.warn('⚠️ Não foi possível carregar arquivo principal, usando padrão');
         return null;

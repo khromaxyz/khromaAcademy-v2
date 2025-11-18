@@ -1,9 +1,11 @@
 import MarkdownIt from 'markdown-it';
-import markdownItKatex from 'markdown-it-katex';
+// REMOVIDO: markdown-it-katex - vamos usar apenas auto-render do KaTeX para garantir renderização perfeita
 import 'katex/dist/katex.min.css';
 
 /**
- * Serviço para renderização de Markdown com suporte a LaTeX
+ * Serviço para renderização de Markdown
+ * IMPORTANTE: LaTeX NÃO é processado aqui - use latexService.render() após inserir HTML no DOM
+ * Isso garante renderização perfeita usando auto-render do KaTeX (igual ao arquivo de teste)
  */
 class MarkdownService {
   private md: MarkdownIt;
@@ -12,7 +14,7 @@ class MarkdownService {
     this.md = new MarkdownIt({
       html: true,
       linkify: true,
-      typographer: true,
+      typographer: false, // Desabilitado para evitar conflitos com LaTeX (smart quotes podem quebrar fórmulas)
       highlight: (str, lang) => {
         // Integrar com Prism.js se disponível
         if (typeof window !== 'undefined' && (window as any).Prism) {
@@ -30,11 +32,8 @@ class MarkdownService {
       },
     });
 
-    // Adicionar plugin KaTeX para renderização de LaTeX
-    this.md.use(markdownItKatex, {
-      throwOnError: false,
-      errorColor: '#cc0000',
-    });
+    // NÃO usar markdown-it-katex - vamos processar LaTeX separadamente com auto-render
+    // Isso evita conflitos e garante renderização perfeita
   }
 
   /**

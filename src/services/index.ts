@@ -11,4 +11,9 @@ export * from './chartService';
 export * from './mathService';
 export * from './cytoscapeService';
 export * from './geminiService';
+export * from './gsapService';
+export * from './tippyService';
+export * from './latexService';
+export * from './libraryResearchService';
+export * from './disciplineExportService';
 

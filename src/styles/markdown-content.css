@@ -212,16 +212,67 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* KaTeX (LaTeX) */
+/* KaTeX (LaTeX) - Configuração otimizada para renderização perfeita */
 .discipline-main-content .katex {
   font-size: 1.1em;
+  color: var(--text-primary);
+  font-family: 'KaTeX_Main', 'Times New Roman', serif;
+  line-height: 1.2;
+  text-indent: 0;
+  text-rendering: auto;
 }
 
+/* Fórmulas inline */
+.discipline-main-content .katex:not(.katex-display) {
+  white-space: nowrap;
+  display: inline-block;
+  vertical-align: baseline;
+  margin: 0 0.1em;
+}
+
+/* Fórmulas em bloco (display) */
 .discipline-main-content .katex-display {
   margin: 1.5em 0;
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 1em 0;
+  padding: 1em;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 4px;
+  text-align: center;
+  display: block;
+  width: 100%;
+}
+
+.discipline-main-content .katex-display > .katex {
+  text-align: center;
+  display: inline-block;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Garantir alinhamento perfeito de frações e operadores */
+.discipline-main-content .katex .frac-line {
+  border-bottom-width: 0.04em;
+  min-height: 0.04em;
+}
+
+.discipline-main-content .katex .sqrt > .root {
+  margin-left: 0.27777778em;
+  margin-right: -0.55555556em;
+}
+
+/* Melhorar espaçamento de subscritos e sobrescritos */
+.discipline-main-content .katex .msupsub {
+  text-align: left;
+}
+
+/* Garantir que matrizes e arrays sejam renderizados corretamente */
+.discipline-main-content .katex .arraycolsep {
+  width: 0.5em;
+}
+
+.discipline-main-content .katex .arraystretch {
+  height: 1;
 }
 
 /* Task lists */

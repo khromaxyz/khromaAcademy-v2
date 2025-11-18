@@ -1,5 +1,6 @@
 import { dataService } from '@/services';
 import { geminiService } from '@/services/geminiService';
+import { exportDisciplineToMarkdown, importDisciplineFromMarkdown, syncDisciplineWithFile } from '@/services/disciplineExportService';
 import { createId } from '@/utils';
 import type { Discipline } from '@/types';
 import { aiAssistant } from './AIAssistant';
@@ -208,7 +209,36 @@ export class AdminPanel {
         this.handleImportJSON();
         return;
       }
-      
+
+      // Exportar MD (todas as disciplinas)
+      if (target.id === 'btn-export-md' || target.closest('#btn-export-md')) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('✅ [AdminPanel] Botão "Exportar MD" clicado');
+        this.handleExportAllMarkdown();
+        return;
+      }
+
+      // Importar MD
+      if (target.id === 'btn-import-md' || target.closest('#btn-import-md')) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('✅ [AdminPanel] Botão "Importar MD" clicado');
+        this.handleImportMarkdown();
+        return;
+      }
+
+      // Exportar MD de disciplina específica
+      if (target.hasAttribute('data-export-md-id')) {
+        e.preventDefault();
+        e.stopPropagation();
+        const disciplineId = target.getAttribute('data-export-md-id');
+        if (disciplineId) {
+          this.handleExportDisciplineMarkdown(disciplineId);
+        }
+        return;
+      }
+
       // Cancelar formulário / Fechar modal
       if (target.id === 'btn-cancel-form' || target.closest('#btn-cancel-form') ||
           target.id === 'discipline-modal-close' || target.closest('#discipline-modal-close')) {
@@ -392,6 +422,198 @@ export class AdminPanel {
     };
     input.click();
     console.log('✅ [AdminPanel] Botão "Importar JSON" clicado');
+  }
+
+  /**
+   * Handler para exportar disciplina específica como Markdown
+   */
+  private async handleExportDisciplineMarkdown(disciplineId: string): Promise<void> {
+    try {
+      const discipline = dataService.getDiscipline(disciplineId);
+      if (!discipline) {
+        alert('Disciplina não encontrada!');
+        return;
+      }
+
+      // Tentar usar File System Access API para sincronização automática
+      const fileHandle = await syncDisciplineWithFile(disciplineId, discipline);
+      
+      if (fileHandle) {
+        alert(`✅ Disciplina "${discipline.title}" exportada para Markdown!\n\nO arquivo foi salvo e será sincronizado automaticamente quando você editá-lo.`);
+        // Configurar monitoramento do arquivo
+        this.setupFileSync(fileHandle, disciplineId);
+      } else {
+        // Fallback: download simples
+        await exportDisciplineToMarkdown(discipline, disciplineId);
+        alert(`✅ Disciplina "${discipline.title}" exportada para Markdown!\n\nArquivo baixado. Para sincronização automática, use um navegador compatível (Chrome/Edge).`);
+      }
+    } catch (error) {
+      console.error('Erro ao exportar disciplina:', error);
+      const discipline = dataService.getDiscipline(disciplineId);
+      if (discipline) {
+        await exportDisciplineToMarkdown(discipline, disciplineId);
+        alert(`✅ Disciplina "${discipline.title}" exportada para Markdown!\n\nArquivo baixado.`);
+      } else {
+        alert('Erro ao exportar disciplina!');
+      }
+    }
+  }
+
+  /**
+   * Handler para exportar todas as disciplinas como Markdown
+   */
+  private async handleExportAllMarkdown(): Promise<void> {
+    const disciplines = dataService.getAllDisciplines();
+    const disciplineCount = Object.keys(disciplines).length;
+
+    if (disciplineCount === 0) {
+      alert('Nenhuma disciplina para exportar!');
+      return;
+    }
+
+    const confirmMessage = `Deseja exportar todas as ${disciplineCount} disciplina(s) como arquivos Markdown?\n\nCada disciplina será exportada como um arquivo separado.`;
+    
+    if (!confirm(confirmMessage)) {
+      return;
+    }
+
+    try {
+      let exportedCount = 0;
+      let errorCount = 0;
+
+      for (const [id, discipline] of Object.entries(disciplines)) {
+        try {
+          await exportDisciplineToMarkdown(discipline, id);
+          exportedCount++;
+          // Pequeno delay entre downloads para evitar bloqueio do navegador
+          await new Promise(resolve => setTimeout(resolve, 300));
+        } catch (error) {
+          console.error(`Erro ao exportar disciplina ${discipline.title}:`, error);
+          errorCount++;
+        }
+      }
+
+      if (errorCount === 0) {
+        alert(`✅ ${exportedCount} disciplina(s) exportada(s) com sucesso!`);
+      } else {
+        alert(`✅ ${exportedCount} disciplina(s) exportada(s) com sucesso!\n\n⚠️ ${errorCount} erro(s) durante a exportação.`);
+      }
+    } catch (error) {
+      console.error('Erro ao exportar disciplinas:', error);
+      alert(`Erro ao exportar disciplinas: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+    }
+  }
+
+  /**
+   * Handler para importar Markdown
+   */
+  private handleImportMarkdown(): void {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.md,.markdown';
+    input.multiple = true; // Permitir múltiplos arquivos
+    input.onchange = async (e) => {
+      const files = (e.target as HTMLInputElement).files;
+      if (!files || files.length === 0) return;
+
+      let importedCount = 0;
+      let errorCount = 0;
+      const errors: string[] = [];
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        try {
+          const content = await file.text();
+          const result = importDisciplineFromMarkdown(content, file.name);
+
+          if (result) {
+            // Verificar se já existe disciplina com mesmo ID
+            const existing = dataService.getDiscipline(result.disciplineId);
+            if (existing) {
+              const overwrite = confirm(
+                `Disciplina "${result.discipline.title}" (ID: ${result.disciplineId}) já existe.\n\nDeseja sobrescrever?`
+              );
+              if (!overwrite) {
+                continue;
+              }
+            }
+
+            // Salvar disciplina
+            dataService.saveDiscipline(result.disciplineId, result.discipline);
+            importedCount++;
+            console.log(`✅ [AdminPanel] Disciplina importada: ${result.discipline.title}`);
+          } else {
+            errorCount++;
+            errors.push(file.name);
+          }
+        } catch (error) {
+          console.error(`❌ [AdminPanel] Erro ao importar ${file.name}:`, error);
+          errorCount++;
+          errors.push(file.name);
+        }
+      }
+
+      // Atualizar lista
+      this.refreshDisciplinesList();
+      window.dispatchEvent(new CustomEvent('disciplines-updated'));
+
+      // Mostrar resultado
+      if (errorCount === 0) {
+        alert(`✅ ${importedCount} disciplina(s) importada(s) com sucesso!`);
+      } else {
+        alert(
+          `✅ ${importedCount} disciplina(s) importada(s) com sucesso!\n\n⚠️ ${errorCount} erro(s):\n${errors.join('\n')}`
+        );
+      }
+    };
+    input.click();
+  }
+
+  /**
+   * Configura sincronização automática do arquivo
+   */
+  private setupFileSync(fileHandle: FileSystemFileHandle, disciplineId: string): void {
+    let lastModified = Date.now();
+    let syncInterval: number | null = null;
+
+    const checkFileChanges = async () => {
+      try {
+        const file = await fileHandle.getFile();
+        const fileModified = file.lastModified;
+
+        if (fileModified > lastModified) {
+          lastModified = fileModified;
+          
+          // Ler arquivo e atualizar disciplina
+          const { readAndUpdateDisciplineFromFile } = await import('@/services/disciplineExportService');
+          const result = await readAndUpdateDisciplineFromFile(fileHandle);
+          
+          if (result) {
+            // Atualizar disciplina
+            dataService.saveDiscipline(result.disciplineId, result.discipline);
+            window.dispatchEvent(new CustomEvent('disciplines-updated'));
+            this.refreshDisciplinesList();
+            console.log(`🔄 [AdminPanel] Disciplina sincronizada automaticamente: ${result.discipline.title}`);
+          }
+        }
+      } catch (error) {
+        console.error('Erro ao verificar mudanças no arquivo:', error);
+        // Parar sincronização se houver erro
+        if (syncInterval !== null) {
+          clearInterval(syncInterval);
+          syncInterval = null;
+        }
+      }
+    };
+
+    // Verificar mudanças a cada 2 segundos
+    syncInterval = window.setInterval(checkFileChanges, 2000);
+
+    // Armazenar cleanup para uso futuro
+    if (!(this as any).fileSyncIntervals) {
+      (this as any).fileSyncIntervals = new Map();
+    }
+    (this as any).fileSyncIntervals.set(disciplineId, syncInterval);
   }
 
   /**
@@ -1295,6 +1517,14 @@ export class AdminPanel {
             </svg>
             Contexto
           </button>` : ''}
+          <button class="btn-secondary" data-export-md-id="${this.escapeHtml(id)}" title="Exportar como Markdown" style="background: rgba(65, 255, 65, 0.2) !important; border-color: rgba(65, 255, 65, 0.5) !important; color: #41FF41 !important;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px;">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            MD
+          </button>
           <button class="btn-secondary" data-edit-id="${this.escapeHtml(id)}">Editar</button>
           <button class="btn-danger" data-delete-id="${this.escapeHtml(id)}">Excluir</button>
         </div>

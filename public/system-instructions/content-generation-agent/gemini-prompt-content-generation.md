@@ -135,12 +135,14 @@ O conteúdo deve ser gerado em MARKDOWN puro, seguindo esta estrutura:
 ## Instruções Críticas
 
 1. **NUNCA retorne JSON** - Apenas MARKDOWN puro
-2. **Seja EXTENSIVO**
-3. **Use exemplos reais** - Código funcional, casos de uso práticos
-4. **Mantenha consistência** - Mesmo nível de detalhamento em todos os módulos
-5. **Inclua exercícios** - Pelo menos 2-3 exercícios por submódulo
-6. **Use formatação rica** - Aproveite todos os recursos do Markdown
-7. **Contextualize** - Relacione com pré-requisitos e disciplinas relacionadas
+2. **Seja MUITO EXTENSIVO e COMPLETO** - Desenvolva cada submódulo completamente até o final (pelo menos 3000-6000 palavras por submódulo)
+3. **COMPLETUDE OBRIGATÓRIA** - NÃO trunque o conteúdo, complete TODAS as seções planejadas até o final
+4. **Use exemplos reais** - Código funcional, casos de uso práticos (múltiplos exemplos por conceito)
+5. **Mantenha consistência** - Mesmo nível de detalhamento em todos os módulos
+6. **Inclua exercícios** - Pelo menos 2-3 exercícios por submódulo
+7. **Use formatação rica** - Aproveite todos os recursos do Markdown
+8. **Contextualize** - Relacione com pré-requisitos e disciplinas relacionadas
+9. **Desenvolva em profundidade** - Não seja superficial, explore cada conceito completamente
 
 ---
 
@@ -194,7 +196,11 @@ Gere um conteúdo educacional COMPLETO, DIDÁTICO e ESTRUTURADO em MARKDOWN que:
    - Negrito e itálico para ênfase
    - Blocos de citação para notas importantes
 
-5. **Seja EXTENSIVO**: O conteúdo total deve ter pelo menos 5000-10000 palavras, distribuídas proporcionalmente entre os módulos
+5. **Seja MUITO EXTENSIVO e COMPLETO**: 
+   - Cada submódulo deve ter pelo menos 3000-6000 palavras (ou mais se necessário)
+   - O conteúdo total deve ter pelo menos 5000-10000 palavras, distribuídas proporcionalmente entre os módulos
+   - **CRÍTICO**: Complete TODAS as seções até o final - NÃO trunque o conteúdo
+   - Desenvolva cada conceito em profundidade, não apenas superficialmente
 
 6. **Inclua elementos práticos**:
    - Exemplos de código funcionais
@@ -202,5 +208,9 @@ Gere um conteúdo educacional COMPLETO, DIDÁTICO e ESTRUTURADO em MARKDOWN que:
    - Casos de uso reais
    - Exercícios práticos
 
-**IMPORTANTE**: Retorne APENAS o conteúdo em MARKDOWN, sem explicações adicionais, sem JSON, sem metadados. O conteúdo deve estar pronto para ser usado diretamente pelos alunos.
+**IMPORTANTE**: 
+- Retorne APENAS o conteúdo em MARKDOWN, sem explicações adicionais, sem JSON, sem metadados
+- O conteúdo deve estar pronto para ser usado diretamente pelos alunos
+- **CRÍTICO - COMPLETUDE**: Gere o conteúdo COMPLETO até o final de cada submódulo - NÃO trunque, complete TODAS as seções planejadas
+- Se o conteúdo for extenso, continue gerando até completar TODAS as seções (Introdução, Conceitos Fundamentais, Exemplos Práticos, Exercícios, Resumo)
 

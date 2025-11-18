@@ -1,80 +1,55 @@
-import { Chart, registerables } from 'chart.js';
-
-// Registrar todos os componentes do Chart.js
-Chart.register(...registerables);
-
 /**
- * Serviço para criar gráficos com Chart.js
+ * Serviço para processar gráficos Chart.js
  */
+
+import Chart from 'chart.js/auto';
+
 class ChartService {
-  private charts: Map<string, Chart> = new Map();
-
-  /**
-   * Cria um gráfico Chart.js
-   */
-  create(canvas: HTMLCanvasElement, config: any): Chart {
-    const chartId = `chart-${Date.now()}-${Math.random()}`;
-    
-    // Configuração padrão com tema escuro
-    const defaultConfig = {
-      ...config,
-      options: {
-        ...config.options,
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          ...config.options?.plugins,
-          legend: {
-            labels: {
-              color: '#ffffff',
-              font: { family: 'Inter, sans-serif' },
-            },
-            ...config.options?.plugins?.legend,
-          },
-        },
-        scales: {
-          ...config.options?.scales,
-          x: {
-            grid: { color: 'rgba(255,255,255,0.1)' },
-            ticks: { color: '#ffffff' },
-            ...config.options?.scales?.x,
-          },
-          y: {
-            grid: { color: 'rgba(255,255,255,0.1)' },
-            ticks: { color: '#ffffff' },
-            ...config.options?.scales?.y,
-          },
-        },
-      },
-    };
-
-    const chart = new Chart(canvas, defaultConfig);
-    this.charts.set(chartId, chart);
-    return chart;
-  }
-
   /**
    * Processa todos os elementos com atributo data-chart
    */
   processAll(container: HTMLElement): void {
     const chartElements = container.querySelectorAll('[data-chart]');
-
-    chartElements.forEach((el) => {
+    
+    chartElements.forEach((element) => {
       try {
-        const configAttr = el.getAttribute('data-chart');
+        const configAttr = element.getAttribute('data-chart');
         if (!configAttr) return;
 
         const config = JSON.parse(configAttr);
         
+        // Limpar conteúdo anterior
+        element.innerHTML = '';
+        
         const canvas = document.createElement('canvas');
-        canvas.style.maxHeight = '400px';
-        el.appendChild(canvas);
+        element.appendChild(canvas);
 
-        this.create(canvas, config);
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        // Configurar Chart.js
+        const chartConfig: any = {
+          type: config.type || 'bar',
+          data: config.data || {},
+          options: {
+            ...config.options,
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              ...config.options?.plugins,
+              legend: {
+                display: config.options?.legend !== false,
+                ...config.options?.legend,
+              },
+            },
+          },
+        };
+
+        new Chart(ctx, chartConfig);
       } catch (error) {
         console.error('Erro ao processar gráfico Chart.js:', error);
-        (el as HTMLElement).innerHTML = `
-          <div class="chart-error">
+        (element as HTMLElement).innerHTML = `
+          <div class="chart-error" style="padding: 20px; background: rgba(255, 65, 65, 0.1); border: 1px solid rgba(255, 65, 65, 0.3); border-radius: 5px; color: #ff4141;">
             <strong>⚠️ Erro ao carregar gráfico</strong>
             <p>Não foi possível processar a configuração do gráfico.</p>
           </div>
@@ -82,26 +57,6 @@ class ChartService {
       }
     });
   }
-
-  /**
-   * Destrói um gráfico específico
-   */
-  destroy(chartId: string): void {
-    const chart = this.charts.get(chartId);
-    if (chart) {
-      chart.destroy();
-      this.charts.delete(chartId);
-    }
-  }
-
-  /**
-   * Destrói todos os gráficos
-   */
-  destroyAll(): void {
-    this.charts.forEach((chart) => chart.destroy());
-    this.charts.clear();
-  }
 }
 
 export const chartService = new ChartService();
-

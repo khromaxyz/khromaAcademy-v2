@@ -63,6 +63,12 @@ export class MainNavigation {
         shortcut: '⌘T',
       },
       {
+        id: 'agentes',
+        label: 'Agentes',
+        icon: this.getAgentsIcon(),
+        shortcut: '⌘A',
+      },
+      {
         id: 'toggle',
         label: 'Recolher',
         icon: this.getToggleIcon(),
@@ -352,6 +358,7 @@ export class MainNavigation {
         'm': 'meus-cursos',
         'e': 'cursos',
         't': 'trilhas',
+        'a': 'agentes',
         'c': 'comunidade',
         ',': 'configuracoes',
       };
@@ -419,6 +426,10 @@ export class MainNavigation {
             <div class="shortcut-item">
               <span class="shortcut-keys"><kbd>${modKey}</kbd> + <kbd>T</kbd></span>
               <span class="shortcut-desc">Trilhas</span>
+            </div>
+            <div class="shortcut-item">
+              <span class="shortcut-keys"><kbd>${modKey}</kbd> + <kbd>A</kbd></span>
+              <span class="shortcut-desc">Agentes</span>
             </div>
             <div class="shortcut-item">
               <span class="shortcut-keys"><kbd>${modKey}</kbd> + <kbd>C</kbd></span>
@@ -924,6 +935,15 @@ export class MainNavigation {
     `;
   }
 
+  private getAgentsIcon(): string {
+    return `
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+        <polyline points="21 15 16 10 5 21"></polyline>
+      </svg>
+    `;
+  }
 
   private getToggleIcon(): string {
     return `

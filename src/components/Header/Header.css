@@ -718,6 +718,261 @@
   color: var(--primary-highlight);
 }
 
+.model-select {
+  margin-top: var(--space-m);
+}
+
+.model-select-input {
+  width: 100%;
+  padding: var(--space-m);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  color: var(--color-white);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--space-m) center;
+  padding-right: calc(var(--space-l) * 2);
+}
+
+.model-select-input:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.model-select-input:focus {
+  outline: none;
+  border-color: var(--primary-highlight);
+  background-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 3px rgba(65, 255, 65, 0.1);
+}
+
+.model-select-input option {
+  background: var(--surface-2);
+  color: var(--color-white);
+}
+
+.model-advanced-config {
+  margin-top: var(--space-l);
+  padding-top: var(--space-l);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.config-row {
+  margin-bottom: var(--space-l);
+}
+
+.config-row:last-child {
+  margin-bottom: 0;
+}
+
+.config-row label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xxs);
+  margin-bottom: var(--space-s);
+}
+
+.config-row label span {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-white);
+}
+
+.config-row label small {
+  font-size: 0.75rem;
+  color: var(--color-grey);
+}
+
+.config-input-group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+}
+
+.config-input-group input[type="range"] {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.config-input-group input[type="number"] {
+  flex: 0 0 auto;
+}
+
+.config-select {
+  flex: 1;
+  padding: var(--space-s) var(--space-m);
+  background: var(--surface-2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-m);
+  color: var(--color-white);
+  font-size: 0.875rem;
+  font-family: inherit;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.config-select:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: var(--surface-3);
+}
+
+.config-select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(65, 255, 65, 0.1);
+}
+
+.config-select option {
+  background: var(--surface-2);
+  color: var(--color-white);
+}
+
+.config-number-input {
+  width: 100px;
+  padding: var(--space-s) var(--space-m);
+  background: var(--surface-2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-m);
+  color: var(--color-white);
+  font-size: 0.875rem;
+  font-family: var(--font-code);
+  text-align: center;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.config-number-input:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: var(--surface-3);
+}
+
+.config-number-input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(65, 255, 65, 0.1);
+}
+
+.config-input-group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+}
+
+.config-input-group input[type="number"] {
+  flex: 0 0 auto;
+}
+
+.config-input-group input[type="range"] {
+  flex: 1;
+}
+
+.config-input-group input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background: var(--primary-highlight);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.config-input-group input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 12px var(--primary-highlight);
+}
+
+.config-input-group input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  background: var(--primary-highlight);
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+  transition: all var(--transition-fast);
+}
+
+.config-input-group input[type="range"]::-moz-range-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 12px var(--primary-highlight);
+}
+
+.config-value {
+  min-width: 60px;
+  text-align: right;
+  font-family: var(--font-code);
+  font-size: 0.875rem;
+  color: var(--primary-highlight);
+  font-weight: 600;
+}
+
+/* Estilos para toggle dentro de config-row */
+.config-row .toggle-switch {
+  margin-bottom: 0;
+  margin-top: var(--space-s);
+}
+
+.config-row .toggle-switch-label {
+  font-size: 0.875rem;
+  color: var(--color-white);
+  font-weight: 600;
+}
+
+.config-row .toggle-switch-input {
+  width: 48px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  position: relative;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.config-row .toggle-switch-input::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background: var(--color-white);
+  border-radius: 50%;
+  transition: transform var(--transition-fast);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.config-row .toggle-switch-input.active {
+  background: var(--primary-highlight) !important;
+  background-color: var(--primary-highlight) !important;
+  border-color: var(--primary-highlight) !important;
+  box-shadow: 0 0 20px rgba(65, 255, 65, 0.3) !important;
+}
+
+.config-row .toggle-switch-input.active::before {
+  transform: translateX(24px) !important;
+  background: var(--color-white);
+}
+
+.config-row .toggle-switch-input:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 12px rgba(65, 255, 65, 0.2);
+}
+
+.config-row .toggle-switch-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .settings-actions {
   display: flex;
   flex-direction: column;

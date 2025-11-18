@@ -2,10 +2,13 @@ import type { Discipline, ModuleMetadata, ModuleContent } from '@/types';
 import { dataService, themeService } from '@/services';
 import { markdownService } from '@/services/markdownService';
 import { mermaidService } from '@/services/mermaidService';
+import { latexService } from '@/services/latexService';
 import { plotlyService } from '@/services/plotlyService';
 import { chartService } from '@/services/chartService';
 import { mathService } from '@/services/mathService';
 import { cytoscapeService } from '@/services/cytoscapeService';
+import { processGSAPAnimations } from '@/services/gsapService';
+import { processTippyTooltips } from '@/services/tippyService';
 import { getIcon } from '@/utils/iconLoader';
 import { ThreeViewer } from './ContentBlocks/ThreeViewer';
 import { QuizBlock } from './ContentBlocks/QuizBlock';
@@ -193,6 +196,10 @@ export class DisciplineContent {
       (window as any).Prism.highlightAllUnder(contentArea);
     }
 
+    // Renderizar LaTeX primeiro (pode afetar layout)
+    console.log('📐 Processando fórmulas LaTeX...');
+    latexService.render(contentArea);
+
     // Renderizar diagramas Mermaid
     console.log('🔷 Processando diagramas Mermaid...');
     await mermaidService.render(contentArea);
@@ -263,7 +270,13 @@ export class DisciplineContent {
     // 9. Processar grafos (Cytoscape.js)
     cytoscapeService.processAll(container);
 
-    // 10. Processar code blocks do markdown
+    // 10. Processar animações GSAP
+    processGSAPAnimations(container);
+
+    // 11. Processar tooltips Tippy.js
+    processTippyTooltips(container);
+
+    // 12. Processar code blocks do markdown
     this.processCodeBlocks(container);
 
     console.log('✅ Blocos especiais processados');
@@ -1081,19 +1094,52 @@ export class DisciplineContent {
     
     // Remover títulos de módulo e submódulo do conteúdo markdown
     if (content) {
+      const titleVariations = [
+        subModule.title,
+        `# ${subModule.title}`,
+        `## ${subModule.title}`,
+        `### ${subModule.title}`,
+        `#### ${subModule.title}`,
+        `# ${subModule.title}\n`,
+        `## ${subModule.title}\n`,
+      ];
+      
       // Remover linhas que começam com "Módulo" ou "Submódulo" seguido de número
+      // E também remover qualquer variação do título do submódulo no início
       content = content
         .split('\n')
-        .filter(line => {
+        .filter((line, index) => {
           const trimmed = line.trim();
+          
           // Ignorar linhas que começam com "Módulo" ou "Submódulo" seguido de número
           if (/^#*\s*Módulo\s+\d+:/i.test(trimmed)) return false;
           if (/^#*\s*Submódulo\s+[\d.]+:/i.test(trimmed)) return false;
-          // Também remover se contiver apenas o título do submódulo duplicado
-          if (trimmed === subModule.title) return false;
+          
+          // Remover título duplicado no início do conteúdo (primeiras 3 linhas)
+          if (index < 3) {
+            // Verificar se a linha é exatamente o título (com ou sem #)
+            if (titleVariations.some(variation => trimmed === variation || trimmed === variation.trim())) {
+              return false;
+            }
+            // Verificar se a linha contém apenas o título (pode ter espaços extras)
+            const normalizedLine = trimmed.replace(/^#+\s*/, '').trim();
+            if (normalizedLine === subModule.title) {
+              return false;
+            }
+          }
+          
           return true;
         })
         .join('\n');
+      
+      // Remover também a descrição se estiver duplicada no início
+      if (subModule.description) {
+        const descPattern = new RegExp(`^\\s*${subModule.description.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*$`, 'im');
+        content = content.replace(descPattern, '').trim();
+      }
+      
+      // Limpar múltiplas linhas vazias no início
+      content = content.replace(/^\n+/, '').trim();
     }
     
     const contentArea = document.getElementById('main-content');
@@ -1138,6 +1184,10 @@ export class DisciplineContent {
       console.log('🎨 Aplicando Prism.js...');
       (window as any).Prism.highlightAllUnder(contentArea);
     }
+    
+    // Renderizar LaTeX primeiro (pode afetar layout)
+    console.log('📐 Processando fórmulas LaTeX...');
+    latexService.render(contentArea);
     
     // Renderizar diagramas Mermaid
     console.log('🔷 Processando diagramas Mermaid...');
@@ -1233,87 +1283,6 @@ export class DisciplineContent {
     });
   }
 
-  /**
-   * Renderiza conteúdo principal (fallback) - DEPRECATED, não usado mais
-   */
-  private renderMainContentFallback(discipline: Discipline): string {
-    // Se houver módulos com conteúdo gerado, renderizar eles
-    if (discipline.modules && discipline.modules.length > 0) {
-      const modulesContent = discipline.modules
-        .sort((a, b) => a.order - b.order)
-        .map(module => {
-          const subModulesContent = module.subModules
-            .sort((a, b) => a.order - b.order)
-            .map(subModule => {
-              // Buscar conteúdo gerado
-              const content = discipline.subModuleContent?.[subModule.id] || subModule.content || '';
-              
-              if (content) {
-                // Renderizar markdown do conteúdo gerado
-                const renderedContent = markdownService.render(content);
-                return `
-                  <div class="submodule-content" data-submodule-id="${subModule.id}">
-                    <h3>${subModule.title}</h3>
-                    ${subModule.description ? `<p class="submodule-description">${subModule.description}</p>` : ''}
-                    <div class="submodule-body">
-                      ${renderedContent}
-                    </div>
-                  </div>
-                `;
-              } else {
-                return `
-                  <div class="submodule-content" data-submodule-id="${subModule.id}">
-                    <h3>${subModule.title}</h3>
-                    ${subModule.description ? `<p class="submodule-description">${subModule.description}</p>` : ''}
-                    <p class="content-placeholder">Conteúdo ainda não gerado. Use o botão de geração no painel administrativo.</p>
-                  </div>
-                `;
-              }
-            })
-            .join('');
-
-          return `
-            <div class="module-content" data-module-id="${module.id}">
-              <h2>${module.title}</h2>
-              ${module.description ? `<p class="module-description">${module.description}</p>` : ''}
-              ${subModulesContent}
-            </div>
-          `;
-        })
-        .join('');
-
-      return `
-        <div class="docs-content-wrapper">
-          <main class="main-scroll-area" id="main-content">
-            <h1 class="k-doc-title">${discipline.title}</h1>
-            <p class="k-doc-lead">${discipline.description}</p>
-            ${modulesContent}
-          </main>
-        </div>
-      `;
-    }
-
-    // Fallback para conteúdo básico
-    return `
-      <div class="docs-content-wrapper">
-        <main class="main-scroll-area" id="main-content">
-          <h1 class="k-doc-title">${discipline.title}</h1>
-          <p class="k-doc-lead">${discipline.description}</p>
-          <div class="k-section">
-            <h2>Conteúdo em Desenvolvimento</h2>
-            <p>O conteúdo detalhado desta disciplina está sendo preparado.</p>
-            <h2>Syllabus</h2>
-            <ul>
-              ${discipline.syllabus.map((item) => `<li>${item}</li>`).join('')}
-            </ul>
-          </div>
-        </main>
-        <aside class="docs-toc" id="docs-toc">
-          <div id="chatbot-container"></div>
-        </aside>
-      </div>
-    `;
-  }
 
   /**
    * Mostra mensagem de erro

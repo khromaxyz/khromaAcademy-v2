@@ -2,26 +2,12 @@
 
 ## Visão Geral
 
-O KhromaAcademy possui um sistema flexível de temas que permite personalizar completamente a aparência da interface.
+O KhromaAcademy possui um sistema de temas que permite alternar entre modo escuro e claro.
 
 ## Temas Disponíveis
 
-### RGB (Multicolor) - Padrão
-Paleta colorida com todas as cores principais.
-
-### Temas Monocromáticos
-- **Red**: Vermelho
-- **Green**: Verde  
-- **Blue**: Azul
-- **Purple**: Roxo
-- **Orange**: Laranja
-- **Cyan**: Ciano
-- **Pink**: Rosa
-- **Yellow**: Amarelo
-
-### Temas Especiais
-- **Monochrome**: Escala de cinza
-- **Neon**: Cores neon vibrantes
+- **Dark**: Modo escuro (padrão)
+- **Light**: Modo claro
 
 ## Implementação Técnica
 
@@ -30,8 +16,14 @@ Paleta colorida com todas as cores principais.
 Cada tema define variáveis CSS específicas:
 
 ```css
-:root[data-theme="red"] {
-  --primary-highlight: #FF4141;
+:root[data-theme="dark"] {
+  --primary-highlight: #41ff41;
+  --gradient-main: linear-gradient(...);
+  --gradient-conic: conic-gradient(...);
+}
+
+:root[data-theme="light"] {
+  --primary-highlight: #0066ff;
   --gradient-main: linear-gradient(...);
   --gradient-conic: conic-gradient(...);
 }
@@ -48,65 +40,13 @@ Cada tema define variáveis CSS específicas:
 O tema é aplicado via atributo `data-theme` no elemento raiz:
 
 ```typescript
-document.documentElement.setAttribute('data-theme', 'red');
+document.documentElement.setAttribute('data-theme', 'dark');
+document.body.setAttribute('data-theme', 'dark');
 ```
 
 ### Persistência
 
 O tema selecionado é salvo no `localStorage` e restaurado automaticamente na próxima visita.
-
-## Adicionar Novo Tema
-
-### 1. Adicionar Tipo TypeScript
-
-Em `src/types/theme.ts`:
-```typescript
-export type ThemeType = 
-  | 'rgb'
-  | 'red'
-  | 'novo-tema'; // Adicionar aqui
-```
-
-### 2. Adicionar Configuração
-
-Em `src/services/themeService.ts`:
-```typescript
-const THEME_CONFIGS: ThemeConfigs = {
-  // ... temas existentes
-  'novo-tema': {
-    primaryHighlight: '#COR',
-    gradientMain: 'linear-gradient(...)',
-    gradientConic: 'conic-gradient(...)',
-  },
-};
-```
-
-### 3. Adicionar CSS
-
-Em `src/styles/themes.css`:
-```css
-:root[data-theme="novo-tema"] {
-  --primary-highlight: #COR;
-  --gradient-main: linear-gradient(...);
-  --gradient-conic: conic-gradient(...);
-}
-```
-
-### 4. Adicionar Botão no HTML
-
-Em `src/index.html`:
-```html
-<button class="theme-btn-enhanced link" data-theme="novo-tema" title="Novo Tema"></button>
-```
-
-### 5. Adicionar Estilo do Botão
-
-Em `src/styles/settings.css`:
-```css
-.theme-btn-enhanced[data-theme="novo-tema"] {
-  background: linear-gradient(...);
-}
-```
 
 ## Uso Programático
 
@@ -114,7 +54,8 @@ Em `src/styles/settings.css`:
 import { themeService } from '@/services';
 
 // Aplicar tema
-themeService.applyTheme('red');
+themeService.applyTheme('dark');
+themeService.applyTheme('light');
 
 // Salvar tema
 themeService.saveTheme();
@@ -131,6 +72,7 @@ const currentTheme = themeService.getCurrentTheme();
 - Cursor customizado
 - Highlight de elementos interativos
 - Progresso visual
+- Todos os componentes da aplicação
 
 ## Boas Práticas
 
@@ -138,4 +80,3 @@ const currentTheme = themeService.getCurrentTheme();
 2. **Consistência**: Mantenha o mesmo padrão de cores em todo o tema
 3. **Gradientes**: Use gradientes suaves para melhor experiência visual
 4. **Teste**: Teste o tema em diferentes seções da aplicação
-

@@ -1,72 +1,64 @@
 # System Instructions e Prompts
 
-Esta pasta contém todos os arquivos de instruções do sistema e templates de prompts usados pelo assistente de IA para criação de disciplinas.
+Esta pasta contém todos os arquivos de instruções do sistema e templates de prompts organizados por agente.
 
-## Arquivos
+## Estrutura de Pastas
 
-### System Instructions e Templates
+Cada agente possui sua própria pasta com seus prompts e um README explicativo:
 
-- **`gemini-system-instruction-discipline-creator.md`**: Arquivo completo que contém TUDO em um só lugar:
-  - **System Instruction**: Instruções principais do sistema para o assistente de criação de disciplinas. Define o comportamento e as diretrizes gerais (antes do primeiro `---`).
-  - **Template de Prompt para Geração**: Template usado para gerar a estrutura inicial de uma disciplina (entre o primeiro e segundo `---`).
-  - **Template de Prompt para Modificação**: Template usado para modificar uma estrutura existente (entre o segundo e terceiro `---`).
-  - **Template de Prompt para Contexto Completo**: Template usado para gerar um contexto completo e detalhado da disciplina (após o terceiro `---`).
-  
-  **Estrutura do arquivo:**
-  ```
-  [System Instruction]
-  ---
-  [Template de Prompt para Geração]
-  ---
-  [Template de Prompt para Modificação]
-  ---
-  [Template de Prompt para Contexto Completo]
-  ```
-  
-  **Placeholders no template de geração:**
-  - `{{NOME}}` - Nome da disciplina
-  - `{{CURSO}}` - Curso
-  - `{{PERIODO}}` - Período
-  - `{{EMENTA}}` - Ementa/descrição
-  - `{{CONTEXTO_ADICIONAL}}` - Contexto adicional fornecido pelo usuário
-  - `{{DISCIPLINAS_EXISTENTES}}` - Lista de disciplinas existentes no sistema
-  - `{{CORES_DISPONIVEIS}}` - Paleta de cores disponíveis
-  
-  **Placeholders no template de modificação:**
-  - `{{ESTRUTURA_ATUAL}}` - Estrutura atual da disciplina em JSON
-  - `{{INSTRUCAO_USUARIO}}` - Instrução do usuário para modificação
-  
-  **Placeholders no template de contexto completo:**
-  - `{{NOME}}` - Nome da disciplina
-  - `{{CURSO}}` - Curso
-  - `{{PERIODO}}` - Período
-  - `{{EMENTA}}` - Ementa/descrição
-  - `{{CONTEXTO_ADICIONAL}}` - Contexto adicional fornecido pelo usuário
-  - `{{DISCIPLINAS_EXISTENTES}}` - Lista de disciplinas existentes no sistema
-  - `{{ESTRUTURA_SYLLABUS}}` - Estrutura do syllabus gerado (lista numerada de tópicos)
+### 📁 `pdf-to-docs-agent/`
+Agente que transforma documentos PDF em conteúdo educacional estruturado.
+- **Fluxo:** Estrutura → Conteúdo
+- **Ver README:** `pdf-to-docs-agent/README.md`
 
-### Outros System Instructions
+### 📁 `content-review-agent/`
+Agente que revisa conteúdo existente adicionando elementos interativos.
+- **Fluxo:** Análise → Implementação
+- **Ver README:** `content-review-agent/README.md`
 
-- **`gemini-system-instruction.md`**: System instruction padrão do chatbot
-- **`gemini-system-instruction-tutor.md`**: System instruction para persona "Tutor"
-- **`gemini-system-instruction-professor.md`**: System instruction para persona "Professor"
-- **`gemini-system-instruction-amigo.md`**: System instruction para persona "Amigo"
+### 📁 `content-generation-agent/`
+Agente que gera conteúdo educacional do zero.
+- **Fluxo:** Geração direta
+- **Ver README:** `content-generation-agent/README.md`
 
-## Como Editar
+### 📁 `discipline-creator-agent/`
+Agente que cria e modifica estruturas completas de disciplinas.
+- **Fluxo:** Geração → Modificação
+- **Ver README:** `discipline-creator-agent/README.md`
 
-Todos os arquivos podem ser editados diretamente. As alterações serão aplicadas na próxima vez que o assistente for usado.
+### 📁 `chatbot-personality/`
+Agente que define diferentes personalidades para o chatbot.
+- **Fluxo:** Seleção de personalidade → Resposta adaptada
+- **Ver README:** `chatbot-personality/README.md`
 
-### Dicas para Edição
+## Como Editar Prompts
 
-1. **System Instructions**: Definem o comportamento geral do assistente. Seja claro e específico sobre o que você espera.
+Todos os prompts são arquivos Markdown que podem ser editados diretamente. As alterações são aplicadas automaticamente sem necessidade de recompilação ou reinicialização do sistema.
 
-2. **Templates de Prompts**: Use placeholders `{{NOME_DO_PLACEHOLDER}}` para valores que serão substituídos dinamicamente. Mantenha a estrutura clara e as instruções específicas.
+### Características do Sistema
 
-3. **Formato JSON**: Se o prompt pede uma resposta em JSON, inclua exemplos claros do formato esperado.
+- ✅ **Edição em Markdown:** Edite diretamente os arquivos `.md`
+- ✅ **Aplicação Automática:** Alterações são carregadas automaticamente
+- ✅ **Sem Recompilação:** Não é necessário rebuild do projeto
+- ✅ **Organização por Agente:** Cada agente tem sua própria pasta
+- ✅ **Documentação Completa:** Cada pasta tem README explicando o fluxo
 
-4. **Teste após editar**: Sempre teste as alterações para garantir que funcionam como esperado.
+### Estrutura de um README de Agente
+
+Cada README contém:
+- Descrição do agente
+- Fluxo de execução (ordem dos agentes)
+- Entrada e saída de cada etapa
+- Parâmetros aceitos
+- Exemplos de uso
+- Referências no código
 
 ## Fallback
 
 Se algum arquivo não puder ser carregado, o sistema usará prompts padrão hardcoded no código como fallback. Isso garante que o sistema continue funcionando mesmo se houver problemas com os arquivos.
 
+## Convenções de Nomenclatura
+
+- Arquivos de prompts: `gemini-prompt-[nome].md`
+- Arquivos de system instructions: `gemini-system-instruction-[nome].md`
+- Pastas: `[nome-do-agente]-agent/` ou `[nome-do-agente]/`

@@ -21,8 +21,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.css" />
 
-    <!-- KaTeX - LaTeX Rendering -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+    <!-- KaTeX - LaTeX Rendering (versão sincronizada com package.json) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.css" />
 
     <!-- STYLES -->
     <link rel="stylesheet" href="./styles/index.css" />
@@ -151,6 +151,95 @@
                   <div class="settings-section-header">
                     <div class="settings-section-icon">
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                        <path d="M2 17l10 5 10-5"></path>
+                        <path d="M2 12l10 5 10-5"></path>
+                      </svg>
+                    </div>
+                    <div class="settings-section-title">
+                      <h4>Modelo de IA</h4>
+                      <p>Escolha o modelo para agentes e geração de disciplinas</p>
+                    </div>
+                  </div>
+                  <div class="model-select" id="model-select">
+                    <select class="model-select-input" id="gemini-model-select">
+                      <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
+                      <option value="gemini-flash-lite-latest">Gemini Flash Lite (Latest)</option>
+                      <option value="gemini-flash-latest">Gemini Flash (Latest)</option>
+                    </select>
+                  </div>
+                  <div class="model-advanced-config" id="model-advanced-config">
+                    <div class="config-row">
+                      <label for="config-temperature">
+                        <span>Temperature</span>
+                        <small>Controla aleatoriedade (0.0-2.0)</small>
+                      </label>
+                      <div class="config-input-group">
+                        <input type="range" id="config-temperature" min="0" max="2" step="0.1" value="1.0">
+                        <span class="config-value" id="config-temperature-value">1.0</span>
+                      </div>
+                    </div>
+                    <div class="config-row">
+                      <label for="config-topP">
+                        <span>Top P</span>
+                        <small>Nucleus sampling (0.0-1.0)</small>
+                      </label>
+                      <div class="config-input-group">
+                        <input type="range" id="config-topP" min="0" max="1" step="0.05" value="0.95">
+                        <span class="config-value" id="config-topP-value">0.95</span>
+                      </div>
+                    </div>
+                    <div class="config-row">
+                      <label for="config-topK">
+                        <span>Top K</span>
+                        <small>Top-K sampling (1-40)</small>
+                      </label>
+                      <div class="config-input-group">
+                        <input type="range" id="config-topK" min="1" max="40" step="1" value="40">
+                        <span class="config-value" id="config-topK-value">40</span>
+                      </div>
+                    </div>
+                    <div class="config-row">
+                      <label for="config-maxOutputTokens">
+                        <span>Max Output Tokens</span>
+                        <small id="maxOutputTokens-desc">Máximo de tokens na resposta (1-65536)</small>
+                      </label>
+                      <div class="config-input-group">
+                        <input type="number" id="config-maxOutputTokens" min="1" max="65536" step="1" value="65536" class="config-number-input">
+                        <input type="range" id="config-maxOutputTokens-range" min="1" max="65536" step="100" value="65536">
+                        <span class="config-value" id="config-maxOutputTokens-value">65536</span>
+                      </div>
+                    </div>
+                      <div class="config-row" id="config-enable-google-search-row">
+                        <label for="config-enableGoogleSearch">
+                          <span>Google Search (Embasamento)</span>
+                          <small>Permite que o modelo pesquise na web para respostas mais precisas e atualizadas</small>
+                        </label>
+                        <div class="toggle-switch">
+                          <span class="toggle-switch-label">Enable Google Search</span>
+                          <div class="toggle-switch-input" id="config-enableGoogleSearch-toggle"></div>
+                        </div>
+                      </div>
+                    <div class="config-row" id="config-image-size-row" style="display: none;">
+                      <label for="config-imageSize">
+                        <span>Image Size</span>
+                        <small>Apenas para Gemini 2.5 Pro</small>
+                      </label>
+                      <div class="config-input-group">
+                        <select id="config-imageSize" class="config-select">
+                          <option value="1K">1K</option>
+                          <option value="2K">2K</option>
+                          <option value="4K">4K</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="settings-section">
+                  <div class="settings-section-header">
+                    <div class="settings-section-icon">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 20h9"></path>
                         <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
                       </svg>
@@ -251,6 +340,22 @@
           </button>
           <button class="btn-secondary" id="btn-export-json">Exportar JSON</button>
           <button class="btn-secondary" id="btn-import-json">Importar JSON</button>
+          <button class="btn-secondary" id="btn-export-md" style="background: rgba(65, 255, 65, 0.2) !important; border-color: rgba(65, 255, 65, 0.5) !important; color: #41FF41 !important;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px; vertical-align: middle;">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Exportar MD
+          </button>
+          <button class="btn-secondary" id="btn-import-md" style="background: rgba(65, 255, 65, 0.2) !important; border-color: rgba(65, 255, 65, 0.5) !important; color: #41FF41 !important;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px; vertical-align: middle;">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+            Importar MD
+          </button>
         </div>
 
         <div class="disciplines-list" id="disciplines-list">
@@ -498,6 +603,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
 

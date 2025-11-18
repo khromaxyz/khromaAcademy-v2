@@ -9,7 +9,7 @@ O **KhromaAcademy** é uma plataforma educacional moderna e interativa projetada
 - **Plataforma de Aprendizado de C.C.**: Foco exclusivo em disciplinas de Ciência da Computação
 - **Interface Moderna**: Design premium com animações suaves e efeitos visuais impressionantes
 - **Visualização Dual**: Grid de cards e grafo de conhecimento interativo para diferentes perspectivas de aprendizado
-- **Sistema de Temas**: 11 temas personalizáveis para adaptar a experiência visual
+- **Sistema de Temas**: 2 temas (Dark e Light) para adaptar a experiência visual
 - **Cursor Customizado**: 6 tipos de cursor para uma experiência única
 - **Painel Administrativo**: Gerenciamento completo de disciplinas (CRUD)
 - **Conteúdo Interativo**: Sistema de blocos de conteúdo (vídeos, quizzes, código, etc.)
@@ -72,37 +72,76 @@ O projeto segue uma **arquitetura modular baseada em componentes**, similar a fr
    - Navegação principal
    - Toggle do painel de configurações
    - Gerenciamento de botões de tema
+   - Integração com CommandPalette
 
-2. **DisciplineCard** (`src/components/DisciplineCard/`)
+2. **MainNavigation** (`src/components/MainNavigation/`)
+   - Menu lateral fixo
+   - Modo expandido/colapsado
+   - Navegação por teclado
+   - Persistência de estado
+
+3. **CommandPalette** (`src/components/CommandPalette/`)
+   - Busca global estilo Spotlight
+   - Busca fuzzy
+   - Atalho Cmd/Ctrl+K
+
+4. **DisciplineCard** (`src/components/DisciplineCard/`)
    - Renderização estática de cards de disciplina
    - Método `render()` que retorna HTML
 
-3. **KnowledgeGraph** (`src/components/KnowledgeGraph/`)
+5. **KnowledgeGraph** (`src/components/KnowledgeGraph/`)
    - Grafo de conhecimento interativo SVG
    - Visualização de relacionamentos entre disciplinas
    - Destaque de pré-requisitos
 
-4. **Modal** (`src/components/Modal/`)
+6. **Modal** (`src/components/Modal/`)
    - Modal com animação FLIP (First, Last, Invert, Play)
    - Detalhes completos da disciplina
    - Botões de ação (Começar Curso, Documentação, etc.)
    - Padrão Singleton
 
-5. **DisciplineContent** (`src/components/DisciplineContent/`)
+7. **DisciplineContent** (`src/components/DisciplineContent/`)
    - Página de conteúdo da disciplina
    - Layout sidebar + conteúdo central
    - Sistema de navegação por módulos
    - Blocos de conteúdo interativos
+   - Suporte a Markdown completo
 
-6. **AdminPanel** (`src/components/AdminPanel/`)
+8. **AdminPanel** (`src/components/AdminPanel/`)
    - CRUD completo de disciplinas
-   - Importação/Exportação JSON
+   - Importação/Exportação JSON e Markdown
    - Validação de formulários
+   - Integração com AIAssistant
 
-7. **SettingsPanel** (`src/components/SettingsPanel/`)
-   - Configurações de cursor customizado
-   - Seleção de temas
-   - Acesso ao painel administrativo
+9. **AIAssistant** (`src/components/AdminPanel/AIAssistant.ts`)
+   - Assistente de IA para criação de disciplinas
+   - Geração de estrutura e conteúdo
+   - Upload de PDFs
+
+10. **SettingsPanel** (`src/components/SettingsPanel/`)
+    - Configurações de cursor customizado
+    - Seleção de temas
+    - Configuração de modelo Gemini
+    - Acesso ao painel administrativo
+
+11. **AgentsPanel** (`src/components/AgentsPanel/`)
+    - Painel de agentes de IA
+    - Navegação entre agentes
+
+12. **PDFToDocsAgent** (`src/components/AgentsPanel/PDFToDocsAgent/`)
+    - Conversão de PDFs em disciplinas
+    - Análise automática de conteúdo
+
+13. **ContentReviewAgent** (`src/components/AgentsPanel/ContentReviewAgent/`)
+    - Revisão e melhoria de conteúdo
+    - Detecção de tipo de disciplina
+    - Recomendação de bibliotecas
+
+14. **GeminiChatbot** (`src/components/DisciplineContent/GeminiChatbot.ts`)
+    - Chatbot integrado com Gemini
+    - Múltiplas abas de conversação
+    - Upload de imagens
+    - Diferentes personalidades
 
 #### Blocos de Conteúdo
 
@@ -114,6 +153,11 @@ Sistema modular de blocos para conteúdo educacional (`src/components/Discipline
 - **CodeBlock**: Blocos de código com syntax highlighting
 - **VideoPlayer**: Player de vídeo integrado
 - **Quiz**: Sistema de quizzes interativos
+- **QuizBlock**: Versão avançada do Quiz
+- **MonacoEditor**: Editor de código avançado
+- **ThreeViewer**: Visualizador 3D
+- **MatterSimulation**: Simulações de física 2D
+- **FabricCanvas**: Canvas interativo
 
 ### Sistema de Estilos
 
@@ -126,15 +170,20 @@ Sistema modular de blocos para conteúdo educacional (`src/components/Discipline
 
 #### Sistema de Temas
 
-11 temas disponíveis:
-- RGB (Multicolor) - Padrão
-- Monocromáticos: Red, Green, Blue, Purple, Orange, Cyan, Pink, Yellow
-- Especiais: Monochrome, Neon
+2 temas disponíveis:
+- **Dark**: Modo escuro (padrão)
+- **Light**: Modo claro
 
 Aplicação via CSS Variables:
 ```css
-:root[data-theme="red"] {
-  --primary-highlight: #FF4141;
+:root[data-theme="dark"] {
+  --primary-highlight: #41ff41;
+  --gradient-main: linear-gradient(...);
+  --gradient-conic: conic-gradient(...);
+}
+
+:root[data-theme="light"] {
+  --primary-highlight: #0066ff;
   --gradient-main: linear-gradient(...);
   --gradient-conic: conic-gradient(...);
 }
@@ -197,6 +246,9 @@ interface Discipline {
   prerequisites: string[];
   position: { x: number; y: number };
   icon: string;
+  modules?: ModuleMetadata[];
+  subModuleContent?: Record<string, string>;
+  context?: string;
 }
 ```
 
@@ -223,6 +275,89 @@ interface Discipline {
 1. `init()`: Inicializa cursor baseado em configuração
 2. `updateCursor()`: Atualiza cursor baseado no tipo selecionado
 3. `updateCursorTargets()`: Atualiza elementos que interagem com cursor
+
+#### 4. GeminiService (`src/services/geminiService.ts`)
+
+**Responsabilidades:**
+- Comunicação com API do Google Gemini
+- Gerenciamento de modelos e configurações
+- Contagem de tokens
+- Geração de conteúdo
+
+**Fluxo:**
+1. `setApiKey()`: Configura API key
+2. `setModel()`: Define modelo a usar
+3. `sendMessage()`: Envia mensagem e recebe resposta
+4. `generateContent()`: Gera conteúdo usando prompts
+
+#### 5. MarkdownService (`src/services/markdownService.ts`)
+
+**Responsabilidades:**
+- Renderização de Markdown para HTML
+- Parse de front matter YAML
+- Integração com syntax highlighting
+
+#### 6. LatexService (`src/services/latexService.ts`)
+
+**Responsabilidades:**
+- Renderização de fórmulas LaTeX usando KaTeX
+- Processamento automático via auto-render
+
+#### 7. MermaidService (`src/services/mermaidService.ts`)
+
+**Responsabilidades:**
+- Renderização de diagramas Mermaid
+- Inicialização e configuração do Mermaid
+
+#### 8. PlotlyService (`src/services/plotlyService.ts`)
+
+**Responsabilidades:**
+- Renderização de gráficos Plotly
+- Suporte a múltiplos tipos de gráficos
+
+#### 9. ChartService (`src/services/chartService.ts`)
+
+**Responsabilidades:**
+- Renderização de gráficos Chart.js
+- Gráficos simples e responsivos
+
+#### 10. MathService (`src/services/mathService.ts`)
+
+**Responsabilidades:**
+- Processamento matemático usando Math.js
+- Avaliação de expressões
+- Calculadoras interativas
+
+#### 11. CytoscapeService (`src/services/cytoscapeService.ts`)
+
+**Responsabilidades:**
+- Visualização de grafos interativos
+- Layouts customizados
+
+#### 12. GSAPService (`src/services/gsapService.ts`)
+
+**Responsabilidades:**
+- Processamento de animações GSAP
+- Animações de algoritmos (busca sequencial, binária)
+
+#### 13. TippyService (`src/services/tippyService.ts`)
+
+**Responsabilidades:**
+- Processamento de tooltips Tippy.js
+- Tooltips contextuais
+
+#### 14. LibraryResearchService (`src/services/libraryResearchService.ts`)
+
+**Responsabilidades:**
+- Pesquisa e recomendação de bibliotecas
+- Informações sobre bibliotecas
+
+#### 15. DisciplineExportService (`src/services/disciplineExportService.ts`)
+
+**Responsabilidades:**
+- Exportação de disciplinas para Markdown
+- Importação de disciplinas de Markdown
+- Sincronização com arquivos
 
 ### Eventos Customizados
 
@@ -298,7 +433,7 @@ Funcionalidades CRUD:
 
 ### 5. Sistema de Temas
 
-- 11 temas disponíveis
+- 2 temas disponíveis (Dark e Light)
 - Troca instantânea via botões
 - Persistência de preferência
 - Aplicação global via CSS Variables
@@ -537,12 +672,14 @@ Para mais detalhes, consulte:
 
 - **Linguagem**: TypeScript 100%
 - **Framework**: Vanilla (sem frameworks)
-- **Build Tool**: Vite
-- **Componentes**: ~15 componentes principais
-- **Serviços**: 3 serviços singleton
-- **Temas**: 11 temas disponíveis
+- **Build Tool**: Vite 5.0+
+- **Componentes**: ~20 componentes principais
+- **Serviços**: 14 serviços singleton
+- **Temas**: 2 temas disponíveis (Dark e Light)
 - **Tipos de Cursor**: 6 tipos
-- **Blocos de Conteúdo**: 6 blocos modulares
+- **Blocos de Conteúdo**: 11 blocos modulares
+- **Agentes de IA**: 2 agentes (PDF to Docs, Content Review)
+- **Bibliotecas Externas**: 15+ bibliotecas integradas
 
 ---
 

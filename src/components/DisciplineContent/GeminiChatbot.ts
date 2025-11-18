@@ -1,6 +1,7 @@
 import { geminiService } from '@/services/geminiService';
 import { markdownService } from '@/services/markdownService';
 import { mermaidService } from '@/services/mermaidService';
+import { latexService } from '@/services/latexService';
 import { getIcon } from '@/utils/iconLoader';
 import './GeminiChatbot.css';
 
@@ -1041,17 +1042,21 @@ export class GeminiChatbot {
       });
     }
 
-    // Processar diagramas Mermaid para mensagens do assistente (após inserção no DOM)
+    // Processar LaTeX e diagramas Mermaid para mensagens do assistente (após inserção no DOM)
     if (role === 'assistant' && !isError) {
       requestAnimationFrame(() => {
         setTimeout(async () => {
           try {
             const messageContent = messageEl.querySelector('.chatbot-message-content') as HTMLElement;
             if (messageContent) {
+              // Renderizar LaTeX primeiro (pode afetar layout)
+              latexService.render(messageContent);
+              
+              // Depois processar Mermaid
               await mermaidService.render(messageContent);
             }
           } catch (error) {
-            console.warn('Erro ao processar diagramas Mermaid:', error);
+            console.warn('Erro ao processar LaTeX/Mermaid:', error);
           }
         }, 100);
       });
@@ -1153,10 +1158,14 @@ export class GeminiChatbot {
       await new Promise(resolve => setTimeout(resolve, 30));
     }
     
-    // Após digitação completa, processar Mermaid
+    // Após digitação completa, processar Mermaid e LaTeX
     requestAnimationFrame(() => {
       setTimeout(async () => {
         try {
+          // Renderizar LaTeX primeiro (pode afetar layout)
+          latexService.render(contentEl);
+          
+          // Depois processar Mermaid
           await mermaidService.render(contentEl);
         } catch (error) {
           console.warn('Erro ao processar diagramas Mermaid após digitação:', error);
@@ -1971,13 +1980,13 @@ flowchart TD
 
     try {
       // Determinar qual arquivo de system instruction carregar baseado na persona
-      let instructionFile = 'gemini-system-instruction.md';
+      let instructionFile = 'chatbot-personality/gemini-system-instruction.md';
       if (this.currentPersona === 'tutor') {
-        instructionFile = 'gemini-system-instruction-tutor.md';
+        instructionFile = 'chatbot-personality/gemini-system-instruction-tutor.md';
       } else if (this.currentPersona === 'professor') {
-        instructionFile = 'gemini-system-instruction-professor.md';
+        instructionFile = 'chatbot-personality/gemini-system-instruction-professor.md';
       } else if (this.currentPersona === 'amigo') {
-        instructionFile = 'gemini-system-instruction-amigo.md';
+        instructionFile = 'chatbot-personality/gemini-system-instruction-amigo.md';
       }
 
       // Carregar template

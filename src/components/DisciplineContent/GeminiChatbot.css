@@ -2372,21 +2372,67 @@
   margin: 1em 0;
 }
 
-/* KaTeX (LaTeX) */
+/* KaTeX (LaTeX) - Configuração otimizada para renderização perfeita */
 .chatbot-message-content .katex {
   font-size: 1.05em;
   color: var(--k-text-primary);
+  font-family: 'KaTeX_Main', 'Times New Roman', serif;
+  line-height: 1.2;
+  text-indent: 0;
+  text-rendering: auto;
 }
 
+/* Fórmulas inline */
+.chatbot-message-content .katex:not(.katex-display) {
+  white-space: nowrap;
+  display: inline-block;
+  vertical-align: baseline;
+  margin: 0 0.1em;
+}
+
+/* Fórmulas em bloco (display) */
 .chatbot-message-content .katex-display {
   margin: 1em 0;
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 0.5em 0;
+  padding: 0.75em;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 4px;
+  text-align: center;
+  display: block;
+  width: 100%;
 }
 
 .chatbot-message-content .katex-display > .katex {
   text-align: center;
+  display: inline-block;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Garantir alinhamento perfeito de frações e operadores */
+.chatbot-message-content .katex .frac-line {
+  border-bottom-width: 0.04em;
+  min-height: 0.04em;
+}
+
+.chatbot-message-content .katex .sqrt > .root {
+  margin-left: 0.27777778em;
+  margin-right: -0.55555556em;
+}
+
+/* Melhorar espaçamento de subscritos e sobrescritos */
+.chatbot-message-content .katex .msupsub {
+  text-align: left;
+}
+
+/* Garantir que matrizes e arrays sejam renderizados corretamente */
+.chatbot-message-content .katex .arraycolsep {
+  width: 0.5em;
+}
+
+.chatbot-message-content .katex .arraystretch {
+  height: 1;
 }
 
 /* Mermaid diagrams */
