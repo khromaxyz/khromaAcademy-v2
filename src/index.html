@@ -269,20 +269,60 @@
     <main>
       <!-- HERO SECTION -->
       <section class="hero container">
+        <div class="hero-glow"></div>
         <div class="hero-content">
-          <h1>Uma Nova Dimensão do Conhecimento em <span class="highlight-chroma">Ciência da Computação.</span></h1>
-          <p>Interfaces que respiram. Conceitos que se conectam. Uma experiência de aprendizado tão inteligente quanto o código que você vai escrever.</p>
+          <div class="hero-badge">
+            <span class="badge-dot">
+              <span class="badge-dot-ping"></span>
+              <span class="badge-dot-core"></span>
+            </span>
+            <span class="badge-text">NEXUS ACADEMY V2.0 LIVE</span>
+          </div>
+          <h1 class="hero-title">
+            <span class="hero-title-line hero-text-gradient">MASTER THE</span>
+            <span class="hero-title-line hero-title-faded">
+              ALGORITHM
+              <span class="hero-title-hover">ALGORITHM</span>
+            </span>
+          </h1>
+          <p class="hero-description">
+            An elite cognitive architecture for the next generation of software engineers. 
+            Dive deep into low-level systems, distributed computing, and artificial intelligence.
+          </p>
+          <div class="hero-actions">
+            <button class="btn-hero-primary">
+              <span class="btn-hero-text">Start Learning</span>
+              <div class="btn-hero-gradient"></div>
+            </button>
+            <button class="btn-hero-secondary">
+              <span>Explore Syllabus</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+          </div>
         </div>
       </section>
 
       <!-- DISCIPLINES SECTION -->
       <section class="disciplines container" id="disciplinas">
         <div class="disciplines-header">
-          <h2>O Currículo</h2>
+          <div class="disciplines-header-content">
+            <h2>Core Curriculum</h2>
+            <p class="disciplines-subtitle">Select a discipline to begin your specialization.</p>
+          </div>
           <div class="view-toggle" data-view="grid">
             <div class="view-toggle-bg"></div>
-            <button class="view-btn link" data-view="grid">Grid</button>
-            <button class="view-btn link" data-view="graph">Grafo</button>
+            <button class="view-btn link" data-view="grid" aria-label="Grid view">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+              </svg>
+            </button>
+            <button class="view-btn link" data-view="graph" aria-label="Graph view">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+              </svg>
+            </button>
           </div>
         </div>
 

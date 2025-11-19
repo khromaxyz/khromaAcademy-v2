@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS | Elite CS Education</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #030303;
+            --card-bg: #0a0a0a;
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1aa;
+            --accent-glow: rgba(255, 255, 255, 0.1);
+            --border-radius: 16px;
+            --rgb-gradient: conic-gradient(from 0deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Background Noise/Grid */
+        .bg-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+        }
+        
+        .ambient-light {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at 50% 50%, rgba(20, 20, 40, 0.4), transparent 70%);
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        /* Typography Classes */
+        .font-display {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Hero Glitch Text Effect */
+        .glitch-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+        .glitch {
+            position: relative;
+            color: white;
+            mix-blend-mode: lighten;
+        }
+        .glitch::before, .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            width: 100%;
+            background: var(--bg-color);
+            clip: rect(0, 0, 0, 0);
+        }
+        .glitch::before {
+            left: -2px;
+            text-shadow: 2px 0 #ff00c1;
+            animation: glitch-anim-1 2s infinite linear alternate-reverse;
+        }
+        .glitch::after {
+            left: 2px;
+            text-shadow: -2px 0 #00fff9;
+            animation: glitch-anim-2 3s infinite linear alternate-reverse;
+        }
+        @keyframes glitch-anim-1 {
+            0% { clip: rect(20px, 9999px, 15px, 0); }
+            20% { clip: rect(50px, 9999px, 60px, 0); }
+            40% { clip: rect(10px, 9999px, 80px, 0); }
+            60% { clip: rect(30px, 9999px, 10px, 0); }
+            80% { clip: rect(70px, 9999px, 40px, 0); }
+            100% { clip: rect(90px, 9999px, 30px, 0); }
+        }
+        @keyframes glitch-anim-2 {
+            0% { clip: rect(10px, 9999px, 30px, 0); }
+            20% { clip: rect(80px, 9999px, 40px, 0); }
+            40% { clip: rect(40px, 9999px, 90px, 0); }
+            60% { clip: rect(20px, 9999px, 20px, 0); }
+            80% { clip: rect(60px, 9999px, 50px, 0); }
+            100% { clip: rect(30px, 9999px, 70px, 0); }
+        }
+
+        /* RGB Chroma Card Styles */
+        .chroma-card {
+            position: relative;
+            background: rgba(15, 15, 15, 0.6);
+            border-radius: var(--border-radius);
+            overflow: hidden; /* Changed from visible to hidden for internal clip, wrapper handles border */
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transform: translateZ(0);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            z-index: 1;
+        }
+
+        .chroma-card-wrapper {
+            position: relative;
+            border-radius: var(--border-radius);
+            padding: 1.5px; /* Thickness of the border */
+            background: #1a1a1a; /* Fallback */
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        /* The Animated RGB Border */
+        .chroma-card-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: var(--rgb-gradient);
+            animation: spin 4s linear infinite;
+            z-index: 0;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        
+        /* Static border state */
+        .chroma-card-wrapper::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: var(--border-radius);
+            padding: 1.5px; 
+            background: linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0)); 
+            -webkit-mask: 
+               linear-gradient(#fff 0 0) content-box, 
+               linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            z-index: 1;
+            opacity: 1;
+            transition: opacity 0.4s ease;
+        }
+
+        .chroma-card-wrapper:hover::before {
+            opacity: 1;
+        }
+        
+        .chroma-card-wrapper:hover::after {
+            opacity: 0; /* Hide static border on hover */
+        }
+
+        .chroma-card-wrapper:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.8);
+        }
+
+        .chroma-content {
+            position: relative;
+            background: var(--card-bg);
+            border-radius: calc(var(--border-radius) - 1px); /* Slightly smaller to fit */
+            height: 100%;
+            width: 100%;
+            z-index: 2;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Card Internal Elements */
+        .card-icon-box {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        .chroma-card-wrapper:hover .card-icon-box {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+        .card-tag {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 4px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: fit-content;
+        }
+
+        /* Start Learning Button */
+        .btn-glow {
+            position: relative;
+            padding: 12px 32px;
+            background: white;
+            color: black;
+            border-radius: 99px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+        .btn-glow:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
+        }
+
+        /* Animated Stats */
+        .stat-number {
+            background: linear-gradient(to bottom, #fff, #888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Mouse spotlight effect */
+        .spotlight {
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.04) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            transform: translate(-50%, -50%);
+            mix-blend-mode: screen;
+        }
+    </style>
+</head>
+<body class="min-h-screen selection:bg-white selection:text-black">
+
+    <!-- Background Elements -->
+    <canvas id="bg-canvas" class="fixed top-0 left-0 w-full h-full -z-10 opacity-40 pointer-events-none"></canvas>
+    <div class="bg-grid"></div>
+    <div class="ambient-light"></div>
+    <div id="spotlight" class="spotlight hidden md:block"></div>
+
+    <!-- Main Layout -->
+    <main class="relative z-10 max-w-[1600px] mx-auto px-6 py-12 md:px-12 md:py-24 flex flex-col gap-24">
+
+        <!-- Hero Section -->
+        <section class="flex flex-col items-start justify-center min-h-[60vh] gap-8 max-w-4xl">
+            <div class="flex items-center gap-3 animate-fade-in-down" style="animation-duration: 0.8s;">
+                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                <span class="font-mono text-sm text-gray-400 tracking-widest uppercase">System Online</span>
+            </div>
+
+            <h1 class="text-6xl md:text-8xl font-display font-bold leading-tight tracking-tight">
+                Master the 
+                <br>
+                <span class="glitch-wrapper">
+                    <span class="glitch" data-text="Architecture">Architecture</span>
+                </span>
+                <br>
+                of the Future.
+            </h1>
+
+            <p class="text-xl text-gray-400 max-w-2xl leading-relaxed font-light animate-fade-in-up" style="animation-delay: 0.2s;">
+                Elite Computer Science education for the architects of the digital age. 
+                <span class="text-white font-medium">Algorithms, Quantum, AI, and beyond.</span>
+                Experience learning at the bleeding edge of technology.
+            </p>
+
+            <div class="flex flex-wrap gap-4 mt-4 animate-fade-in-up" style="animation-delay: 0.4s;">
+                <button class="btn-glow font-mono">Initialize Path</button>
+                <button class="px-8 py-3 rounded-full border border-white/10 text-white/80 hover:bg-white/5 hover:text-white transition-all duration-300 font-mono text-sm uppercase tracking-wider">
+                    View Catalog
+                </button>
+            </div>
+
+            <!-- Hero Stats -->
+            <div class="grid grid-cols-3 gap-12 mt-12 border-t border-white/10 pt-8 w-full max-w-2xl animate-fade-in" style="animation-delay: 0.6s;">
+                <div>
+                    <div class="text-4xl font-bold stat-number font-display">98%</div>
+                    <div class="text-sm text-gray-500 mt-1">Completion Rate</div>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold stat-number font-display">Elite</div>
+                    <div class="text-sm text-gray-500 mt-1">Industry Standard</div>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold stat-number font-display">24/7</div>
+                    <div class="text-sm text-gray-500 mt-1">Neural Support</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Courses Section -->
+        <section id="courses" class="w-full scroll-mt-24">
+            <div class="flex justify-between items-end mb-16">
+                <div>
+                    <h2 class="text-3xl md:text-4xl font-display font-bold text-white mb-2">Core Modules</h2>
+                    <p class="text-gray-400 font-light">Select a discipline to begin your specialized training.</p>
+                </div>
+                <div class="hidden md:flex gap-2">
+                    <button class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-colors">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <button class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-colors">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8" id="courses-grid">
+                <!-- Cards will be injected by JS for maintainability and easy expansion -->
+            </div>
+            
+            <div class="flex justify-center mt-16">
+                <button class="group flex items-center gap-3 text-gray-400 hover:text-white transition-colors">
+                    <span class="font-mono text-sm tracking-widest uppercase border-b border-transparent group-hover:border-white pb-1 transition-all">Load Full Database</span>
+                    <i class="fa-solid fa-chevron-down text-xs group-hover:translate-y-1 transition-transform"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Features/Why Us Section (Visual Break) -->
+        <section class="py-24 relative rounded-3xl overflow-hidden border border-white/5 bg-white/[0.02]">
+            <!-- Decorative blurs -->
+            <div class="absolute top-0 right-0 w-96 h-96 bg-purple-500/10 blur-[100px] rounded-full pointer-events-none"></div>
+            <div class="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/10 blur-[100px] rounded-full pointer-events-none"></div>
+
+            <div class="relative z-10 px-8 md:px-16">
+                <div class="grid md:grid-cols-2 gap-16 items-center">
+                    <div>
+                        <h3 class="text-3xl font-display font-bold mb-6">State-of-the-art <br>Learning Environment</h3>
+                        <div class="space-y-6">
+                            <div class="flex gap-4">
+                                <div class="mt-1 w-8 h-8 rounded-full bg-gradient-to-br from-gray-800 to-black border border-white/10 flex items-center justify-center flex-shrink-0">
+                                    <i class="fa-solid fa-microchip text-xs text-white"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-white font-medium mb-1">Browser-based IDE</h4>
+                                    <p class="text-sm text-gray-400">Zero setup. Code in Rust, C++, Python, and Go directly from your browser with VIM keybindings support.</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="mt-1 w-8 h-8 rounded-full bg-gradient-to-br from-gray-800 to-black border border-white/10 flex items-center justify-center flex-shrink-0">
+                                    <i class="fa-solid fa-network-wired text-xs text-white"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-white font-medium mb-1">Neural Code Review</h4>
+                                    <p class="text-sm text-gray-400">Instant feedback on your algorithm complexity and memory usage by our proprietary AI models.</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="mt-1 w-8 h-8 rounded-full bg-gradient-to-br from-gray-800 to-black border border-white/10 flex items-center justify-center flex-shrink-0">
+                                    <i class="fa-solid fa-trophy text-xs text-white"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-white font-medium mb-1">Global Leaderboards</h4>
+                                    <p class="text-sm text-gray-400">Compete with the top 1% of engineers worldwide in weekly optimization challenges.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="relative h-full min-h-[300px] rounded-xl border border-white/10 bg-black/50 overflow-hidden flex items-center justify-center group">
+                        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20"></div>
+                        <div class="text-center z-10 transform transition-transform duration-500 group-hover:scale-105">
+                             <div class="text-6xl font-mono font-bold text-white/10 select-none pointer-events-none">
+                                &lt;/&gt;
+                             </div>
+                        </div>
+                        <!-- Fake Code Overlay -->
+                        <div class="absolute inset-0 p-6 font-mono text-xs text-green-400/40 overflow-hidden leading-relaxed opacity-30">
+                            function optimizeGraph(nodes) {<br>
+                            &nbsp;&nbsp;const visited = new Set();<br>
+                            &nbsp;&nbsp;const queue = [...nodes];<br>
+                            &nbsp;&nbsp;while(queue.length) {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;let current = queue.shift();<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;// Neural optimization engine<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;if (current.weight > threshold) {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;prune(current);<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                            &nbsp;&nbsp;}<br>
+                            &nbsp;&nbsp;return graph.serialize();<br>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer Simplicity -->
+    <footer class="border-t border-white/5 bg-black py-12 text-center relative z-10">
+        <div class="flex flex-col items-center gap-4">
+            <div class="text-2xl font-display font-bold tracking-tight">NEXUS</div>
+            <p class="text-gray-600 text-sm">© 2024 Elite Computer Science Education. All systems nominal.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Dynamic Interactions -->
+    <script>
+        // Course Data
+        const courses = [
+            {
+                title: "Advanced Algorithms",
+                category: "Computer Science",
+                level: "Senior",
+                icon: "fa-code-branch",
+                desc: "Master dynamic programming, graph theory, and NP-completeness with rigorous proofs.",
+                color: "text-blue-400",
+                students: "1.2k"
+            },
+            {
+                title: "Neural Networks Architecture",
+                category: "Artificial Intelligence",
+                level: "Expert",
+                icon: "fa-brain",
+                desc: "Build transformers and diffusion models from scratch using PyTorch and TensorFlow.",
+                color: "text-purple-400",
+                students: "850"
+            },
+            {
+                title: "Quantum Computing 101",
+                category: "Physics & CS",
+                level: "Intermediate",
+                icon: "fa-atom",
+                desc: "Understanding Qubits, Superposition, and entanglement. Write your first Q# program.",
+                color: "text-cyan-400",
+                students: "2.1k"
+            },
+            {
+                title: "System Security & Pentesting",
+                category: "Cybersecurity",
+                level: "Advanced",
+                icon: "fa-shield-halved",
+                desc: "Offensive security methodologies, buffer overflows, and advanced cryptography.",
+                color: "text-red-400",
+                students: "940"
+            },
+            {
+                title: "Distributed Systems",
+                category: "Infrastructure",
+                level: "Senior",
+                icon: "fa-server",
+                desc: "Designing scalable systems. CAP theorem, consensus algorithms (Raft/Paxos), and sharding.",
+                color: "text-orange-400",
+                students: "1.5k"
+            },
+            {
+                title: "Compiler Construction",
+                category: "Low Level",
+                level: "Expert",
+                icon: "fa-layer-group",
+                desc: "Lexical analysis, parsing, semantic analysis, and code generation. Build your own language.",
+                color: "text-green-400",
+                students: "600"
+            }
+        ];
+
+        const grid = document.getElementById('courses-grid');
+
+        // Render Courses
+        courses.forEach((course, index) => {
+            const cardWrapper = document.createElement('div');
+            cardWrapper.className = 'chroma-card-wrapper group';
+            cardWrapper.style.animationDelay = `${index * 0.1}s`;
+            cardWrapper.classList.add('animate-fade-in-up'); // Add a standard animation class if defined or handled via CSS
+
+            cardWrapper.innerHTML = `
+                <div class="chroma-content">
+                    <div class="flex justify-between items-start">
+                        <div class="card-icon-box">
+                            <i class="fa-solid ${course.icon}"></i>
+                        </div>
+                        <div class="card-tag ${course.color} bg-white/5 border-white/10">
+                            ${course.level}
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-xl font-display font-bold text-white mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-gray-400 transition-all">
+                            ${course.title}
+                        </h3>
+                        <p class="text-sm text-gray-400 leading-relaxed">
+                            ${course.desc}
+                        </p>
+                    </div>
+
+                    <div class="mt-auto pt-4 border-t border-white/5 flex items-center justify-between text-xs font-mono text-gray-500">
+                        <span>${course.category}</span>
+                        <span class="flex items-center gap-2">
+                            <i class="fa-regular fa-user"></i> ${course.students}
+                        </span>
+                    </div>
+                </div>
+            `;
+            grid.appendChild(cardWrapper);
+        });
+
+        // Spotlight Effect
+        const spotlight = document.getElementById('spotlight');
+        document.addEventListener('mousemove', (e) => {
+            const x = e.clientX;
+            const y = e.clientY;
+            spotlight.style.left = x + 'px';
+            spotlight.style.top = y + 'px';
+        });
+
+        // Add Animation keyframes via JS injection for simple fade-ins if not using Tailwind plugin
+        const styleSheet = document.createElement("style");
+        styleSheet.textContent = `
+            @keyframes fadeInUp {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            @keyframes fadeInDown {
+                from { opacity: 0; transform: translateY(-20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            .animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; opacity: 0; }
+            .animate-fade-in-down { animation: fadeInDown 0.6s ease-out forwards; opacity: 0; }
+            .animate-fade-in { animation: fadeIn 0.8s ease-out forwards; opacity: 0; }
+        `;
+        document.head.appendChild(styleSheet);
+
+        // Canvas Particle System
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particlesArray;
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let mouse = {
+            x: null,
+            y: null,
+            radius: (canvas.height / 80) * (canvas.width / 80)
+        }
+
+        window.addEventListener('mousemove', function(event) {
+            mouse.x = event.x;
+            mouse.y = event.y;
+        });
+
+        class Particle {
+            constructor(x, y, directionX, directionY, size, color) {
+                this.x = x;
+                this.y = y;
+                this.directionX = directionX;
+                this.directionY = directionY;
+                this.size = size;
+                this.color = color;
+            }
+            
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+                ctx.fillStyle = '#ffffff';
+                ctx.fill();
+            }
+            
+            update() {
+                if (this.x > canvas.width || this.x < 0) {
+                    this.directionX = -this.directionX;
+                }
+                if (this.y > canvas.height || this.y < 0) {
+                    this.directionY = -this.directionY;
+                }
+
+                // Check collision detection - mouse position / particle position
+                let dx = mouse.x - this.x;
+                let dy = mouse.y - this.y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < mouse.radius + this.size) {
+                    if (mouse.x < this.x && this.x < canvas.width - this.size * 10) {
+                        this.x += 10;
+                    }
+                    if (mouse.x > this.x && this.x > this.size * 10) {
+                        this.x -= 10;
+                    }
+                    if (mouse.y < this.y && this.y < canvas.height - this.size * 10) {
+                        this.y += 10;
+                    }
+                    if (mouse.y > this.y && this.y > this.size * 10) {
+                        this.y -= 10;
+                    }
+                }
+                
+                this.x += this.directionX;
+                this.y += this.directionY;
+                this.draw();
+            }
+        }
+
+        function init() {
+            particlesArray = [];
+            let numberOfParticles = (canvas.height * canvas.width) / 9000;
+            for (let i = 0; i < numberOfParticles; i++) {
+                let size = (Math.random() * 2) + 1;
+                let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
+                let y = (Math.random() * ((innerHeight - size * 2) - (size * 2)) + size * 2);
+                let directionX = (Math.random() * 0.5) - 0.25;
+                let directionY = (Math.random() * 0.5) - 0.25;
+                let color = '#ffffff';
+
+                particlesArray.push(new Particle(x, y, directionX, directionY, size, color));
+            }
+        }
+
+        function connect() {
+            let opacityValue = 1;
+            for (let a = 0; a < particlesArray.length; a++) {
+                for (let b = a; b < particlesArray.length; b++) {
+                    let distance = ((particlesArray[a].x - particlesArray[b].x) * (particlesArray[a].x - particlesArray[b].x))
+                    + ((particlesArray[a].y - particlesArray[b].y) * (particlesArray[a].y - particlesArray[b].y));
+                    
+                    if (distance < (canvas.width/7) * (canvas.height/7)) {
+                        opacityValue = 1 - (distance / 20000);
+                        ctx.strokeStyle = 'rgba(100, 100, 255,' + opacityValue * 0.2 + ')'; // Blueish tint
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+                        ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            ctx.clearRect(0, 0, innerWidth, innerHeight);
+            
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+            }
+            connect();
+        }
+
+        // Resize event
+        window.addEventListener('resize', function() {
+            canvas.width = innerWidth;
+            canvas.height = innerHeight;
+            mouse.radius = ((canvas.height/80) * (canvas.height/80));
+            init();
+        });
+
+        // Initializing
+        init();
+        animate();
+
+    </script>
+</body>
+</html>

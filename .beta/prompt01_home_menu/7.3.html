@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS | Elite CS Education</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-dark: #030303;
+            --card-bg: #0a0a0a;
+            --neon-blue: #00f3ff;
+            --neon-purple: #bc13fe;
+            --neon-green: #0aff00;
+            --border-radius: 16px;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            cursor: default;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #050505;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Typography Utilities */
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        
+        /* RGB Chroma Animation Keyframes */
+        @keyframes border-spin {
+            0% { --angle: 0deg; }
+            100% { --angle: 360deg; }
+        }
+
+        @keyframes gradient-xy {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @property --angle {
+            syntax: '<angle>';
+            initial-value: 0deg;
+            inherits: false;
+        }
+
+        /* The Chroma Card Core Logic */
+        .chroma-card {
+            position: relative;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 2px; /* Defines border width */
+            isolation: isolate;
+            transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .chroma-card::before, .chroma-card::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: inherit;
+            background: conic-gradient(from var(--angle), 
+                #ff4545, #00ff99, #006aff, #ff0095, #ff4545);
+            animation: border-spin 3s linear infinite;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .chroma-card::after {
+            filter: blur(20px);
+            opacity: 0; /* Initially hidden */
+        }
+
+        /* Hover State for Cards */
+        .chroma-card:hover {
+            transform: translateY(-5px) scale(1.01);
+            box-shadow: 0 20px 50px -10px rgba(0,0,0,0.8);
+        }
+
+        .chroma-card:hover::before {
+            opacity: 1;
+        }
+        
+        .chroma-card:hover::after {
+            opacity: 0.6;
+        }
+
+        .chroma-content {
+            background: #0a0a0a; /* Inner card background */
+            border-radius: 14px; /* Slightly smaller than parent */
+            height: 100%;
+            width: 100%;
+            position: relative;
+            z-index: 2;
+            overflow: hidden;
+        }
+
+        /* Glassmorphism Overlay for Card Content */
+        .glass-overlay {
+            background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 100%);
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        /* Text Gradients */
+        .text-gradient-chrome {
+            background: linear-gradient(to right, #fff, #a5a5a5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .text-gradient-primary {
+            background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Grid Pattern Background */
+        .bg-grid-pattern {
+            background-size: 50px 50px;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            mask-image: radial-gradient(ellipse at center, black 40%, transparent 70%);
+        }
+
+        /* Hero Glitch Effect (Simplified) */
+        .glitch-wrapper {
+            position: relative;
+        }
+
+        .hero-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(56,189,248,0.15) 0%, rgba(0,0,0,0) 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Stats Tag */
+        .stat-tag {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+        }
+        .stat-tag:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        /* Entrance Animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+    </style>
+</head>
+<body class="min-h-screen selection:bg-cyan-500 selection:text-black relative">
+
+    <!-- Background Canvas for Neural Network Effect -->
+    <canvas id="neural-canvas" class="fixed top-0 left-0 w-full h-full pointer-events-none z-0 opacity-40"></canvas>
+    
+    <!-- Background Elements -->
+    <div class="fixed inset-0 z-0 pointer-events-none bg-grid-pattern opacity-30"></div>
+    <div class="fixed inset-0 z-[999] pointer-events-none opacity-[0.03] mix-blend-overlay" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E');"></div>
+
+    <!-- Main Content Wrapper -->
+    <main class="relative z-10 max-w-[1600px] mx-auto px-6 md:px-12 lg:px-16 pb-32">
+
+        <!-- HERO SECTION -->
+        <section class="min-h-[90vh] flex flex-col justify-center items-start relative pt-20">
+            
+            <div class="hero-glow"></div>
+
+            <!-- Badge -->
+            <div class="reveal inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 backdrop-blur-md mb-8">
+                <span class="relative flex h-2 w-2">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+                </span>
+                <span class="text-xs font-mono font-medium text-cyan-300 tracking-widest uppercase">System Online v.4.0</span>
+            </div>
+
+            <!-- Headline -->
+            <h1 class="reveal delay-100 text-6xl md:text-8xl lg:text-9xl font-bold tracking-tighter leading-[0.9] text-white mb-8">
+                ARCHITECT <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">THE FUTURE</span>
+            </h1>
+
+            <!-- Subtext -->
+            <p class="reveal delay-200 text-lg md:text-xl text-gray-400 max-w-2xl leading-relaxed mb-12 border-l-2 border-white/10 pl-6">
+                Master the fundamental abstractions of computer science. From <span class="text-white font-medium">low-level architecture</span> to <span class="text-white font-medium">distributed systems</span>. The elite curriculum for engineers who build the tools of tomorrow.
+            </p>
+
+            <!-- CTA Area -->
+            <div class="reveal delay-300 flex flex-wrap gap-6 items-center">
+                <button class="group relative px-8 py-4 bg-white text-black font-bold text-sm tracking-widest uppercase overflow-hidden rounded-sm hover:scale-105 transition-transform duration-300">
+                    <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-cyan-300 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <span class="relative z-10 flex items-center gap-2">
+                        Start Curriculum
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                    </span>
+                </button>
+                
+                <div class="flex items-center gap-4 text-sm font-mono text-gray-500">
+                    <span class="flex items-center gap-1"><span class="text-green-500">///</span> 2,409 Active Nodes</span>
+                    <span class="flex items-center gap-1"><span class="text-purple-500">///</span> 99.9% Uptime</span>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- DASHBOARD / TRACKS SECTION -->
+        <section class="mt-20">
+            <div class="reveal flex flex-col md:flex-row justify-between items-end mb-12 border-b border-white/10 pb-8">
+                <div>
+                    <h2 class="text-3xl md:text-4xl font-bold mb-2">Core Disciplines</h2>
+                    <p class="text-gray-400">Select a learning path to initialize interface.</p>
+                </div>
+                <div class="flex gap-2 mt-4 md:mt-0">
+                    <button class="stat-tag px-4 py-2 rounded text-xs text-white font-mono uppercase tracking-wider hover:bg-white hover:text-black transition-colors">All</button>
+                    <button class="stat-tag px-4 py-2 rounded text-xs text-gray-400 font-mono uppercase tracking-wider">Systems</button>
+                    <button class="stat-tag px-4 py-2 rounded text-xs text-gray-400 font-mono uppercase tracking-wider">Algos</button>
+                    <button class="stat-tag px-4 py-2 rounded text-xs text-gray-400 font-mono uppercase tracking-wider">AI/ML</button>
+                </div>
+            </div>
+
+            <!-- CARD GRID -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
+
+                <!-- Card 1: Distributed Systems -->
+                <article class="reveal chroma-card group h-[420px]">
+                    <div class="chroma-content p-8 flex flex-col h-full">
+                        <div class="glass-overlay"></div>
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-gray-800 to-black border border-white/10 flex items-center justify-center group-hover:border-cyan-500/50 transition-colors">
+                                <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                            </div>
+                            <span class="font-mono text-xs text-cyan-400 bg-cyan-400/10 px-2 py-1 rounded border border-cyan-400/20">SYS-401</span>
+                        </div>
+                        
+                        <h3 class="text-2xl font-bold mb-3 text-white group-hover:text-cyan-300 transition-colors">Distributed Systems</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed mb-auto">
+                            Architect scalable backends. Learn Paxos, Raft, MapReduce, and consistency models for planetary-scale computing.
+                        </p>
+
+                        <div class="mt-6 pt-6 border-t border-white/5">
+                            <div class="flex justify-between text-xs font-mono text-gray-500 mb-2">
+                                <span>PROGRESS</span>
+                                <span>12%</span>
+                            </div>
+                            <div class="w-full h-1 bg-gray-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-gradient-to-r from-cyan-500 to-blue-600 w-[12%]"></div>
+                            </div>
+                            <div class="mt-4 flex items-center gap-3">
+                                <span class="text-xs text-gray-400 bg-white/5 px-2 py-1 rounded">Golang</span>
+                                <span class="text-xs text-gray-400 bg-white/5 px-2 py-1 rounded">Docker</span>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Card 2: Advanced Algorithms -->
+                <article class="reveal chroma-card group h-[420px]">
+                    <div class="chroma-content p-8 flex flex-col h-full">
+                        <div class="glass-overlay"></div>
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-gray-800 to-black border border-white/10 flex items-center justify-center group-hover:border-purple-500/50 transition-colors">
+                                <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
+                            </div>
+                            <span class="font-mono text-xs text-purple-400 bg-purple-400/10 px-2 py-1 rounded border border-purple-400/20">ALG-500</span>
+                        </div>
+                        
+                        <h3 class="text-2xl font-bold mb-3 text-white group-hover:text-purple-300 transition-colors">Graph Theory & AI</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed mb-auto">
+                            Deep dive into advanced graph traversal, dynamic programming, and heuristic search algorithms for AI pathfinding.
+                        </p>
+
+                        <div class="mt-6 pt-6 border-t border-white/5">
+                            <div class="flex justify-between text-xs font-mono text-gray-500 mb-2">
+                                <span>PROGRESS</span>
+                                <span>0%</span>
+                            </div>
+                            <div class="w-full h-1 bg-gray-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-purple-600 w-[0%]"></div>
+                            </div>
+                            <div class="mt-4 flex items-center gap-3">
+                                <span class="text-xs text-gray-400 bg-white/5 px-2 py-1 rounded">Python</span>
+                                <span class="text-xs text-gray-400 bg-white/5 px-2 py-1 rounded">C++</span>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Card 3: Compilers & Internals -->
+                <article class="reveal chroma-card group h-[420px]">
+                    <div class="chroma-content p-8 flex flex-col h-full">
+                        <div class="glass-overlay"></div>
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-gray-800 to-black border border-white/10 flex items-center justify-center group-hover:border-pink-500/50 transition-colors">
+                                <svg class="w-6 h-6 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                            </div>
+                            <span class="font-mono text-xs text-pink-400 bg-pink-400/10 px-2 py-1 rounded border border-pink-400/20">CMP-303</span>
+                        </div>
+                        
+                        <h3 class="text-2xl font-bold mb-3 text-white group-hover:text-pink-300 transition-colors">Compiler Design</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed mb-auto">
+                            Build your own programming language. Lexical analysis, parsing, AST generation, and LLVM IR code emission.
+                        </p>
+
+                        <div class="mt-6 pt-6 border-t border-white/5">
+                            <div class="flex justify-between text-xs font-mono text-gray-500 mb-2">
+                                <span>PROGRESS</span>
+                                <span>45%</span>
+                            </div>
+                            <div class="w-full h-1 bg-gray-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-gradient-to-r from-pink-500 to-rose-600 w-[45%]"></div>
+                            </div>
+                            <div class="mt-4 flex items-center gap-3">
+                                <span class="text-xs text-gray-400 bg-white/5 px-2 py-1 rounded">Rust</span>
+                                <span class="text-xs text-gray-400 bg-white/5 px-2 py-1 rounded">LLVM</span>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Card 4: OS Kernel Dev -->
+                <article class="reveal chroma-card group h-[420px]">
+                    <div class="chroma-content p-8 flex flex-col h-full">
+                        <div class="glass-overlay"></div>
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-gray-800 to-black border border-white/10 flex items-center justify-center group-hover:border-green-500/50 transition-colors">
+                                <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            </div>
+                            <span class="font-mono text-xs text-green-400 bg-green-400/10 px-2 py-1 rounded border border-green-400/20">KER-800</span>
+                        </div>
+                        
+                        <h3 class="text-2xl font-bold mb-3 text-white group-hover:text-green-300 transition-colors">Kernel Development</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed mb-auto">
+                            Understand the ring protection model. Write a bootloader, memory manager, and scheduler from scratch in C.
+                        </p>
+
+                        <div class="mt-6 pt-6 border-t border-white/5">
+                            <div class="flex justify-between text-xs font-mono text-gray-500 mb-2">
+                                <span>PROGRESS</span>
+                                <span>8%</span>
+                            </div>
+                            <div class="w-full h-1 bg-gray-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-green-600 w-[8%]"></div>
+                            </div>
+                            <div class="mt-4 flex items-center gap-3">
+                                <span class="text-xs text-gray-400 bg-white/5 px-2 py-1 rounded">C</span>
+                                <span class="text-xs text-gray-400 bg-white/5 px-2 py-1 rounded">Assembly</span>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                 <!-- Card 5: Cybersecurity -->
+                 <article class="reveal chroma-card group h-[420px]">
+                    <div class="chroma-content p-8 flex flex-col h-full">
+                        <div class="glass-overlay"></div>
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-gray-800 to-black border border-white/10 flex items-center justify-center group-hover:border-red-500/50 transition-colors">
+                                <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                            </div>
+                            <span class="font-mono text-xs text-red-400 bg-red-400/10 px-2 py-1 rounded border border-red-400/20">SEC-601</span>
+                        </div>
+                        
+                        <h3 class="text-2xl font-bold mb-3 text-white group-hover:text-red-300 transition-colors">Offensive Security</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed mb-auto">
+                            Advanced penetration testing. Buffer overflows, XSS, SQLi, and cryptography breaking fundamentals.
+                        </p>
+
+                        <div class="mt-6 pt-6 border-t border-white/5">
+                            <div class="flex justify-between text-xs font-mono text-gray-500 mb-2">
+                                <span>PROGRESS</span>
+                                <span>67%</span>
+                            </div>
+                            <div class="w-full h-1 bg-gray-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-gradient-to-r from-red-500 to-orange-600 w-[67%]"></div>
+                            </div>
+                            <div class="mt-4 flex items-center gap-3">
+                                <span class="text-xs text-gray-400 bg-white/5 px-2 py-1 rounded">Kali</span>
+                                <span class="text-xs text-gray-400 bg-white/5 px-2 py-1 rounded">Python</span>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Card 6: Neural Networks -->
+                <article class="reveal chroma-card group h-[420px]">
+                    <div class="chroma-content p-8 flex flex-col h-full">
+                        <div class="glass-overlay"></div>
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-gray-800 to-black border border-white/10 flex items-center justify-center group-hover:border-amber-500/50 transition-colors">
+                                <svg class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            </div>
+                            <span class="font-mono text-xs text-amber-400 bg-amber-400/10 px-2 py-1 rounded border border-amber-400/20">NN-900</span>
+                        </div>
+                        
+                        <h3 class="text-2xl font-bold mb-3 text-white group-hover:text-amber-300 transition-colors">Deep Learning</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed mb-auto">
+                            Mathematics of backpropagation. Build CNNs, RNNs, and Transformers from scratch using PyTorch and raw CUDA.
+                        </p>
+
+                        <div class="mt-6 pt-6 border-t border-white/5">
+                            <div class="flex justify-between text-xs font-mono text-gray-500 mb-2">
+                                <span>PROGRESS</span>
+                                <span>2%</span>
+                            </div>
+                            <div class="w-full h-1 bg-gray-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-amber-600 w-[2%]"></div>
+                            </div>
+                            <div class="mt-4 flex items-center gap-3">
+                                <span class="text-xs text-gray-400 bg-white/5 px-2 py-1 rounded">PyTorch</span>
+                                <span class="text-xs text-gray-400 bg-white/5 px-2 py-1 rounded">CUDA</span>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+
+            <!-- FOOTER INDICATOR -->
+            <div class="mt-32 text-center">
+                <div class="inline-block animate-bounce">
+                    <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                </div>
+                <p class="text-xs text-gray-600 mt-4 font-mono uppercase">Scroll for curriculum details</p>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Custom Cursor -->
+    <div id="cursor-dot" class="hidden md:block fixed w-1.5 h-1.5 bg-cyan-400 rounded-full pointer-events-none z-[9999] mix-blend-difference"></div>
+    <div id="cursor-ring" class="hidden md:block fixed w-8 h-8 border border-cyan-500/50 rounded-full pointer-events-none z-[9999] transition-all duration-150 ease-out mix-blend-difference"></div>
+
+    <script>
+        // --- CUSTOM CURSOR ---
+        const cursorDot = document.getElementById('cursor-dot');
+        const cursorRing = document.getElementById('cursor-ring');
+        
+        window.addEventListener('mousemove', (e) => {
+            const x = e.clientX;
+            const y = e.clientY;
+            
+            // Dot follows instantly
+            cursorDot.style.left = `${x}px`;
+            cursorDot.style.top = `${y}px`;
+            
+            // Ring follows with delay (handled by CSS transition)
+            cursorRing.style.left = `${x - 16}px`; // Center the 32px ring
+            cursorRing.style.top = `${y - 16}px`;
+        });
+
+        // Hover effects for cursor
+        document.querySelectorAll('a, button, .chroma-card').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursorRing.style.transform = 'scale(1.5)';
+                cursorRing.style.borderColor = '#fff';
+                cursorDot.style.transform = 'scale(0.5)';
+            });
+            el.addEventListener('mouseleave', () => {
+                cursorRing.style.transform = 'scale(1)';
+                cursorRing.style.borderColor = 'rgba(6, 182, 212, 0.5)';
+                cursorDot.style.transform = 'scale(1)';
+            });
+        });
+
+        // --- ANIMATION OBSERVER ---
+        const revealElements = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    
+                    // Animate Progress Bars if inside the revealed element
+                    const bars = entry.target.querySelectorAll('[class*="w-["]');
+                    bars.forEach(bar => {
+                         // Simple width animation trick
+                         const targetWidth = bar.className.match(/w-\[(\d+%)\]/)[1];
+                         bar.style.width = '0%';
+                         bar.style.transition = 'width 1.5s cubic-bezier(0.22, 1, 0.36, 1)';
+                         bar.classList.remove(bar.className.match(/w-\[\d+%\]/)[0]); // Remove tailwind width
+                         setTimeout(() => {
+                             bar.style.width = targetWidth;
+                         }, 100);
+                    });
+                }
+            });
+        }, { threshold: 0.1 });
+
+        revealElements.forEach(el => observer.observe(el));
+
+
+        // --- BACKGROUND PARTICLE SYSTEM (NEURAL NETWORK) ---
+        const canvas = document.getElementById('neural-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+        
+        // Configuration
+        const particleCount = 60;
+        const connectionDistance = 180;
+        const mouseDistance = 250;
+
+        let mouse = { x: null, y: null };
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.x;
+            mouse.y = e.y;
+        });
+
+        window.addEventListener('resize', resize);
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.5; // Slow velocity
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.size = Math.random() * 1.5 + 0.5;
+                this.baseColor = `rgba(255, 255, 255, ${Math.random() * 0.3 + 0.1})`;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Bounce off edges
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+
+                // Mouse Interaction
+                let dx = mouse.x - this.x;
+                let dy = mouse.y - this.y;
+                let distance = Math.sqrt(dx*dx + dy*dy);
+
+                if (distance < mouseDistance) {
+                    const forceDirectionX = dx / distance;
+                    const forceDirectionY = dy / distance;
+                    const force = (mouseDistance - distance) / mouseDistance;
+                    const directionX = forceDirectionX * force * 0.6;
+                    const directionY = forceDirectionY * force * 0.6;
+                    
+                    this.x -= directionX; // Repel slightly
+                    this.y -= directionY;
+                }
+            }
+
+            draw() {
+                ctx.fillStyle = this.baseColor;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+
+                // Draw connections
+                for (let j = i; j < particles.length; j++) {
+                    let dx = particles[i].x - particles[j].x;
+                    let dy = particles[i].y - particles[j].y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < connectionDistance) {
+                        ctx.beginPath();
+                        // Color depends on mouse proximity to line center
+                        let opacity = 1 - (distance / connectionDistance);
+                        ctx.strokeStyle = `rgba(100, 100, 255, ${opacity * 0.15})`;
+                        ctx.lineWidth = 1;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        resize();
+        initParticles();
+        animate();
+
+    </script>
+</body>
+</html>

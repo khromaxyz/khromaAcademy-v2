@@ -2,90 +2,295 @@
  * Estilos das Seções Principais
  */
 
-/* Hero Section */
+/* Hero Section - Design Premium 7.7.html */
 .hero {
   padding: var(--space-section) 0;
-  text-align: center;
+  text-align: left;
   position: relative;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
   animation: fadeInUp 0.8s ease-out;
 }
 
-.hero::before {
-  content: '';
+.hero-glow {
   position: absolute;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.08) 0%, rgba(0,0,0,0) 70%);
   top: 50%;
   left: 50%;
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(65, 255, 65, 0.05) 0%, transparent 70%);
   transform: translate(-50%, -50%);
-  border-radius: 50%;
-  filter: blur(60px);
   z-index: -1;
-  animation: pulse 4s ease-in-out infinite;
+  pointer-events: none;
 }
 
 .hero-content {
   position: relative;
   z-index: 1;
+  max-width: 1200px;
+  width: 100%;
 }
 
-.hero h1 {
-  font-size: clamp(2.5rem, 8vw, 5.5rem);
-  line-height: 1.1;
-  margin-bottom: var(--space-l);
-  animation: fadeInUp 0.8s ease-out 0.2s both;
+/* Hero Badge */
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(147, 197, 253, 1);
+  margin-bottom: 24px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  animation: fadeInUp 0.8s ease-out 0.1s both;
 }
 
-.hero p {
-  font-size: clamp(1.1rem, 2vw, 1.35rem);
-  color: var(--color-grey);
-  max-width: 700px;
-  margin: 0 auto;
+.badge-dot {
+  position: relative;
+  display: flex;
+  width: 8px;
+  height: 8px;
+}
+
+.badge-dot-ping {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: rgba(59, 130, 246, 0.75);
+  animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.badge-dot-core {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: rgba(59, 130, 246, 1);
+  z-index: 1;
+}
+
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.badge-text {
+  font-family: var(--font-heading);
+}
+
+/* Hero Title */
+.hero-title {
+  font-size: clamp(3rem, 8vw, 7rem);
+  font-weight: 700;
+  line-height: 0.9;
+  margin-bottom: 24px;
+  letter-spacing: -0.05em;
+  font-family: var(--font-heading);
+}
+
+.hero-title-line {
+  display: block;
+}
+
+.hero-text-gradient {
+  background: linear-gradient(to right, #fff 20%, #666 40%, #666 60%, #fff 80%);
+  background-size: 200% auto;
+  color: #000;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 5s linear infinite;
+}
+
+@keyframes shine {
+  to {
+    background-position: 200% center;
+  }
+}
+
+.hero-title-faded {
+  color: rgba(255, 255, 255, 0.2);
+  position: relative;
+}
+
+.hero-title-hover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: white;
+  opacity: 0;
+  transition: opacity 0.7s ease;
+  pointer-events: none;
+  clip-path: inset(0 0 0 0);
+}
+
+.hero-title-faded:hover .hero-title-hover {
+  opacity: 1;
+}
+
+/* Hero Description */
+.hero-description {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: rgba(156, 163, 175, 1);
+  max-width: 42rem;
+  line-height: 1.75;
+  margin-bottom: 40px;
+  font-weight: 300;
+  animation: fadeInUp 0.8s ease-out 0.3s both;
+}
+
+/* Hero Actions */
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
   animation: fadeInUp 0.8s ease-out 0.4s both;
-  line-height: 1.8;
 }
 
-/* Disciplines Section */
+/* Hero Buttons */
+.btn-hero-primary {
+  position: relative;
+  padding: 16px 32px;
+  background: white;
+  color: black;
+  font-weight: 700;
+  border-radius: 9999px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-heading);
+  font-size: 1rem;
+}
+
+.btn-hero-text {
+  position: relative;
+  z-index: 10;
+}
+
+.btn-hero-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgba(99, 102, 241, 1), rgba(6, 182, 212, 1));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.btn-hero-primary:hover {
+  transform: scale(1.05);
+}
+
+.btn-hero-primary:hover .btn-hero-gradient {
+  opacity: 1;
+}
+
+.btn-hero-primary:active {
+  transform: scale(0.95);
+}
+
+.btn-hero-secondary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 32px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  font-weight: 500;
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.btn-hero-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.btn-hero-secondary svg {
+  width: 16px;
+  height: 16px;
+  color: rgba(156, 163, 175, 1);
+}
+
+/* Disciplines Section - Design Premium 7.7.html */
 .disciplines {
   padding: var(--space-section) 0;
 }
 
 .disciplines-header {
-  text-align: center;
-  margin-bottom: var(--space-xl);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 48px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.disciplines-header-content {
+  flex: 1;
 }
 
 .disciplines-header h2 {
-  font-size: clamp(2.5rem, 5vw, 3.5rem);
-  margin-bottom: var(--space-m);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  background: var(--gradient-main);
-  background-size: 200% 200%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: gradientShift 4s ease infinite;
+  font-size: clamp(1.875rem, 4vw, 2.25rem);
+  margin-bottom: 8px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: white;
+  font-family: var(--font-heading);
+}
+
+.disciplines-subtitle {
+  font-size: 0.875rem;
+  color: rgba(161, 161, 170, 1);
+  margin: 0;
 }
 
 .view-toggle {
   display: inline-flex;
-  background-color: var(--surface-1);
-  border-radius: 99px;
-  padding: var(--space-xxs);
-  border: 1px solid var(--border-subtle);
+  gap: 8px;
+  background-color: transparent;
+  border-radius: 8px;
+  padding: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   position: relative;
 }
 
 .view-btn {
-  padding: var(--space-xs) var(--space-m);
+  padding: 8px;
   font-family: var(--font-heading);
   font-weight: 600;
   font-size: 14px;
   z-index: 2;
-  color: var(--text-secondary);
-  transition: color var(--transition-medium);
+  color: rgba(161, 161, 170, 1);
+  transition: all 0.2s ease;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.view-btn:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .view-toggle-bg {
@@ -93,21 +298,20 @@
   top: 4px;
   bottom: 4px;
   width: calc(50% - 4px);
-  background-color: var(--interactive-active);
-  border-radius: 99px;
-  transition: transform var(--transition-medium);
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   left: 4px;
-  /* Não bloquear eventos dos botões */
   pointer-events: none;
 }
 
 .view-toggle[data-view='graph'] .view-toggle-bg {
-  transform: translateX(100%);
+  transform: translateX(calc(100% + 4px));
 }
 
 .view-toggle[data-view='grid'] .view-btn[data-view='grid'],
 .view-toggle[data-view='graph'] .view-btn[data-view='graph'] {
-  color: var(--text-primary);
+  color: white;
 }
 
 .disciplines-container {
@@ -129,31 +333,31 @@
   display: block !important;
 }
 
-.disciplines-grid .discipline-card {
+.disciplines-grid .chroma-card-wrapper {
   animation: cardStagger 0.6s ease-out both;
 }
 
-.disciplines-grid .discipline-card:nth-child(1) {
+.disciplines-grid .chroma-card-wrapper:nth-child(1) {
   animation-delay: 0.1s;
 }
 
-.disciplines-grid .discipline-card:nth-child(2) {
+.disciplines-grid .chroma-card-wrapper:nth-child(2) {
   animation-delay: 0.2s;
 }
 
-.disciplines-grid .discipline-card:nth-child(3) {
+.disciplines-grid .chroma-card-wrapper:nth-child(3) {
   animation-delay: 0.3s;
 }
 
-.disciplines-grid .discipline-card:nth-child(4) {
+.disciplines-grid .chroma-card-wrapper:nth-child(4) {
   animation-delay: 0.4s;
 }
 
-.disciplines-grid .discipline-card:nth-child(5) {
+.disciplines-grid .chroma-card-wrapper:nth-child(5) {
   animation-delay: 0.5s;
 }
 
-.disciplines-grid .discipline-card:nth-child(6) {
+.disciplines-grid .chroma-card-wrapper:nth-child(6) {
   animation-delay: 0.6s;
 }
 

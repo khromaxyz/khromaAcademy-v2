@@ -55,17 +55,29 @@ export class DisciplineCard {
       : discipline.period;
     
     return `
-      <article class="discipline-card link" data-id="${id}" data-progress="${discipline.progress}" style="--card-progress: ${discipline.progress}%;">
-        <div class="card-inner">
-          <div class="card-illustration" style="color: ${discipline.color};">
-            ${iconHtml}
+      <article class="chroma-card-wrapper" data-id="${id}" data-progress="${discipline.progress}">
+        <div class="chroma-card-content">
+          <div>
+            <div class="card-icon" style="color: ${discipline.color};">
+              ${iconHtml}
+            </div>
+            <h3 class="card-title">${discipline.title}</h3>
+            <p class="card-desc">${discipline.description || 'Explore this discipline to master advanced concepts.'}</p>
+            <div class="card-badges">
+              <span class="tech-badge">${discipline.code}</span>
+              <span class="tech-badge">${periodLabel}</span>
+            </div>
           </div>
-          <div class="card-content">
-            <div class="card-code">${discipline.code}</div>
-            <h3>${discipline.title}</h3>
-            <div class="card-meta">
-              <span>${periodLabel}</span>
-              <span class="card-progress-indicator">${discipline.progress}%</span>
+          <div class="card-footer">
+            <div class="footer-content-default">
+              <span class="stats">
+                <span class="stats-dot" style="background: ${discipline.color};"></span>
+                ${discipline.progress > 0 ? `${discipline.progress}% Complete` : 'Not Started'}
+              </span>
+              <span class="stats">${discipline.modules?.length || 0} Modules</span>
+            </div>
+            <div class="footer-content-hover">
+              <button class="enroll-btn">Initialize →</button>
             </div>
           </div>
         </div>

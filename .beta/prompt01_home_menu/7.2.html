@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS | Elite CS Education</title>
+    
+    <!-- Tailwind CSS v4 (Alpha/CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    
+    <!-- Fonts: Space Grotesk for Headers, Inter for UI -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-deep: #050505;
+            --bg-card: #0a0a0a;
+            --text-main: #ededed;
+            --text-muted: #888888;
+            --chroma-speed: 4s;
+            --card-border-radius: 16px;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            cursor: none; /* Custom cursor */
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        /* --- Custom Cursor --- */
+        #cursor-dot,
+        #cursor-outline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+            mix-blend-mode: difference;
+        }
+
+        #cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: white;
+        }
+
+        #cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+
+        body.hovering-active #cursor-outline {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: transparent;
+        }
+
+        /* --- Background Noise --- */
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9000;
+            opacity: 0.03;
+            background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+        }
+
+        /* --- Typography & Hero --- */
+        .hero-glitch {
+            position: relative;
+            display: inline-block;
+        }
+
+        .hero-glitch::before,
+        .hero-glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-deep);
+        }
+
+        .hero-glitch::before {
+            left: 2px;
+            text-shadow: -1px 0 #ff00c1;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim 5s infinite linear alternate-reverse;
+        }
+
+        .hero-glitch::after {
+            left: -2px;
+            text-shadow: -1px 0 #00fff9;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim2 5s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim {
+            0% { clip: rect(38px, 9999px, 14px, 0); transform: skew(0.85deg); }
+            5% { clip: rect(63px, 9999px, 87px, 0); transform: skew(0.08deg); }
+            10% { clip: rect(92px, 9999px, 6px, 0); transform: skew(0.36deg); }
+            15% { clip: rect(25px, 9999px, 72px, 0); transform: skew(0.11deg); }
+            20% { clip: rect(11px, 9999px, 38px, 0); transform: skew(0.98deg); }
+            25% { clip: rect(76px, 9999px, 95px, 0); transform: skew(0.17deg); }
+            100% { clip: rect(53px, 9999px, 19px, 0); transform: skew(0.68deg); }
+        }
+        @keyframes glitch-anim2 {
+            0% { clip: rect(4px, 9999px, 21px, 0); transform: skew(0.25deg); }
+            5% { clip: rect(78px, 9999px, 92px, 0); transform: skew(0.83deg); }
+            10% { clip: rect(15px, 9999px, 54px, 0); transform: skew(0.41deg); }
+            15% { clip: rect(36px, 9999px, 2px, 0); transform: skew(0.04deg); }
+            20% { clip: rect(61px, 9999px, 64px, 0); transform: skew(0.29deg); }
+            25% { clip: rect(84px, 9999px, 28px, 0); transform: skew(0.56deg); }
+            100% { clip: rect(9px, 9999px, 43px, 0); transform: skew(0.72deg); }
+        }
+
+        /* --- Chroma RGB Card Core --- */
+        .chroma-card-wrapper {
+            position: relative;
+            z-index: 1;
+            border-radius: var(--card-border-radius);
+            padding: 2px; /* This controls border thickness */
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: #1a1a1a; /* Fallback */
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        /* The Spinning Gradient Layer */
+        .chroma-card-wrapper::before {
+            content: "";
+            position: absolute;
+            width: 250%;
+            height: 250%;
+            top: -75%;
+            left: -75%;
+            z-index: -2;
+            background: conic-gradient(
+                from 0deg,
+                transparent 0deg,
+                #ff0000 40deg,   /* Red */
+                #ff00ff 100deg,  /* Magenta */
+                #0000ff 160deg,  /* Blue */
+                #00ffff 220deg,  /* Cyan */
+                #00ff00 280deg,  /* Green */
+                #ffff00 340deg,  /* Yellow */
+                transparent 360deg
+            );
+            animation: rotate var(--chroma-speed) linear infinite;
+            opacity: 0.5;
+            transition: opacity 0.3s ease;
+        }
+
+        /* The Glow Layer - Enhanced */
+        .chroma-card-wrapper::after {
+            content: "";
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            z-index: -1;
+            background: conic-gradient(
+                from 180deg,
+                transparent 0deg,
+                #ff0000 40deg,
+                #ff00ff 100deg,
+                #0000ff 160deg,
+                #00ffff 220deg,
+                #00ff00 280deg,
+                #ffff00 340deg,
+                transparent 360deg
+            );
+            filter: blur(35px);
+            animation: rotate calc(var(--chroma-speed) * 0.8) linear infinite reverse; /* Counter rotation for liquid effect */
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Hover States for Card */
+        .chroma-card-wrapper:hover {
+            transform: translateY(-5px) scale(1.01);
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
+        }
+
+        .chroma-card-wrapper:hover::before {
+            opacity: 1;
+            animation-duration: 2s; /* Speed up on hover */
+        }
+
+        .chroma-card-wrapper:hover::after {
+            opacity: 0.6;
+            animation-duration: 2s;
+        }
+
+        /* The Inner Content Container */
+        .chroma-card-content {
+            background-color: rgba(10, 10, 10, 0.95);
+            border-radius: calc(var(--card-border-radius) - 1px);
+            height: 100%;
+            width: 100%;
+            position: relative;
+            z-index: 2;
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* --- Utilities --- */
+        .fade-in-up {
+            animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #050505;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-cyan-500/30 selection:text-cyan-200">
+
+    <!-- Interactive Background -->
+    <canvas id="starfield" class="fixed top-0 left-0 w-full h-full z-0 opacity-40"></canvas>
+    <div class="noise-overlay"></div>
+
+    <!-- Custom Cursor -->
+    <div id="cursor-dot"></div>
+    <div id="cursor-outline"></div>
+
+    <main class="relative z-10 w-full min-h-screen flex flex-col items-center justify-start pt-24 pb-24 px-6 lg:px-12">
+
+        <!-- Hero Section -->
+        <section class="max-w-7xl w-full text-center mb-32 relative">
+            <!-- Ambient decorative glow behind hero -->
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+            
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 backdrop-blur-md mb-8 animate-[fadeInUp_1s_ease-out_0.2s_forwards] opacity-0">
+                <span class="relative flex h-2 w-2">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+                </span>
+                <span class="text-xs font-medium tracking-wider uppercase text-gray-300">Admissions Open for 2025</span>
+            </div>
+
+            <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter mb-6 leading-[1.1]">
+                <div class="block overflow-hidden">
+                    <span class="block hero-glitch" data-text="ARCHITECT">ARCHITECT</span>
+                </div>
+                <div class="block overflow-hidden text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-200 to-gray-500">
+                    <span class="block fade-in-up" style="animation-delay: 0.2s;">THE FUTURE</span>
+                </div>
+            </h1>
+
+            <p class="max-w-2xl mx-auto text-lg md:text-xl text-gray-400 font-light leading-relaxed fade-in-up mb-10" style="animation-delay: 0.4s;">
+                An elite curriculum designed for the next generation of computer scientists. 
+                Master algorithms, quantum computing, and artificial intelligence in an 
+                environment built for excellence.
+            </p>
+
+            <div class="flex flex-wrap justify-center gap-4 fade-in-up" style="animation-delay: 0.6s;">
+                <button class="group relative px-8 py-4 bg-white text-black font-bold rounded-lg overflow-hidden hover-trigger">
+                    <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <span class="relative z-10 flex items-center gap-2 group-hover:text-white transition-colors">
+                        Start Application 
+                        <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                    </span>
+                </button>
+                <button class="px-8 py-4 bg-white/5 border border-white/10 text-white font-medium rounded-lg hover:bg-white/10 transition-all hover-trigger backdrop-blur-sm">
+                    View Syllabus
+                </button>
+            </div>
+        </section>
+
+        <!-- Stats / Social Proof (Minimal) -->
+        <div class="w-full max-w-7xl grid grid-cols-2 md:grid-cols-4 gap-8 border-y border-white/5 py-8 mb-32 fade-in-up" style="animation-delay: 0.8s;">
+            <div class="text-center">
+                <div class="text-3xl font-bold font-mono text-white mb-1">98%</div>
+                <div class="text-xs text-gray-500 uppercase tracking-widest">Placement Rate</div>
+            </div>
+            <div class="text-center">
+                <div class="text-3xl font-bold font-mono text-white mb-1">Top 1%</div>
+                <div class="text-xs text-gray-500 uppercase tracking-widest">Global Talent</div>
+            </div>
+            <div class="text-center">
+                <div class="text-3xl font-bold font-mono text-white mb-1">$240k</div>
+                <div class="text-xs text-gray-500 uppercase tracking-widest">Avg Starting Comp</div>
+            </div>
+            <div class="text-center">
+                <div class="text-3xl font-bold font-mono text-white mb-1">50+</div>
+                <div class="text-xs text-gray-500 uppercase tracking-widest">Fortune 500 Partners</div>
+            </div>
+        </div>
+
+        <!-- Filtering & Controls -->
+        <div class="w-full max-w-7xl mb-12 flex flex-col md:flex-row justify-between items-center gap-6 fade-in-up" style="animation-delay: 0.9s;">
+            <h2 class="text-2xl font-semibold tracking-tight">Core Disciplines</h2>
+            
+            <div class="flex gap-2 p-1 bg-white/5 rounded-lg backdrop-blur-sm border border-white/5 overflow-x-auto max-w-full">
+                <button class="filter-btn active px-4 py-2 text-sm rounded-md transition-all bg-white/10 text-white border border-white/10 shadow-sm" data-filter="all">All</button>
+                <button class="filter-btn px-4 py-2 text-sm rounded-md transition-all text-gray-400 hover:text-white hover:bg-white/5" data-filter="foundation">Foundations</button>
+                <button class="filter-btn px-4 py-2 text-sm rounded-md transition-all text-gray-400 hover:text-white hover:bg-white/5" data-filter="advanced">Advanced</button>
+                <button class="filter-btn px-4 py-2 text-sm rounded-md transition-all text-gray-400 hover:text-white hover:bg-white/5" data-filter="frontier">Frontier</button>
+            </div>
+        </div>
+
+        <!-- Course Grid -->
+        <section id="course-grid" class="w-full max-w-7xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 perspective-1000">
+            <!-- Cards are injected here via JavaScript -->
+        </section>
+
+        <!-- Bottom Call to Action -->
+        <section class="w-full max-w-4xl mt-40 mb-20 text-center fade-in-up">
+             <div class="p-1 rounded-2xl bg-gradient-to-b from-white/10 to-transparent">
+                <div class="bg-[#0a0a0a] rounded-xl p-12 border border-white/5 relative overflow-hidden">
+                    <!-- Decorative BG -->
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-purple-500/10 blur-[80px] rounded-full pointer-events-none"></div>
+                    <div class="absolute bottom-0 left-0 w-64 h-64 bg-cyan-500/10 blur-[80px] rounded-full pointer-events-none"></div>
+                    
+                    <h3 class="text-3xl font-bold mb-4 relative z-10">Ready to transcend?</h3>
+                    <p class="text-gray-400 mb-8 max-w-lg mx-auto relative z-10">Join a community of relentless innovators. The admission window closes in 14 days.</p>
+                    <button class="px-10 py-4 bg-white text-black font-bold rounded-full hover:scale-105 transition-transform duration-300 hover-trigger relative z-10">
+                        Apply Now
+                    </button>
+                </div>
+             </div>
+        </section>
+
+        <footer class="w-full border-t border-white/5 py-12 text-center text-gray-600 text-sm">
+            <p>&copy; 2025 NEXUS INSTITUTE. ALL RIGHTS RESERVED.</p>
+        </footer>
+
+    </main>
+
+    <script>
+        /**
+         * DATA SOURCE
+         * "Elite" sounding courses with metadata.
+         */
+        const courses = [
+            {
+                id: 1,
+                title: "Algorithmic Complexity",
+                code: "CS-104",
+                category: "foundation",
+                description: "Master Big O notation, complex data structures, and optimization techniques essential for high-frequency trading systems.",
+                tags: ["C++", "Optimization", "Math"],
+                color: "#ef4444" // Red
+            },
+            {
+                id: 2,
+                title: "Neural Architectures",
+                code: "AI-301",
+                category: "advanced",
+                description: "Deep dive into transformers, GANs, and diffusion models. Build LLMs from scratch and understand the mathematics of intelligence.",
+                tags: ["Python", "PyTorch", "Linear Algebra"],
+                color: "#06b6d4" // Cyan
+            },
+            {
+                id: 3,
+                title: "Quantum Cryptography",
+                code: "Q-402",
+                category: "frontier",
+                description: "Post-quantum encryption standards. Understand Shor's algorithm and secure communications for the quantum era.",
+                tags: ["Q#", "Physics", "Security"],
+                color: "#d946ef" // Magenta
+            },
+            {
+                id: 4,
+                title: "Kernel Exploitation",
+                code: "SEC-205",
+                category: "advanced",
+                description: "Offensive security at the OS level. Memory corruption, ROP chains, and bypassing modern mitigations.",
+                tags: ["Assembly", "C", "Linux"],
+                color: "#84cc16" // Lime
+            },
+            {
+                id: 5,
+                title: "Distributed Systems",
+                code: "SYS-201",
+                category: "foundation",
+                description: "Design scalable systems handling millions of RPS. Consensus algorithms, sharding, and eventual consistency.",
+                tags: ["Go", "Kubernetes", "Cloud"],
+                color: "#f59e0b" // Amber
+            },
+            {
+                id: 6,
+                title: "Bio-Computation",
+                code: "BIO-500",
+                category: "frontier",
+                description: "Storing data in DNA sequences and biological logic gates. The convergence of wetware and software.",
+                tags: ["Biology", "Data Theory", "Future"],
+                color: "#10b981" // Emerald
+            },
+             {
+                id: 7,
+                title: "Compiler Design",
+                code: "CS-300",
+                category: "advanced",
+                description: "Lexical analysis, parsing, and code generation. Build your own turing-complete language optimized for specific hardware.",
+                tags: ["Rust", "LLVM", "Theory"],
+                color: "#6366f1" // Violet
+            },
+            {
+                id: 8,
+                title: "AR/VR Spatial UX",
+                code: "XR-404",
+                category: "frontier",
+                description: "Designing interfaces for the spatial web. Hand-tracking, eye-gaze interaction physics, and immersive rendering.",
+                tags: ["Unity", "C#", "Design"],
+                color: "#ec4899" // Pink
+            },
+            {
+                id: 9,
+                title: "Database Internals",
+                code: "DB-220",
+                category: "foundation",
+                description: "B-Trees, LSM Trees, and WALs. How databases actually persist and retrieve data on disk efficiently.",
+                tags: ["C", "Storage", "I/O"],
+                color: "#3b82f6" // Blue
+            },
+            {
+                id: 10,
+                title: "Autonomous Robotics",
+                code: "ROB-550",
+                category: "frontier",
+                description: "SLAM, path planning, and sensor fusion. Programming drones and bipeds to navigate complex, unstructured environments.",
+                tags: ["ROS", "C++", "Control Theory"],
+                color: "#f43f5e" // Rose
+            },
+            {
+                id: 11,
+                title: "Financial Engineering",
+                code: "FIN-303",
+                category: "advanced",
+                description: "Algorithmic trading strategies, stochastic calculus, and risk management. The intersection of code and capital.",
+                tags: ["Python", "Pandas", "Stats"],
+                color: "#14b8a6" // Teal
+            },
+            {
+                id: 12,
+                title: "Zero-Knowledge Proofs",
+                code: "ZKP-600",
+                category: "frontier",
+                description: "Prove you know a secret without revealing it. The math behind modern privacy-preserving blockchains.",
+                tags: ["Math", "Cryptography", "zk-SNARKs"],
+                color: "#8b5cf6" // Indigo
+            }
+        ];
+
+        const grid = document.getElementById('course-grid');
+        
+        /**
+         * MAGNETIC BUTTON EFFECT
+         */
+        const magnets = document.querySelectorAll('button');
+        magnets.forEach((magnet) => {
+            magnet.addEventListener('mousemove', (e) => {
+                const position = magnet.getBoundingClientRect();
+                const x = e.pageX - position.left - position.width / 2;
+                const y = e.pageY - position.top - position.height / 2;
+
+                magnet.style.transform = `translate(${x * 0.15}px, ${y * 0.15}px)`;
+            });
+
+            magnet.addEventListener('mouseleave', () => {
+                magnet.style.transform = 'translate(0px, 0px)';
+            });
+        });
+
+        /**
+         * INTERSECTION OBSERVER FOR REVEALS
+         */
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: "0px 0px -50px 0px"
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in-up').forEach(el => {
+            observer.observe(el);
+        });
+        
+        /**
+         * RENDER ENGINE
+         */
+        function renderCards(filter = 'all') {
+            grid.innerHTML = '';
+            
+            const filtered = filter === 'all' 
+                ? courses 
+                : courses.filter(c => c.category === c.category); // Bug fix: Logic was redundant, fixing below
+
+            const displayCourses = filter === 'all' 
+                ? courses 
+                : courses.filter(c => c.category === filter);
+
+            displayCourses.forEach((course, index) => {
+                // Create Card Structure
+                const card = document.createElement('div');
+                card.className = `chroma-card-wrapper hover-trigger group opacity-0 translate-y-8 transition-all duration-500`;
+                card.style.animation = `fadeInUp 0.6s ease-out forwards ${index * 0.1}s`;
+
+                // Logic for specific glow color hints based on tags (optional override)
+                // but we keep the rainbow border as requested.
+
+                card.innerHTML = `
+                    <div class="chroma-card-content p-8 flex flex-col h-full relative overflow-hidden">
+                        <!-- Subtle internal grid bg -->
+                        <div class="absolute inset-0 w-full h-full opacity-[0.03] pointer-events-none" 
+                            style="background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 20px 20px;">
+                        </div>
+
+                        <!-- Header -->
+                        <div class="flex justify-between items-start mb-6 relative z-10">
+                            <span class="font-mono text-xs font-bold text-[var(--text-muted)] border border-white/10 px-2 py-1 rounded bg-white/5 uppercase tracking-widest">
+                                ${course.code}
+                            </span>
+                            <div class="w-2 h-2 rounded-full bg-gray-700 group-hover:bg-white transition-colors duration-300 shadow-[0_0_10px_rgba(255,255,255,0.5)]"></div>
+                        </div>
+
+                        <!-- Title & Desc -->
+                        <h3 class="text-2xl font-bold mb-3 text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-gray-400 transition-all">
+                            ${course.title}
+                        </h3>
+                        <p class="text-gray-400 text-sm leading-relaxed mb-8 flex-grow">
+                            ${course.description}
+                        </p>
+
+                        <!-- Tags & Footer -->
+                        <div class="mt-auto relative z-10">
+                            <div class="flex flex-wrap gap-2 mb-6">
+                                ${course.tags.map(tag => `<span class="text-[10px] font-medium text-gray-500 px-2 py-1 bg-white/5 rounded border border-white/5">${tag}</span>`).join('')}
+                            </div>
+                            
+                            <div class="flex items-center justify-between border-t border-white/10 pt-4">
+                                <span class="text-xs text-gray-500 font-mono group-hover:text-cyan-400 transition-colors">8 Modules</span>
+                                <button class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all duration-300">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Vanilla Tilt Effect
+                card.addEventListener('mousemove', (e) => handleTilt(e, card));
+                card.addEventListener('mouseleave', () => resetTilt(card));
+                
+                grid.appendChild(card);
+            });
+        }
+
+        /**
+         * 3D TILT PHYSICS
+         */
+        function handleTilt(e, element) {
+            const rect = element.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            const rotateX = ((y - centerY) / centerY) * -5; // Max rotation deg
+            const rotateY = ((x - centerX) / centerX) * 5;
+
+            element.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+        }
+
+        function resetTilt(element) {
+            element.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)`;
+        }
+
+        /**
+         * CANVAS BACKGROUND (STARFIELD + CONNECTIONS)
+         */
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            
+            reset() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.2; // Slow movement
+                this.vy = (Math.random() - 0.5) * 0.2;
+                this.size = Math.random() * 1.5;
+                this.alpha = Math.random() * 0.5;
+                this.flashSpeed = 0.02 + Math.random() * 0.05;
+                this.flashDir = 1;
+            }
+            
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                
+                // Wrap around
+                if (this.x < 0) this.x = width;
+                if (this.x > width) this.x = 0;
+                if (this.y < 0) this.y = height;
+                if (this.y > height) this.y = 0;
+
+                // Twinkle
+                this.alpha += this.flashSpeed * this.flashDir;
+                if (this.alpha > 0.8 || this.alpha < 0.1) this.flashDir *= -1;
+            }
+            
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            const count = Math.floor((width * height) / 15000); // Density
+            for (let i = 0; i < count; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animateCanvas() {
+            ctx.clearRect(0, 0, width, height);
+            
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            // Draw subtle connections between close particles
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+            ctx.lineWidth = 1;
+            
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+                    
+                    if (dist < 100) {
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            requestAnimationFrame(animateCanvas);
+        }
+
+        window.addEventListener('resize', () => {
+            resize();
+            initParticles();
+        });
+
+        /**
+         * CUSTOM CURSOR LOGIC
+         */
+        const cursorDot = document.getElementById('cursor-dot');
+        const cursorOutline = document.getElementById('cursor-outline');
+
+        window.addEventListener('mousemove', (e) => {
+            const posX = e.clientX;
+            const posY = e.clientY;
+
+            // Dot follows instantly
+            cursorDot.style.left = `${posX}px`;
+            cursorDot.style.top = `${posY}px`;
+
+            // Outline follows with slight delay (handled by CSS transition mostly, but update pos)
+            // We use a timeout or simple tracking for smoother feel
+            cursorOutline.animate({
+                left: `${posX}px`,
+                top: `${posY}px`
+            }, { duration: 500, fill: "forwards" });
+        });
+
+        // Add hover effect to interactive elements
+        document.addEventListener('mouseover', (e) => {
+            if (e.target.closest('.hover-trigger') || e.target.tagName === 'BUTTON' || e.target.tagName === 'A') {
+                document.body.classList.add('hovering-active');
+            }
+        });
+
+        document.addEventListener('mouseout', (e) => {
+             if (e.target.closest('.hover-trigger') || e.target.tagName === 'BUTTON' || e.target.tagName === 'A') {
+                document.body.classList.remove('hovering-active');
+            }
+        });
+
+        /**
+         * FILTER LOGIC
+         */
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // UI Toggle
+                document.querySelectorAll('.filter-btn').forEach(b => {
+                    b.classList.remove('active', 'bg-white/10', 'text-white', 'border-white/10', 'shadow-sm');
+                    b.classList.add('text-gray-400', 'hover:text-white');
+                });
+                btn.classList.add('active', 'bg-white/10', 'text-white', 'border-white/10', 'shadow-sm');
+                btn.classList.remove('text-gray-400');
+                
+                // Render
+                renderCards(btn.dataset.filter);
+            });
+        });
+
+        // INIT
+        resize();
+        initParticles();
+        animateCanvas();
+        renderCards();
+
+    </script>
+</body>
+</html>

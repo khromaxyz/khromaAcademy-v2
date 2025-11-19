@@ -70,7 +70,7 @@ function renderAll(): void {
  */
 function attachModalTriggers(): void {
   // Adicionar listeners diretamente em cada card
-  const cards = document.querySelectorAll('.discipline-card');
+  const cards = document.querySelectorAll('.chroma-card-wrapper');
   
   cards.forEach((card) => {
     const id = card.getAttribute('data-id');

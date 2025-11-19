@@ -90,52 +90,159 @@ export class MainNavigation {
   }
 
   /**
-   * Cria o elemento do menu - Design Ultra-Moderno Minimalista
+   * Cria o elemento do menu - Design Elite com Chroma Glow
    */
   private create(): HTMLElement {
-    const nav = document.createElement('nav');
-    nav.className = `main-navigation ${this.isCollapsed ? 'collapsed' : ''}`;
-    nav.setAttribute('role', 'navigation');
-    nav.setAttribute('aria-label', 'Navegação principal');
+    const aside = document.createElement('aside');
+    aside.id = 'sidebar';
+    aside.className = `main-navigation ${this.isCollapsed ? 'collapsed' : ''}`;
+    aside.setAttribute('role', 'navigation');
+    aside.setAttribute('aria-label', 'Navegação principal');
+    aside.setAttribute('data-state', this.isCollapsed ? 'collapsed' : 'expanded');
 
-    // Items do menu
-    const menuItems = document.createElement('div');
-    menuItems.className = 'nav-items';
-    
-    this.items.forEach(item => {
-      if (item.isToggle) {
-        // Separador sutil antes do toggle
-        const separator = document.createElement('div');
-        separator.className = 'nav-separator';
-        menuItems.appendChild(separator);
-      }
-      
-      menuItems.appendChild(this.createMenuItem(item));
-    });
+    // 1. Header / Logo
+    const header = document.createElement('div');
+    header.className = 'nav-header';
+    header.innerHTML = `
+      <div class="logo-container">
+        <div class="logo-icon">
+          <span class="logo-letter">K</span>
+        </div>
+        <div class="logo-text">
+          <h1 class="logo-glitch">KHROMA</h1>
+          <span class="logo-subtitle">Academy</span>
+        </div>
+      </div>
+      <button id="collapse-btn" class="collapse-btn" aria-label="Recolher menu">
+        <svg viewBox="0 0 256 256" fill="currentColor" class="collapse-icon" id="collapse-icon">
+          <polyline points="160 208 80 128 160 48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+        </svg>
+      </button>
+    `;
 
-    // Footer minimalista com perfil
+    // 2. Navigation Menu
+    const navMenu = document.createElement('div');
+    navMenu.className = 'nav-menu';
+
+    // Seção: PLATAFORMA
+    const plataformaSection = this.createSection('Plataforma', [
+      { id: 'home', label: 'Dashboard', icon: this.getHomeIcon() },
+      { id: 'meus-cursos', label: 'Cursos', icon: this.getMyCorsosIcon() },
+      { id: 'cursos', label: 'Projetos', icon: this.getCoursesIcon(), badge: 3 },
+      { id: 'trilhas', label: 'Mentoria', icon: this.getPathsIcon() },
+    ]);
+    navMenu.appendChild(plataformaSection);
+
+    // Seção: SOCIAL (itens adicionais para corresponder ao design)
+    const socialSection = this.createSection('Social', [
+      { id: 'mensagens', label: 'Mensagens', icon: this.getMessagesIcon(), hasNotification: true },
+      { id: 'forum', label: 'Fórum Global', icon: this.getForumIcon() },
+      { id: 'eventos', label: 'Eventos Chroma', icon: this.getEventsIcon() },
+    ]);
+    navMenu.appendChild(socialSection);
+
+    // Seção: CONFIGURAÇÕES
+    const configSection = this.createSection('Configurações', [
+      { id: 'analytics', label: 'Analytics', icon: this.getAnalyticsIcon() },
+      { id: 'configuracoes', label: 'Ajustes', icon: this.getSettingsIcon() },
+    ]);
+    navMenu.appendChild(configSection);
+
+    // Card Pro Plan (visível apenas quando expandido)
+    const proPlanCard = document.createElement('div');
+    proPlanCard.className = 'pro-plan-card';
+    proPlanCard.innerHTML = `
+      <div class="pro-plan-glow"></div>
+      <h4 class="pro-plan-title">Pro Plan</h4>
+      <p class="pro-plan-description">Desbloqueie todo o poder RGB.</p>
+      <button class="pro-plan-button">Upgrade Now</button>
+    `;
+    navMenu.appendChild(proPlanCard);
+
+    // 3. Footer / Profile
     const footer = document.createElement('div');
     footer.className = 'nav-footer';
     footer.innerHTML = `
       <div class="user-profile">
         <div class="user-avatar">
-          <img src="data:image/svg+xml,%3Csvg viewBox='0 0 40 40' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='20' cy='20' r='20' fill='%2300FF66'/%3E%3Cpath d='M20 20c3.3 0 6-2.7 6-6s-2.7-6-6-6-6 2.7-6 6 2.7 6 6 6zm0 2c-4 0-12 2-12 6v2h24v-2c0-4-8-6-12-6z' fill='%230a0a0a'/%3E%3C/svg%3E" alt="User" />
+          <img src="https://i.pravatar.cc/150?img=15" alt="User Avatar" />
+          <span class="user-status-dot"></span>
         </div>
         <div class="user-info">
-          <div class="user-name">Dark</div>
-          <div class="user-status">
-            <span class="status-dot"></span>
-            <span>Online</span>
-          </div>
+          <span class="user-name">Neo Anderson</span>
+          <span class="user-role">Student • Lv. 42</span>
         </div>
+        <button class="user-logout" aria-label="Sair">
+          <i class="logout-icon"></i>
+        </button>
       </div>
     `;
 
     // Montar estrutura
-    nav.appendChild(menuItems);
-    nav.appendChild(footer);
+    aside.appendChild(header);
+    aside.appendChild(navMenu);
+    aside.appendChild(footer);
 
-    return nav;
+    return aside;
+  }
+
+  /**
+   * Cria uma seção do menu
+   */
+  private createSection(title: string, items: Array<{ id: string; label: string; icon: string; badge?: number; hasNotification?: boolean }>): HTMLElement {
+    const section = document.createElement('div');
+    section.className = 'nav-section';
+
+    const titleEl = document.createElement('h3');
+    titleEl.className = 'nav-section-title';
+    titleEl.textContent = title;
+    section.appendChild(titleEl);
+
+    const list = document.createElement('ul');
+    list.className = 'nav-section-list';
+
+    items.forEach(item => {
+      const listItem = document.createElement('li');
+      const link = document.createElement('a');
+      link.href = '#';
+      link.className = `chroma-item ${item.id === this.activeItemId ? 'active' : ''}`;
+      link.dataset.itemId = item.id;
+      link.setAttribute('role', 'button');
+      link.setAttribute('aria-label', item.label);
+
+      if (item.id === this.activeItemId) {
+        link.setAttribute('aria-current', 'page');
+      }
+
+      link.innerHTML = `
+        <i class="nav-item-icon">${item.icon}</i>
+        <span class="nav-item-label">${item.label}</span>
+        ${item.badge ? `<div class="nav-item-badge">${item.badge}</div>` : ''}
+        ${item.hasNotification ? `<span class="nav-item-notification"></span>` : ''}
+        <span class="nav-tooltip">${item.label}</span>
+      `;
+
+      // Event listener
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // Criar NavigationItem para compatibilidade
+        const navItem: NavigationItem = {
+          id: item.id,
+          label: item.label,
+          icon: item.icon,
+        };
+        
+        this.handleItemClick(navItem, link);
+      });
+
+      listItem.appendChild(link);
+      list.appendChild(listItem);
+    });
+
+    section.appendChild(list);
+    return section;
   }
 
   /**
@@ -162,7 +269,6 @@ export class MainNavigation {
         ${badgeHtml}
         ${shortcutHtml}
       </div>
-      <div class="nav-item-indicator"></div>
       <div class="nav-item-tooltip">
         <span>${item.label}</span>
       </div>
@@ -204,18 +310,18 @@ export class MainNavigation {
   /**
    * Manipula clique em item do menu
    */
-  private handleItemClick(item: NavigationItem, element: HTMLElement): void {
+  private handleItemClick(item: NavigationItem | { id: string; label: string; icon: string }, element: HTMLElement): void {
     // Animação de click sutil
     this.createClickAnimation(element);
 
-    // Executar ação customizada
-    if (item.action) {
+    // Executar ação customizada (se for NavigationItem completo)
+    if ('action' in item && item.action) {
       item.action();
       return;
     }
 
     // Navegação normal
-    if (!item.isToggle) {
+    if (!('isToggle' in item && item.isToggle)) {
       this.setActive(item.id);
       this.options.onNavigate?.(item.id);
       
@@ -246,7 +352,7 @@ export class MainNavigation {
     this.activeItemId = itemId;
     
     // Atualizar UI
-    const items = this.container.querySelectorAll('.nav-item');
+    const items = this.container.querySelectorAll('.chroma-item');
     items.forEach(item => {
       const id = item.getAttribute('data-item-id');
       if (id === itemId) {
@@ -267,12 +373,17 @@ export class MainNavigation {
   toggle(): void {
     this.isCollapsed = !this.isCollapsed;
     this.container.classList.toggle('collapsed', this.isCollapsed);
+    this.container.setAttribute('data-state', this.isCollapsed ? 'collapsed' : 'expanded');
     document.body.classList.toggle('nav-collapsed', this.isCollapsed);
     
-    // Atualizar label do botão toggle
-    const toggleItem = this.container.querySelector('[data-item-id="toggle"] .nav-item-label');
-    if (toggleItem) {
-      toggleItem.textContent = this.isCollapsed ? 'Expandir' : 'Recolher';
+    // Atualizar ícone do botão collapse
+    const collapseIcon = this.container.querySelector('#collapse-icon') as HTMLElement;
+    if (collapseIcon) {
+      if (this.isCollapsed) {
+        collapseIcon.style.transform = 'rotate(180deg)';
+      } else {
+        collapseIcon.style.transform = 'rotate(0deg)';
+      }
     }
 
     this.options.onToggle?.(this.isCollapsed);
@@ -306,6 +417,14 @@ export class MainNavigation {
    * Setup event listeners
    */
   private setupEventListeners(): void {
+    // Botão de collapse
+    const collapseBtn = this.container.querySelector('#collapse-btn');
+    if (collapseBtn) {
+      collapseBtn.addEventListener('click', () => {
+        this.toggle();
+      });
+    }
+
     // Keyboard navigation
     this.container.addEventListener('keydown', (e) => {
       this.handleKeyboardNavigation(e);
@@ -660,7 +779,7 @@ export class MainNavigation {
    * Navegação por teclado
    */
   private handleKeyboardNavigation(e: KeyboardEvent): void {
-    const items = Array.from(this.container.querySelectorAll('.nav-item')) as HTMLElement[];
+    const items = Array.from(this.container.querySelectorAll('.chroma-item')) as HTMLElement[];
     const currentIndex = items.findIndex(item => item === document.activeElement);
 
     switch (e.key) {
@@ -899,38 +1018,47 @@ export class MainNavigation {
 
   // Ícones SVG - Design Minimalista
   private getHomeIcon(): string {
+    // squares-four (Dashboard)
     return `
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+      <svg viewBox="0 0 256 256" fill="currentColor">
+        <rect x="40" y="40" width="72" height="72" rx="8"/>
+        <rect x="144" y="40" width="72" height="72" rx="8"/>
+        <rect x="40" y="144" width="72" height="72" rx="8"/>
+        <rect x="144" y="144" width="72" height="72" rx="8"/>
       </svg>
     `;
   }
 
   private getMyCorsosIcon(): string {
+    // graduation-cap
     return `
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+      <svg viewBox="0 0 256 256" fill="currentColor">
+        <path d="M251.76,88.94l-120-64a8,8,0,0,0-7.52,0l-120,64a8,8,0,0,0,0,14.12L32,117.87v48.42a15.91,15.91,0,0,0,4.06,10.65C49.16,191.53,78.51,216,128,216a127.75,127.75,0,0,0,52.58-11.13,8,8,0,0,0,5.49-7.79V117.87l27.76-14.81a8,8,0,0,0,0-14.12ZM180,152.18a127.75,127.75,0,0,1-52,9.82c-43.27,0-68.72-18.08-84.47-33.65V123.41L128,140l84.47-16.6v5.14A127.75,127.75,0,0,1,180,152.18ZM128,120,16.81,96,128,72,239.19,96Z"/>
       </svg>
     `;
   }
 
   private getCoursesIcon(): string {
+    // kanban (Projetos)
     return `
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="10"></circle>
-        <circle cx="12" cy="12" r="6"></circle>
-        <circle cx="12" cy="12" r="2"></circle>
+      <svg viewBox="0 0 256 256" fill="currentColor">
+        <rect x="40" y="40" width="48" height="176" rx="8"/>
+        <rect x="104" y="40" width="48" height="176" rx="8"/>
+        <rect x="168" y="40" width="48" height="176" rx="8"/>
       </svg>
     `;
   }
 
   private getPathsIcon(): string {
+    // users-three (Mentoria)
     return `
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="10"></circle>
-        <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+      <svg viewBox="0 0 256 256" fill="currentColor">
+        <circle cx="80" cy="104" r="40"/>
+        <path d="M24,200a60,60,0,0,1,112,0"/>
+        <circle cx="176" cy="112" r="40"/>
+        <path d="M16,200a64,64,0,0,1,128,0"/>
+        <circle cx="176" cy="144" r="32"/>
+        <path d="M32,200a56,56,0,0,1,112,0"/>
       </svg>
     `;
   }
@@ -946,19 +1074,62 @@ export class MainNavigation {
   }
 
   private getToggleIcon(): string {
+    // caret-left (para o botão de collapse)
     return `
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M9 18l-6-6 6-6"></path>
-        <path d="M15 18l-6-6 6-6"></path>
+      <svg viewBox="0 0 256 256" fill="currentColor">
+        <polyline points="160 208 80 128 160 48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
       </svg>
     `;
   }
 
   private getSettingsIcon(): string {
+    // gear-six (Ajustes)
     return `
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="3"></circle>
-        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+      <svg viewBox="0 0 256 256" fill="currentColor">
+        <circle cx="128" cy="128" r="44"/>
+        <path d="M197.43,169.61a83.27,83.27,0,0,0,4.57-9.61l16.24-7.23a103.88,103.88,0,0,0,0-49.54L202,96a83.27,83.27,0,0,0-4.57-9.61l7.23-16.24a103.88,103.88,0,0,0-49.54,0L150,79.43A83.27,83.27,0,0,0,140.39,75L133.16,58.76a103.88,103.88,0,0,0-49.54,0L75,70.39A83.27,83.27,0,0,0,65.39,75L58.16,58.76a103.88,103.88,0,0,0,0,49.54L65.39,120a83.27,83.27,0,0,0,4.57,9.61L58.76,145.85a103.88,103.88,0,0,0,49.54,0L115,150.39a83.27,83.27,0,0,0,9.61,4.57l7.23,16.24a103.88,103.88,0,0,0,49.54,0L188.39,169.61A83.27,83.27,0,0,0,197.43,169.61ZM128,152a24,24,0,1,1,24-24A24,24,0,0,1,128,152Z"/>
+      </svg>
+    `;
+  }
+
+  private getMessagesIcon(): string {
+    // chat-circle-dots
+    return `
+      <svg viewBox="0 0 256 256" fill="currentColor">
+        <path d="M128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,21.24,21.24l34.05-11.35A104,104,0,1,0,128,24Zm0,192a87.87,87.87,0,0,1-44.06-11.81l-3.27-1.09L40,216l12.85-40.67-1.09-3.27A88,88,0,1,1,128,216ZM140,128a12,12,0,1,1-12-12A12,12,0,0,1,140,128ZM92,128a12,12,0,1,1-12-12A12,12,0,0,1,92,128Zm96,0a12,12,0,1,1-12-12A12,12,0,0,1,188,128Z"/>
+      </svg>
+    `;
+  }
+
+  private getForumIcon(): string {
+    // globe-hemisphere-west
+    return `
+      <svg viewBox="0 0 256 256" fill="currentColor">
+        <path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,16a87.48,87.48,0,0,1,44.07,11.8L128,88.24,83.93,51.8A87.48,87.48,0,0,1,128,40ZM40,128a87.61,87.61,0,0,1,3.33-23.61L88,128H40Zm16,0a87.48,87.48,0,0,1,11.8-44.07L128,88.24V128H56Zm72,72a87.48,87.48,0,0,1-44.07-11.8L128,167.76V128h72v72Zm16,0V128h72a87.61,87.61,0,0,1-3.33,23.61L168,128Zm0-16h43.93L128,88.24V184Zm16-95.76L212.67,88.4A87.48,87.48,0,0,1,200,40Zm56,56a87.48,87.48,0,0,1-11.8,44.07L168,167.76V128h88Z"/>
+      </svg>
+    `;
+  }
+
+  private getEventsIcon(): string {
+    // calendar-star
+    return `
+      <svg viewBox="0 0 256 256" fill="currentColor">
+        <rect x="40" y="40" width="176" height="176" rx="8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+        <line x1="176" y1="24" x2="176" y2="56" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+        <line x1="80" y1="24" x2="80" y2="56" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+        <line x1="40" y1="88" x2="216" y2="88" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+        <path d="M168,144a20,20,0,1,1-20-20A20,20,0,0,1,168,144Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+        <path d="M184,176a40,40,0,0,1-72,0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+      </svg>
+    `;
+  }
+
+  private getAnalyticsIcon(): string {
+    // chart-line-up
+    return `
+      <svg viewBox="0 0 256 256" fill="currentColor">
+        <polyline points="232 208 232 136 184 136" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
+        <polyline points="24 48 120 144 160 104 232 176" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
       </svg>
     `;
   }

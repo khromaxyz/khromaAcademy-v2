@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS | Elite CS Education</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #050505;
+            --card-bg: #0A0A0A;
+            --text-primary: #ffffff;
+            --text-secondary: #a3a3a3;
+            --accent-glow: rgba(56, 189, 248, 0.15);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, .font-display {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        /* Background Pattern */
+        .grid-bg {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(to right, #1a1a1a 1px, transparent 1px),
+                linear-gradient(to bottom, #1a1a1a 1px, transparent 1px);
+            background-size: 50px 50px;
+            mask-image: radial-gradient(circle at 50% 0%, black 40%, transparent 100%);
+            z-index: -2;
+            pointer-events: none;
+        }
+        
+        .ambient-glow {
+            position: absolute;
+            top: -20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 1000px;
+            background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0) 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Advanced RGB Chroma Border Effect */
+        @property --angle {
+            syntax: "<angle>";
+            initial-value: 0deg;
+            inherits: false;
+        }
+
+        .chroma-card-wrapper {
+            position: relative;
+            border-radius: 1rem;
+            background: var(--card-bg);
+            isolation: isolate;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .chroma-card-wrapper:hover {
+            transform: translateY(-4px);
+        }
+
+        /* The rotating gradient border */
+        .chroma-card-wrapper::after, .chroma-card-wrapper::before {
+            content: '';
+            position: absolute;
+            inset: -1.5px;
+            background: conic-gradient(from var(--angle), 
+                #ff2e2e, 
+                #ffaa00, 
+                #eec300, 
+                #00ff55, 
+                #0099ff, 
+                #aa00ff, 
+                #ff0055, 
+                #ff2e2e
+            );
+            z-index: -1;
+            border-radius: 1.1rem;
+            animation: spin 4s linear infinite;
+            opacity: 0.15; /* Subtle visibility by default */
+            transition: opacity 0.5s ease;
+        }
+
+        /* Blur effect for the glow */
+        .chroma-card-wrapper::before {
+            filter: blur(1rem);
+            opacity: 0; /* Glow hidden by default to keep it clean */
+        }
+
+        /* Reveal on hover */
+        .chroma-card-wrapper:hover::after {
+            opacity: 1;
+        }
+        .chroma-card-wrapper:hover::before {
+            opacity: 0.6;
+        }
+
+        /* Always visible subtle border for non-hover state */
+        .card-border-static {
+            position: absolute;
+            inset: -1px;
+            border-radius: 1.1rem;
+            background: linear-gradient(to bottom, #333, #111);
+            z-index: -2;
+        }
+
+        .chroma-card-content {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            height: 100%;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        @keyframes spin {
+            from { --angle: 0deg; }
+            to { --angle: 360deg; }
+        }
+
+        /* Typography Effects */
+        .hero-title {
+            background: linear-gradient(to right, #ffffff 20%, #a5a5a5 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.04em;
+            line-height: 1.1;
+        }
+
+        .glass-pill {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Smooth Fade In */
+        .fade-in-up {
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Noise Texture Overlay */
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 999;
+            opacity: 0.03;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+    </style>
+</head>
+<body class="min-h-screen relative">
+
+    <!-- Ambient Backgrounds -->
+    <div class="noise-overlay"></div>
+    <div class="grid-bg"></div>
+    <div class="ambient-glow"></div>
+
+    <main class="relative z-10 max-w-7xl mx-auto px-6 pt-24 pb-32 flex flex-col items-center">
+        
+        <!-- Hero Section -->
+        <div class="text-center max-w-4xl mx-auto mb-32 fade-in-up">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-pill mb-8">
+                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                <span class="text-xs font-medium tracking-wide text-neutral-400 uppercase">Accepting New Cohort</span>
+            </div>
+            
+            <h1 class="hero-title text-5xl md:text-7xl lg:text-8xl font-bold mb-8 tracking-tighter">
+                Engineering the <br>
+                <span class="text-white relative inline-block">
+                    Impossible
+                    <svg class="absolute -bottom-2 left-0 w-full h-2 text-blue-600 opacity-80" viewBox="0 0 100 10" preserveAspectRatio="none">
+                        <path d="M0 5 Q 50 10 100 5" stroke="currentColor" stroke-width="2" fill="none" />
+                    </svg>
+                </span>
+            </h1>
+            
+            <p class="text-lg md:text-xl text-neutral-400 max-w-2xl mx-auto leading-relaxed mb-12 font-light">
+                NEXUS is the definitive computer science academy for the top 1%. 
+                Master distributed systems, quantum algorithms, and neural architecture.
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <button class="group relative px-8 py-4 bg-white text-black rounded-lg font-semibold overflow-hidden transition-all hover:scale-105 active:scale-95">
+                    <span class="relative z-10 flex items-center gap-2">
+                        Start Curriculum
+                        <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                    </span>
+                </button>
+                <button class="px-8 py-4 rounded-lg font-medium text-neutral-300 hover:text-white transition-colors relative group">
+                    View Syllabus
+                    <span class="absolute bottom-3 left-8 right-8 h-px bg-neutral-700 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Discipline Cards Grid -->
+        <div class="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            
+            <!-- Card 1 -->
+            <div class="chroma-card-wrapper fade-in-up delay-100 group cursor-pointer">
+                <div class="card-border-static"></div>
+                <div class="chroma-card-content p-8 flex flex-col h-full justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-lg bg-neutral-900 border border-neutral-800 flex items-center justify-center mb-6 text-blue-400 group-hover:text-blue-300 transition-colors shadow-[0_0_15px_rgba(59,130,246,0.1)] group-hover:shadow-[0_0_25px_rgba(59,130,246,0.3)]">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3 text-white">Distributed Systems</h3>
+                        <p class="text-neutral-400 text-sm leading-relaxed">
+                            Architect scalable, fault-tolerant systems. Dive deep into consensus algorithms, sharding, and microservices patterns used by FAANG.
+                        </p>
+                    </div>
+                    <div class="mt-8 flex items-center justify-between border-t border-neutral-800/50 pt-4">
+                        <span class="text-xs font-mono text-neutral-500">CS-401</span>
+                        <span class="text-xs font-medium text-white flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0 duration-300">
+                            Explore <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="chroma-card-wrapper fade-in-up delay-200 group cursor-pointer">
+                <div class="card-border-static"></div>
+                <div class="chroma-card-content p-8 flex flex-col h-full justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-lg bg-neutral-900 border border-neutral-800 flex items-center justify-center mb-6 text-purple-400 group-hover:text-purple-300 transition-colors shadow-[0_0_15px_rgba(168,85,247,0.1)] group-hover:shadow-[0_0_25px_rgba(168,85,247,0.3)]">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3 text-white">High-Performance AI</h3>
+                        <p class="text-neutral-400 text-sm leading-relaxed">
+                            Optimize neural networks for inference and training. Master CUDA kernels, GPU architecture, and memory management.
+                        </p>
+                    </div>
+                    <div class="mt-8 flex items-center justify-between border-t border-neutral-800/50 pt-4">
+                        <span class="text-xs font-mono text-neutral-500">AI-505</span>
+                        <span class="text-xs font-medium text-white flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0 duration-300">
+                            Explore <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="chroma-card-wrapper fade-in-up delay-300 group cursor-pointer">
+                <div class="card-border-static"></div>
+                <div class="chroma-card-content p-8 flex flex-col h-full justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-lg bg-neutral-900 border border-neutral-800 flex items-center justify-center mb-6 text-emerald-400 group-hover:text-emerald-300 transition-colors shadow-[0_0_15px_rgba(16,185,129,0.1)] group-hover:shadow-[0_0_25px_rgba(16,185,129,0.3)]">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.131A8 8 0 008 8M2.205 7.704c.27-3.268 2.45-5.832 5.545-6.464a8.036 8.036 0 011.55-.14c.456.006.9.05 1.33.125m0 0a8.026 8.026 0 013 16.957M8 20a8 8 0 006.64-3.46"/></svg>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3 text-white">Quantum Algorithms</h3>
+                        <p class="text-neutral-400 text-sm leading-relaxed">
+                            Prepare for the post-silicon era. Learn Qiskit, superposition, entanglement, and Shor's algorithm from first principles.
+                        </p>
+                    </div>
+                    <div class="mt-8 flex items-center justify-between border-t border-neutral-800/50 pt-4">
+                        <span class="text-xs font-mono text-neutral-500">Q-302</span>
+                        <span class="text-xs font-medium text-white flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0 duration-300">
+                            Explore <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+             <!-- Card 4 -->
+             <div class="chroma-card-wrapper fade-in-up delay-100 group cursor-pointer">
+                <div class="card-border-static"></div>
+                <div class="chroma-card-content p-8 flex flex-col h-full justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-lg bg-neutral-900 border border-neutral-800 flex items-center justify-center mb-6 text-amber-400 group-hover:text-amber-300 transition-colors shadow-[0_0_15px_rgba(245,158,11,0.1)] group-hover:shadow-[0_0_25px_rgba(245,158,11,0.3)]">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3 text-white">Compiler Design</h3>
+                        <p class="text-neutral-400 text-sm leading-relaxed">
+                            Build your own language. Understand lexical analysis, parsing, ASTs, and LLVM backend optimization techniques.
+                        </p>
+                    </div>
+                    <div class="mt-8 flex items-center justify-between border-t border-neutral-800/50 pt-4">
+                        <span class="text-xs font-mono text-neutral-500">CS-450</span>
+                        <span class="text-xs font-medium text-white flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0 duration-300">
+                            Explore <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+             <!-- Card 5 -->
+             <div class="chroma-card-wrapper fade-in-up delay-200 group cursor-pointer">
+                <div class="card-border-static"></div>
+                <div class="chroma-card-content p-8 flex flex-col h-full justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-lg bg-neutral-900 border border-neutral-800 flex items-center justify-center mb-6 text-rose-400 group-hover:text-rose-300 transition-colors shadow-[0_0_15px_rgba(251,113,133,0.1)] group-hover:shadow-[0_0_25px_rgba(251,113,133,0.3)]">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3 text-white">Cybersecurity Ops</h3>
+                        <p class="text-neutral-400 text-sm leading-relaxed">
+                            Advanced penetration testing, zero-day exploit analysis, and cryptography. Secure the infrastructure of the future.
+                        </p>
+                    </div>
+                    <div class="mt-8 flex items-center justify-between border-t border-neutral-800/50 pt-4">
+                        <span class="text-xs font-mono text-neutral-500">SEC-600</span>
+                        <span class="text-xs font-medium text-white flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0 duration-300">
+                            Explore <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+             <!-- Card 6 -->
+             <div class="chroma-card-wrapper fade-in-up delay-300 group cursor-pointer">
+                <div class="card-border-static"></div>
+                <div class="chroma-card-content p-8 flex flex-col h-full justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-lg bg-neutral-900 border border-neutral-800 flex items-center justify-center mb-6 text-cyan-400 group-hover:text-cyan-300 transition-colors shadow-[0_0_15px_rgba(34,211,238,0.1)] group-hover:shadow-[0_0_25px_rgba(34,211,238,0.3)]">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3 text-white">Database Internals</h3>
+                        <p class="text-neutral-400 text-sm leading-relaxed">
+                            Look under the hood of Postgres and Redis. Learn B-Trees, LSM-Trees, ACID compliance, and distributed consensus.
+                        </p>
+                    </div>
+                    <div class="mt-8 flex items-center justify-between border-t border-neutral-800/50 pt-4">
+                        <span class="text-xs font-mono text-neutral-500">DB-501</span>
+                        <span class="text-xs font-medium text-white flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0 duration-300">
+                            Explore <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <script>
+        // Simple parallax effect for the background glow
+        document.addEventListener('mousemove', (e) => {
+            const glow = document.querySelector('.ambient-glow');
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            
+            glow.style.transform = `translate(calc(-50% + ${(x - 0.5) * 50}px), calc(${(y - 0.5) * 50}px))`;
+        });
+
+        // 3D Tilt Effect for Cards
+        const cards = document.querySelectorAll('.chroma-card-wrapper');
+
+        cards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = ((y - centerY) / centerY) * -5; // Max rotation deg
+                const rotateY = ((x - centerX) / centerX) * 5;
+
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>

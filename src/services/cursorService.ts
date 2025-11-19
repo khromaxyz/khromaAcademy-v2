@@ -7,7 +7,7 @@ const CURSOR_SELECTORS = [
   '.link',
   'a',
   'button',
-  '.discipline-card',
+  '.chroma-card-wrapper',
   '.graph-node',
   '.discipline-item',
   '.btn-primary',

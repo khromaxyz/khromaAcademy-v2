@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS | Elite CS Education</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Custom Properties & Reset */
+        :root {
+            --bg-dark: #030303;
+            --bg-card: #0a0a0a;
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1aa;
+            --accent-rgb: 255, 255, 255;
+            --neon-glow: 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            /* Subtle noise texture for premium feel */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        /* Utility Classes for smooth rendering */
+        .antialiased {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* 
+         * ==========================================
+         * HERO SECTION ANIMATIONS
+         * ==========================================
+         */
+        .hero-text-gradient {
+            background: linear-gradient(to right, #fff 20%, #666 40%, #666 60%, #fff 80%);
+            background-size: 200% auto;
+            color: #000;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 5s linear infinite;
+        }
+
+        @keyframes shine {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        .hero-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.08) 0%, rgba(0,0,0,0) 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* 
+         * ==========================================
+         * CHROMA RGB CARD STYLES
+         * ==========================================
+         */
+        .chroma-card-wrapper {
+            position: relative;
+            border-radius: 16px;
+            padding: 1px; /* The border width */
+            background: rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+            transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+            cursor: pointer;
+        }
+
+        .chroma-card-wrapper:hover {
+            transform: translateY(-4px);
+        }
+
+        /* The animated border gradient */
+        .chroma-card-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(
+                transparent, 
+                transparent, 
+                transparent, 
+                #ff0080, 
+                #7928ca, 
+                #4f46e5, 
+                #0ea5e9, 
+                #10b981, 
+                #facc15, 
+                #f97316, 
+                #ef4444, 
+                transparent
+            );
+            animation: rotate 4s linear infinite;
+            opacity: 0; /* Hidden by default, shown on hover or via class */
+            transition: opacity 0.4s ease;
+            z-index: 0;
+        }
+
+        /* Always show subtle border, but boost on hover */
+        .chroma-card-wrapper.active-border::before,
+        .chroma-card-wrapper:hover::before {
+            opacity: 1;
+        }
+
+        @keyframes rotate {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Inner Card content to mask the center of the gradient */
+        .chroma-card-content {
+            position: relative;
+            background: var(--bg-card);
+            border-radius: 15px; /* slightly less than wrapper */
+            height: 100%;
+            z-index: 1;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+        }
+
+        /* Glass reflection effect */
+        .chroma-card-content::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 40%;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.03), transparent);
+            border-radius: 15px 15px 0 0;
+            pointer-events: none;
+        }
+
+        /* Typography in cards */
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .card-desc {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Tech Badges */
+        .tech-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #d4d4d8;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Icon styling */
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            color: white;
+        }
+
+        /* Progress/Stats area */
+        .card-footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 1rem;
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .enroll-btn {
+            background: white;
+            color: black;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        .chroma-card-wrapper:hover .enroll-btn {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .stats {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #71717a;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .chroma-card-wrapper:hover .stats {
+            opacity: 0;
+            transform: translateY(-10px);
+            display: none; 
+        }
+        
+        /* Instead of display none which breaks layout, lets absolute position the button over the stats */
+        .card-footer {
+            position: relative;
+            height: 40px; /* Fixed height for animation stability */
+        }
+
+        .footer-content-default {
+            position: absolute;
+            left: 0;
+            top: 1rem;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .footer-content-hover {
+            position: absolute;
+            left: 0;
+            top: 1rem;
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .chroma-card-wrapper:hover .footer-content-default {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        .chroma-card-wrapper:hover .footer-content-hover {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        /* 
+         * ==========================================
+         * SPOTLIGHT EFFECT (JS DRIVEN)
+         * ==========================================
+         */
+        .spotlight-grid {
+            /* Handled via JS to update variables, but base style here */
+        }
+
+        /* 
+         * ==========================================
+         * DECORATIVE ELEMENTS
+         * ==========================================
+         */
+        .bg-grid-pattern {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+        }
+
+        /* Floating particles animation */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: white;
+            opacity: 0.3;
+            animation: float-particle 20s infinite linear;
+        }
+        
+        @keyframes float-particle {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 0.5; }
+            90% { opacity: 0.5; }
+            100% { transform: translateY(-100vh) translateX(20px); opacity: 0; }
+        }
+
+        /* Scanline Animation */
+        @keyframes scanline {
+            0% { top: 0%; opacity: 0; }
+            10% { opacity: 0.5; }
+            90% { opacity: 0.5; }
+            100% { top: 100%; opacity: 0; }
+        }
+        
+        .animate-scanline {
+            animation: scanline 4s linear infinite;
+        }
+
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Glitch Effect Class (JS toggled) */
+        .glitch-active {
+            position: relative;
+        }
+        .glitch-active::before,
+        .glitch-active::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .glitch-active::before {
+            left: 2px;
+            text-shadow: -1px 0 #ff00c1;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim 5s infinite linear alternate-reverse;
+        }
+        .glitch-active::after {
+            left: -2px;
+            text-shadow: -1px 0 #00fff9;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim2 5s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim {
+            0% { clip: rect(42px, 9999px, 44px, 0); }
+            5% { clip: rect(12px, 9999px, 59px, 0); }
+            10% { clip: rect(48px, 9999px, 29px, 0); }
+            15% { clip: rect(42px, 9999px, 73px, 0); }
+            20% { clip: rect(63px, 9999px, 27px, 0); }
+            25% { clip: rect(34px, 9999px, 55px, 0); }
+            30% { clip: rect(86px, 9999px, 73px, 0); }
+            35% { clip: rect(20px, 9999px, 20px, 0); }
+            40% { clip: rect(26px, 9999px, 60px, 0); }
+            45% { clip: rect(25px, 9999px, 66px, 0); }
+            50% { clip: rect(57px, 9999px, 98px, 0); }
+            55% { clip: rect(5px, 9999px, 46px, 0); }
+            60% { clip: rect(82px, 9999px, 31px, 0); }
+            65% { clip: rect(54px, 9999px, 27px, 0); }
+            70% { clip: rect(28px, 9999px, 99px, 0); }
+            75% { clip: rect(45px, 9999px, 69px, 0); }
+            80% { clip: rect(23px, 9999px, 85px, 0); }
+            85% { clip: rect(54px, 9999px, 84px, 0); }
+            90% { clip: rect(45px, 9999px, 47px, 0); }
+            95% { clip: rect(37px, 9999px, 20px, 0); }
+            100% { clip: rect(4px, 9999px, 91px, 0); }
+        }
+        @keyframes glitch-anim2 {
+            0% { clip: rect(65px, 9999px, 100px, 0); }
+            5% { clip: rect(52px, 9999px, 74px, 0); }
+            10% { clip: rect(79px, 9999px, 85px, 0); }
+            15% { clip: rect(75px, 9999px, 5px, 0); }
+            20% { clip: rect(67px, 9999px, 61px, 0); }
+            25% { clip: rect(14px, 9999px, 79px, 0); }
+            30% { clip: rect(1px, 9999px, 66px, 0); }
+            35% { clip: rect(86px, 9999px, 30px, 0); }
+            40% { clip: rect(23px, 9999px, 98px, 0); }
+            45% { clip: rect(85px, 9999px, 72px, 0); }
+            50% { clip: rect(71px, 9999px, 75px, 0); }
+            55% { clip: rect(2px, 9999px, 48px, 0); }
+            60% { clip: rect(30px, 9999px, 16px, 0); }
+            65% { clip: rect(59px, 9999px, 50px, 0); }
+            70% { clip: rect(41px, 9999px, 62px, 0); }
+            75% { clip: rect(2px, 9999px, 82px, 0); }
+            80% { clip: rect(47px, 9999px, 73px, 0); }
+            85% { clip: rect(3px, 9999px, 27px, 0); }
+            90% { clip: rect(26px, 9999px, 55px, 0); }
+            95% { clip: rect(42px, 9999px, 97px, 0); }
+            100% { clip: rect(38px, 9999px, 49px, 0); }
+        }
+
+    </style>
+</head>
+<body class="antialiased selection:bg-indigo-500 selection:text-white">
+
+    <!-- Background Grid -->
+    <div class="fixed inset-0 z-[-1] pointer-events-none bg-grid-pattern h-[80vh]"></div>
+    
+    <!-- Custom Cursor -->
+    <div id="cursor-dot" class="fixed w-2 h-2 bg-white rounded-full pointer-events-none z-[100] mix-blend-difference transition-transform duration-100"></div>
+    <div id="cursor-circle" class="fixed w-8 h-8 border border-white rounded-full pointer-events-none z-[100] mix-blend-difference transition-all duration-300 opacity-50"></div>
+
+    <!-- Interactive Network Background -->
+    <canvas id="network-canvas" class="fixed inset-0 z-[-1]"></canvas>
+
+    <!-- Course Detail Modal (Hidden by default) -->
+    <div id="course-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center opacity-0 transition-opacity duration-500">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-xl" id="modal-backdrop"></div>
+        
+        <div class="relative w-full max-w-4xl h-[80vh] bg-[#0a0a0a] border border-white/10 rounded-2xl overflow-hidden flex flex-col shadow-2xl transform scale-95 transition-transform duration-500" id="modal-content">
+            <!-- Modal Header -->
+            <div class="h-16 border-b border-white/10 flex items-center justify-between px-8 bg-white/5">
+                <div class="flex items-center gap-4">
+                    <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <h3 class="font-mono text-lg text-white tracking-widest" id="modal-title">SYSTEM_INIT</h3>
+                </div>
+                <button id="close-modal" class="text-gray-400 hover:text-white transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="flex-1 flex flex-col md:flex-row overflow-hidden">
+                <!-- Sidebar -->
+                <div class="w-full md:w-64 border-r border-white/10 bg-black/20 p-6 overflow-y-auto custom-scrollbar">
+                    <div class="text-xs font-bold text-gray-500 mb-4 tracking-wider">MODULES_SEQUENCE</div>
+                    <ul class="space-y-2" id="modal-modules">
+                        <!-- Dynamic Content -->
+                    </ul>
+                </div>
+
+                <!-- Main Content -->
+                <div class="flex-1 p-8 overflow-y-auto relative">
+                    <!-- Decorative Scanline -->
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-indigo-500 to-transparent opacity-50 animate-scanline"></div>
+                    
+                    <div class="mb-8">
+                        <h2 class="text-4xl font-bold text-white mb-4" id="modal-main-title">Title</h2>
+                        <p class="text-gray-400 leading-relaxed" id="modal-description">Description</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div class="p-4 rounded-lg bg-white/5 border border-white/10">
+                            <div class="text-xs text-gray-500 mb-1">PREREQUISITES</div>
+                            <div class="text-indigo-400 font-mono" id="modal-prereq">None</div>
+                        </div>
+                        <div class="p-4 rounded-lg bg-white/5 border border-white/10">
+                            <div class="text-xs text-gray-500 mb-1">ESTIMATED_TIME</div>
+                            <div class="text-indigo-400 font-mono" id="modal-time">12 Weeks</div>
+                        </div>
+                    </div>
+
+                    <div class="border border-dashed border-white/20 rounded-lg p-6 bg-black/40">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-sm font-mono text-gray-400">COMPETENCY_MATRIX</span>
+                            <span class="text-xs px-2 py-1 rounded bg-green-900/30 text-green-400 border border-green-800">ACTIVE</span>
+                        </div>
+                        <div class="space-y-3" id="modal-skills">
+                            <!-- Skills bars -->
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8 flex justify-end">
+                         <button class="px-8 py-3 bg-white text-black font-bold rounded hover:bg-gray-200 transition-colors flex items-center gap-2">
+                            <span>INITIALIZE_COURSE</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main class="max-w-7xl mx-auto px-6 py-12 sm:px-8 lg:px-12 relative min-h-screen flex flex-col justify-center">
+        
+        <!-- HERO SECTION -->
+        <section class="relative mb-24 pt-12 text-center sm:text-left">
+            <div class="hero-glow"></div>
+            
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-indigo-300 mb-6 backdrop-blur-md animate-fade-in-up" style="animation-delay: 0.1s; animation-fill-mode: backwards;">
+                <span class="flex h-2 w-2 rounded-full bg-indigo-500 animate-pulse"></span>
+                NEXUS ACADEMY V2.0 LIVE
+            </div>
+
+            <h1 class="text-5xl sm:text-7xl lg:text-8xl font-bold tracking-tighter mb-6 leading-[0.9]">
+                <span class="block hero-text-gradient">MASTER THE</span>
+                <span class="block text-white/20 relative">
+                    ALGORITHM
+                    <span class="absolute top-0 left-0 text-white opacity-0 hover:opacity-100 transition-opacity duration-700 select-none" style="clip-path: inset(0 0 0 0)">ALGORITHM</span>
+                </span>
+            </h1>
+
+            <p class="text-lg sm:text-xl text-gray-400 max-w-2xl font-light leading-relaxed mb-10 sm:ml-2 animate-fade-in-up" style="animation-delay: 0.3s; animation-fill-mode: backwards;">
+                An elite cognitive architecture for the next generation of software engineers. 
+                Dive deep into low-level systems, distributed computing, and artificial intelligence.
+            </p>
+
+            <div class="flex flex-wrap gap-4 sm:ml-2 animate-fade-in-up" style="animation-delay: 0.4s; animation-fill-mode: backwards;">
+                <button class="group relative px-8 py-4 bg-white text-black font-bold rounded-full overflow-hidden transition-all hover:scale-105 active:scale-95">
+                    <span class="relative z-10">Start Learning</span>
+                    <div class="absolute inset-0 bg-gradient-to-r from-indigo-400 to-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </button>
+                
+                <button class="px-8 py-4 rounded-full border border-white/10 bg-white/5 text-white font-medium hover:bg-white/10 transition-all backdrop-blur-sm flex items-center gap-2">
+                    <span>Explore Syllabus</span>
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+            </div>
+        </section>
+
+
+        <!-- COURSE GRID SECTION -->
+        <section id="courses">
+            <div class="flex items-end justify-between mb-12 border-b border-white/10 pb-6">
+                <div>
+                    <h2 class="text-3xl font-bold text-white mb-2">Core Curriculum</h2>
+                    <p class="text-gray-500">Select a discipline to begin your specialization.</p>
+                </div>
+                <div class="hidden sm:flex gap-2">
+                    <button class="p-2 rounded-lg border border-white/10 hover:bg-white/5 text-gray-400 hover:text-white transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    </button>
+                    <button class="p-2 rounded-lg border border-white/10 bg-white/10 text-white transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="card-grid">
+                
+                <!-- CARD 1: DATA STRUCTURES -->
+                <div class="chroma-card-wrapper group">
+                    <div class="chroma-card-content">
+                        <div>
+                            <div class="card-icon text-cyan-400">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                            </div>
+                            <h3 class="card-title">Advanced Algorithms</h3>
+                            <p class="card-desc">Master complexity analysis, graph theory, and dynamic programming. The bedrock of computer science.</p>
+                            <div class="flex flex-wrap">
+                                <span class="tech-badge">C++</span>
+                                <span class="tech-badge">Python</span>
+                                <span class="tech-badge">Big O</span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="footer-content-default">
+                                <span class="stats flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                                    Beginner to Expert
+                                </span>
+                                <span class="stats">12 Modules</span>
+                            </div>
+                            <div class="footer-content-hover">
+                                <button class="enroll-btn">Initialize &rarr;</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 2: SYSTEMS -->
+                <div class="chroma-card-wrapper group active-border">
+                    <div class="chroma-card-content">
+                        <div>
+                            <div class="card-icon text-purple-400">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path></svg>
+                            </div>
+                            <h3 class="card-title">Distributed Systems</h3>
+                            <p class="card-desc">Architect scalable, fault-tolerant systems. Learn consensus, replication, and sharding patterns.</p>
+                            <div class="flex flex-wrap">
+                                <span class="tech-badge">Go</span>
+                                <span class="tech-badge">Rust</span>
+                                <span class="tech-badge">Kubernetes</span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="footer-content-default">
+                                <span class="stats flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-yellow-500"></span>
+                                    Intermediate
+                                </span>
+                                <span class="stats">8 Modules</span>
+                            </div>
+                            <div class="footer-content-hover">
+                                <button class="enroll-btn">Initialize &rarr;</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 3: AI/ML -->
+                <div class="chroma-card-wrapper group">
+                    <div class="chroma-card-content">
+                        <div>
+                            <div class="card-icon text-pink-400">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                            </div>
+                            <h3 class="card-title">Neural Networks</h3>
+                            <p class="card-desc">Build intelligence from scratch. Deep Learning, Transformers, and Large Language Models.</p>
+                            <div class="flex flex-wrap">
+                                <span class="tech-badge">PyTorch</span>
+                                <span class="tech-badge">TensorFlow</span>
+                                <span class="tech-badge">Math</span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="footer-content-default">
+                                <span class="stats flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                                    Advanced
+                                </span>
+                                <span class="stats">16 Modules</span>
+                            </div>
+                            <div class="footer-content-hover">
+                                <button class="enroll-btn">Initialize &rarr;</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                 <!-- CARD 4: SECURITY -->
+                 <div class="chroma-card-wrapper group">
+                    <div class="chroma-card-content">
+                        <div>
+                            <div class="card-icon text-emerald-400">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                            </div>
+                            <h3 class="card-title">Cybersecurity Ops</h3>
+                            <p class="card-desc">Offensive and defensive security operations. Cryptography, network security, and ethical hacking.</p>
+                            <div class="flex flex-wrap">
+                                <span class="tech-badge">Kali</span>
+                                <span class="tech-badge">Network</span>
+                                <span class="tech-badge">Crypto</span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="footer-content-default">
+                                <span class="stats flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                                    All Levels
+                                </span>
+                                <span class="stats">10 Modules</span>
+                            </div>
+                            <div class="footer-content-hover">
+                                <button class="enroll-btn">Initialize &rarr;</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 5: COMPILERS -->
+                <div class="chroma-card-wrapper group">
+                    <div class="chroma-card-content">
+                        <div>
+                            <div class="card-icon text-orange-400">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                            </div>
+                            <h3 class="card-title">Compiler Design</h3>
+                            <p class="card-desc">Understand how code becomes software. Lexical analysis, parsing, and code generation.</p>
+                            <div class="flex flex-wrap">
+                                <span class="tech-badge">LLVM</span>
+                                <span class="tech-badge">Assembly</span>
+                                <span class="tech-badge">C</span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="footer-content-default">
+                                <span class="stats flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                                    Hardcore
+                                </span>
+                                <span class="stats">14 Modules</span>
+                            </div>
+                            <div class="footer-content-hover">
+                                <button class="enroll-btn">Initialize &rarr;</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 6: OS -->
+                <div class="chroma-card-wrapper group">
+                    <div class="chroma-card-content">
+                        <div>
+                            <div class="card-icon text-blue-400">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                            </div>
+                            <h3 class="card-title">OS Engineering</h3>
+                            <p class="card-desc">Kernel development, memory management, and process scheduling. Build your own OS.</p>
+                            <div class="flex flex-wrap">
+                                <span class="tech-badge">Kernel</span>
+                                <span class="tech-badge">C</span>
+                                <span class="tech-badge">x86</span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="footer-content-default">
+                                <span class="stats flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                                    Expert
+                                </span>
+                                <span class="stats">20 Modules</span>
+                            </div>
+                            <div class="footer-content-hover">
+                                <button class="enroll-btn">Initialize &rarr;</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+        
+        <footer class="mt-24 border-t border-white/10 py-8 text-center text-gray-600 text-sm">
+            <p>© 2023 NEXUS INSTITUTE. ELITE COMPUTING.</p>
+        </footer>
+    </main>
+
+    <script>
+        /**
+         * =========================================================================
+         * NEXUS ELITE - CORE SYSTEM CONTROLLER
+         * Includes: Network Canvas, Modal Logic, Glitch Effects, 3D Card Tilt
+         * =========================================================================
+         */
+
+        // --- DATA REPOSITORY ---
+        const COURSE_DATA = {
+            "Advanced Algorithms": {
+                id: "CS-301",
+                description: "Dive into the mathematical foundations of computation. This course covers advanced graph algorithms, NP-completeness, randomized algorithms, and approximation techniques. You will implement complex data structures from scratch.",
+                modules: ["Graph Theory Advanced", "Network Flow", "Linear Programming", "NP-Completeness", "Approximation Algos", "Randomized Algos", "Computational Geometry", "Quantum Algorithms Intro"],
+                prereq: "CS-201, Math-202",
+                time: "14 Weeks",
+                skills: [
+                    { name: "Algorithmic Thinking", val: 95 },
+                    { name: "C++ Optimization", val: 88 },
+                    { name: "Problem Solving", val: 98 }
+                ]
+            },
+            "Distributed Systems": {
+                id: "CS-450",
+                description: "Design systems that handle millions of requests per second. Learn the CAP theorem, PAXOS/Raft consensus, distributed storage (Dynamo, Cassandra concepts), and microservices architecture patterns.",
+                modules: ["RPC & Serialization", "Time & Clocks", "Leader Election", "Replication", "Sharding Strategies", "Consistency Models", "Fault Tolerance", "MapReduce & Spark"],
+                prereq: "CS-350, Networking",
+                time: "12 Weeks",
+                skills: [
+                    { name: "System Design", val: 92 },
+                    { name: "Go/Rust", val: 85 },
+                    { name: "Concurrency", val: 90 }
+                ]
+            },
+            "Neural Networks": {
+                id: "AI-500",
+                description: "From Perceptrons to Transformers. Understand the calculus behind backpropagation and gradient descent. Build and train models for Computer Vision and NLP using PyTorch and JAX.",
+                modules: ["Linear Algebra for DL", "Backpropagation", "CNNs & ResNets", "RNNs & LSTMs", "Attention Mechanisms", "Transformers (BERT/GPT)", "Generative Models (GANs/Diff)", "RLHF"],
+                prereq: "Math-201, Python",
+                time: "16 Weeks",
+                skills: [
+                    { name: "Deep Learning Theory", val: 94 },
+                    { name: "PyTorch Implementation", val: 89 },
+                    { name: "Model Tuning", val: 85 }
+                ]
+            },
+            "Cybersecurity Ops": {
+                id: "SEC-404",
+                description: "A comprehensive deep-dive into offensive and defensive security. Learn penetration testing methodologies, malware analysis, reverse engineering, and security operations center (SOC) protocols.",
+                modules: ["Network Sniffing", "Exploit Development", "Web App Security", "Cryptography Applied", "Malware Analysis", "Forensics", "Cloud Security", "Red Teaming Ops"],
+                prereq: "OS-300, Networking",
+                time: "10 Weeks",
+                skills: [
+                    { name: "Ethical Hacking", val: 88 },
+                    { name: "Reverse Engineering", val: 75 },
+                    { name: "Network Analysis", val: 95 }
+                ]
+            },
+            "Compiler Design": {
+                id: "CS-420",
+                description: "Demystify the black box. Write your own compiler for a subset of C. Learn lexical analysis, LL/LR parsing, semantic analysis, intermediate code generation (LLVM IR), and optimization.",
+                modules: ["Lexical Analysis (Flex)", "Parsing Theory (Bison)", "Abstract Syntax Trees", "Semantic Analysis", "IR Generation", "Register Allocation", "Code Optimization", "JIT Compilation"],
+                prereq: "CS-301, Assembly",
+                time: "14 Weeks",
+                skills: [
+                    { name: "Language Theory", val: 90 },
+                    { name: "C++ Architecting", val: 92 },
+                    { name: "Low-level Debugging", val: 85 }
+                ]
+            },
+            "OS Engineering": {
+                id: "CS-410",
+                description: "Write an operating system kernel from scratch. Bootloaders, memory paging, virtual memory, process scheduling (Round Robin, Priority), file systems (EXT2/FAT), and device drivers.",
+                modules: ["x86/ARM Boot process", "Kernel Basics", "Interrupts & Syscalls", "Physical Memory Mgmt", "Virtual Memory & Paging", "Multitasking", "Filesystems", "User Mode"],
+                prereq: "C, Assembly, Comp Arch",
+                time: "20 Weeks",
+                skills: [
+                    { name: "Kernel Dev", val: 98 },
+                    { name: "C Programming", val: 99 },
+                    { name: "Hardware Interfacing", val: 90 }
+                ]
+            }
+        };
+
+        // --- NETWORK CANVAS ANIMATION ---
+        const canvas = document.getElementById('network-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+
+        // Configuration
+        const particleConfig = {
+            count: 60, // Reduced for mobile, handled in resize
+            color: 'rgba(255, 255, 255, 0.5)',
+            lineColor: 'rgba(255, 255, 255, 0.05)',
+            connectionDistance: 150,
+            mouseDistance: 200
+        };
+
+        const mouse = { x: null, y: null };
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.size = Math.random() * 2 + 1;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Bounce off edges
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+
+                // Mouse interaction
+                if (mouse.x != null) {
+                    let dx = mouse.x - this.x;
+                    let dy = mouse.y - this.y;
+                    let distance = Math.sqrt(dx*dx + dy*dy);
+                    if (distance < particleConfig.mouseDistance) {
+                        const forceDirectionX = dx / distance;
+                        const forceDirectionY = dy / distance;
+                        const force = (particleConfig.mouseDistance - distance) / particleConfig.mouseDistance;
+                        const directionX = forceDirectionX * force * 0.6;
+                        const directionY = forceDirectionY * force * 0.6;
+                        this.vx += directionX;
+                        this.vy += directionY;
+                    }
+                }
+                // Friction
+                this.vx *= 0.98; 
+                this.vy *= 0.98;
+                
+                // Minimum movement to keep it alive
+                if(Math.abs(this.vx) < 0.1 && Math.abs(this.vy) < 0.1) {
+                     this.vx += (Math.random() - 0.5) * 0.1;
+                     this.vy += (Math.random() - 0.5) * 0.1;
+                }
+            }
+
+            draw() {
+                ctx.fillStyle = particleConfig.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            
+            // Adjust count based on screen size
+            particleConfig.count = width < 768 ? 30 : 80;
+            
+            particles = [];
+            for (let i = 0; i < particleConfig.count; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animateCanvas() {
+            ctx.clearRect(0, 0, width, height);
+            
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+                
+                // Draw connections
+                for (let j = i; j < particles.length; j++) {
+                    let dx = particles[i].x - particles[j].x;
+                    let dy = particles[i].y - particles[j].y;
+                    let distance = Math.sqrt(dx*dx + dy*dy);
+
+                    if (distance < particleConfig.connectionDistance) {
+                        ctx.strokeStyle = particleConfig.lineColor;
+                        ctx.lineWidth = 1 - (distance / particleConfig.connectionDistance);
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animateCanvas);
+        }
+
+        window.addEventListener('resize', initCanvas);
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.x;
+            mouse.y = e.y;
+        });
+        window.addEventListener('mouseout', () => {
+            mouse.x = null;
+            mouse.y = null;
+        });
+
+        initCanvas();
+        animateCanvas();
+
+        // --- 3D TILT CARD LOGIC ---
+        const cards = document.querySelectorAll('.chroma-card-wrapper');
+        cards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                // Smoother tilt math
+                const tiltX = ((y - centerY) / centerY) * 5; // Max 5 deg
+                const tiltY = ((centerX - x) / centerX) * 5;
+
+                card.style.transform = `perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateY(-8px)`;
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
+                setTimeout(() => {
+                     if (!card.matches(':hover')) card.style.transform = '';
+                }, 150);
+            });
+            
+            // Modal Trigger
+            card.addEventListener('click', () => {
+                const title = card.querySelector('.card-title').innerText;
+                openModal(title);
+            });
+        });
+
+        // --- MODAL SYSTEM ---
+        const modal = document.getElementById('course-modal');
+        const modalBackdrop = document.getElementById('modal-backdrop');
+        const closeModalBtn = document.getElementById('close-modal');
+        const modalContent = document.getElementById('modal-content');
+
+        // Elements to populate
+        const mTitle = document.getElementById('modal-title');
+        const mMainTitle = document.getElementById('modal-main-title');
+        const mDesc = document.getElementById('modal-description');
+        const mModules = document.getElementById('modal-modules');
+        const mPrereq = document.getElementById('modal-prereq');
+        const mTime = document.getElementById('modal-time');
+        const mSkills = document.getElementById('modal-skills');
+
+        function openModal(courseName) {
+            const data = COURSE_DATA[courseName];
+            if (!data) return;
+
+            // Populate Data
+            mTitle.innerText = `SYSTEM_INIT :: ${data.id}`;
+            mMainTitle.innerText = courseName;
+            mMainTitle.setAttribute('data-text', courseName); // For glitch
+            mDesc.innerText = data.description;
+            mPrereq.innerText = data.prereq;
+            mTime.innerText = data.time;
+
+            // Modules
+            mModules.innerHTML = '';
+            data.modules.forEach((mod, idx) => {
+                const li = document.createElement('li');
+                li.className = "text-sm text-gray-400 font-mono hover:text-indigo-400 transition-colors cursor-default flex gap-2";
+                li.innerHTML = `<span class="text-gray-600 select-none">${(idx+1).toString().padStart(2, '0')}</span> ${mod}`;
+                mModules.appendChild(li);
+            });
+
+            // Skills Matrix
+            mSkills.innerHTML = '';
+            data.skills.forEach(skill => {
+                const div = document.createElement('div');
+                div.innerHTML = `
+                    <div class="flex justify-between text-xs mb-1 text-gray-400">
+                        <span>${skill.name}</span>
+                        <span>${skill.val}%</span>
+                    </div>
+                    <div class="h-1 w-full bg-gray-800 rounded-full overflow-hidden">
+                        <div class="h-full bg-indigo-500" style="width: 0%; transition: width 1s cubic-bezier(0.22, 1, 0.36, 1)"></div>
+                    </div>
+                `;
+                mSkills.appendChild(div);
+                // Animate bars after open
+                setTimeout(() => {
+                    div.querySelector('.h-full').style.width = `${skill.val}%`;
+                }, 100);
+            });
+
+            // Show Modal
+            modal.classList.remove('hidden');
+            // Slight delay to allow display block to apply before opacity transition
+            requestAnimationFrame(() => {
+                modal.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-95');
+                modalContent.classList.add('scale-100');
+                
+                // Trigger Glitch Effect on Title
+                mMainTitle.classList.add('glitch-active');
+                setTimeout(() => mMainTitle.classList.remove('glitch-active'), 1000);
+            });
+            
+            document.body.style.overflow = 'hidden'; // Lock body scroll
+        }
+
+        function closeModal() {
+            modal.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }, 500);
+        }
+
+        closeModalBtn.addEventListener('click', closeModal);
+        modalBackdrop.addEventListener('click', closeModal);
+        
+        // Keyboard escape to close
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+                closeModal();
+            }
+        });
+
+        // --- ADD KEYFRAMES FOR FADE IN UP (Redundant protection) ---
+        const styles = document.createElement('style');
+        styles.innerHTML = `
+            @keyframes fadeInUp {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .animate-fade-in-up {
+                animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            }
+        `;
+        document.head.appendChild(styles);
+
+        // --- CUSTOM CURSOR LOGIC ---
+        const cursorDot = document.getElementById('cursor-dot');
+        const cursorCircle = document.getElementById('cursor-circle');
+
+        // Only active on desktop
+        if (window.matchMedia("(pointer: fine)").matches) {
+            let mouseX = -100;
+            let mouseY = -100;
+            let circleX = -100;
+            let circleY = -100;
+
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                
+                // Instant dot movement
+                cursorDot.style.transform = `translate(${mouseX - 4}px, ${mouseY - 4}px)`;
+            });
+
+            // Smooth circle movement
+            function animateCursor() {
+                // Lerp
+                circleX += (mouseX - circleX) * 0.15;
+                circleY += (mouseY - circleY) * 0.15;
+                
+                cursorCircle.style.transform = `translate(${circleX - 16}px, ${circleY - 16}px)`;
+                requestAnimationFrame(animateCursor);
+            }
+            animateCursor();
+
+            // Hover states
+            const interactiveElements = document.querySelectorAll('a, button, .chroma-card-wrapper');
+            interactiveElements.forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    cursorCircle.classList.add('scale-150', 'bg-white/20', 'border-transparent');
+                    cursorDot.classList.add('scale-50');
+                });
+                el.addEventListener('mouseleave', () => {
+                    cursorCircle.classList.remove('scale-150', 'bg-white/20', 'border-transparent');
+                    cursorDot.classList.remove('scale-50');
+                });
+            });
+        } else {
+            // Hide on touch devices
+            cursorDot.style.display = 'none';
+            cursorCircle.style.display = 'none';
+        }
+
+    </script>
+</body>
+</html>
