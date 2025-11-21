@@ -1,615 +1,1334 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>KhromaAcademy | A Experiência Definitiva</title>
 
-    <!-- FONTS -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Lora:wght@400;500&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Fira+Code:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KhromaAcademy | A Experiência Definitiva</title>
 
-    <!-- LUCIDE ICONS -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- FONTS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Lora:wght@400;500&family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Fira+Code:wght@400;700&display=swap"
+    rel="stylesheet" />
 
-    <!-- PRISM.JS - Syntax Highlighting -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.css" />
+  <!-- FONT AWESOME -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- KaTeX - LaTeX Rendering (versão sincronizada com package.json) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.css" />
+  <!-- LUCIDE ICONS -->
+  <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- STYLES -->
-    <link rel="stylesheet" href="./styles/index.css" />
-  </head>
-  <body data-theme="dark">
-    <!-- PRE-LOADER -->
-    <div class="preloader">
-      <svg viewBox="0 0 400 50">
-        <defs>
-          <linearGradient id="preloader-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="#FF4141" />
-            <stop offset="25%" stop-color="#41FF41" />
-            <stop offset="75%" stop-color="#4141FF" />
-            <stop offset="100%" stop-color="#FF41FF" />
-          </linearGradient>
-        </defs>
-        <text class="logo-text" x="50%" y="50%" dominant-baseline="middle" text-anchor="middle">
-          Khroma.Academy
-        </text>
-      </svg>
-    </div>
+  <!-- PRISM.JS - Syntax Highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" />
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.css" />
 
-    <!-- CUSTOM CURSOR -->
-    <div class="cursor cursor-classic"></div>
+  <!-- KaTeX - LaTeX Rendering (versão sincronizada com package.json) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.css" />
 
-    <!-- HEADER -->
-    <header class="main-header">
-      <div class="container">
-        <nav class="header-nav">
-          <div class="header-left">
-            <a href="#" class="logo link" aria-label="Khroma Academy - Página Inicial">
-              <svg class="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M7 9L11 12L7 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M13 16H17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  <!-- STYLES -->
+  <link rel="stylesheet" href="./styles/index.css" />
+
+  <!-- THREE.JS IMPORT MAP -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+
+<body data-theme="dark">
+  <!-- PRE-LOADER -->
+  <div class="preloader">
+    <svg viewBox="0 0 400 50">
+      <defs>
+        <linearGradient id="preloader-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#FF4141" />
+          <stop offset="25%" stop-color="#41FF41" />
+          <stop offset="75%" stop-color="#4141FF" />
+          <stop offset="100%" stop-color="#FF41FF" />
+        </linearGradient>
+      </defs>
+      <text class="logo-text" x="50%" y="50%" dominant-baseline="middle" text-anchor="middle">
+        Khroma.Academy
+      </text>
+    </svg>
+  </div>
+
+  <!-- CUSTOM CURSOR -->
+  <div class="cursor cursor-classic"></div>
+
+  <!-- HEADER -->
+  <header class="main-header">
+    <div class="container">
+      <nav class="header-nav">
+        <div class="header-left">
+          <a href="#" class="logo link" aria-label="Khroma Academy - Página Inicial">
+            <svg class="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M7 9L11 12L7 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" />
+              <path d="M13 16H17" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            </svg>
+            <span class="logo-text">khroma.academy</span>
+          </a>
+        </div>
+        <div class="header-right">
+          <div class="search-input-wrapper">
+            <div class="search-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
               </svg>
-              <span class="logo-text">khroma.academy</span>
-            </a>
+            </div>
+            <input type="text" class="search-input-header" id="header-search-input"
+              placeholder="Buscar cursos, disciplinas..." title="Buscar (⌘K)" />
+            <div class="search-shortcut">
+              <kbd>⌘</kbd><kbd>K</kbd>
+            </div>
           </div>
-          <div class="header-right">
-            <div class="search-input-wrapper">
-              <div class="search-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <path d="m21 21-4.35-4.35"></path>
-                </svg>
+          <button class="theme-toggle-btn link" id="theme-toggle-btn" title="Alternar Tema">
+            <svg class="theme-icon theme-icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+            <svg class="theme-icon theme-icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+          </button>
+        </div>
+        <div class="settings-panel">
+          <div class="settings-content">
+            <div class="settings-section">
+              <div class="settings-section-header">
+                <div class="settings-section-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                    <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                    <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                  </svg>
+                </div>
+                <div class="settings-section-title">
+                  <h4>Cores</h4>
+                  <p>Escolha a paleta de cores da interface</p>
+                </div>
               </div>
-              <input 
-                type="text" 
-                class="search-input-header" 
-                id="header-search-input" 
-                placeholder="Buscar cursos, disciplinas..." 
-                title="Buscar (⌘K)"
-              />
-              <div class="search-shortcut">
-                <kbd>⌘</kbd><kbd>K</kbd>
+              <div class="theme-grid">
+                <button class="theme-btn-enhanced link active" data-theme="dark" title="Dark"></button>
+                <button class="theme-btn-enhanced link" data-theme="light" title="Light"></button>
               </div>
             </div>
-            <button class="theme-toggle-btn link" id="theme-toggle-btn" title="Alternar Tema">
-              <svg class="theme-icon theme-icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-              </svg>
-              <svg class="theme-icon theme-icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="5"></circle>
-                <line x1="12" y1="1" x2="12" y2="3"></line>
-                <line x1="12" y1="21" x2="12" y2="23"></line>
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                <line x1="1" y1="12" x2="3" y2="12"></line>
-                <line x1="21" y1="12" x2="23" y2="12"></line>
-                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-              </svg>
-            </button>
-          </div>
-          <div class="settings-panel">
-              <div class="settings-content">
-                <div class="settings-section">
-                  <div class="settings-section-header">
-                    <div class="settings-section-icon">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
-                        <line x1="9" y1="9" x2="9.01" y2="9"></line>
-                        <line x1="15" y1="9" x2="15.01" y2="9"></line>
-                      </svg>
-                    </div>
-                    <div class="settings-section-title">
-                      <h4>Cores</h4>
-                      <p>Escolha a paleta de cores da interface</p>
-                    </div>
-                  </div>
-                  <div class="theme-grid">
-                    <button class="theme-btn-enhanced link active" data-theme="dark" title="Dark"></button>
-                    <button class="theme-btn-enhanced link" data-theme="light" title="Light"></button>
+
+            <div class="settings-section">
+              <div class="settings-section-header">
+                <div class="settings-section-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"></path>
+                    <path d="M13 13l6 6"></path>
+                  </svg>
+                </div>
+                <div class="settings-section-title">
+                  <h4>Cursor Personalizado</h4>
+                  <p>Personalize o ponteiro do mouse</p>
+                </div>
+              </div>
+              <div class="toggle-switch">
+                <span class="toggle-switch-label">Habilitar Cursor</span>
+                <div class="toggle-switch-input" id="cursor-enabled-toggle"></div>
+              </div>
+              <div class="cursor-select" id="cursor-select">
+                <div class="cursor-option active" data-cursor="classic">Clássico</div>
+                <div class="cursor-option" data-cursor="dot">Ponto</div>
+                <div class="cursor-option" data-cursor="square">Quadrado</div>
+                <div class="cursor-option" data-cursor="crosshair">Mira</div>
+                <div class="cursor-option" data-cursor="glow">Glow</div>
+                <div class="cursor-option" data-cursor="outline">Outline</div>
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <div class="settings-section-header">
+                <div class="settings-section-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                    <path d="M2 17l10 5 10-5"></path>
+                    <path d="M2 12l10 5 10-5"></path>
+                  </svg>
+                </div>
+                <div class="settings-section-title">
+                  <h4>Modelo de IA</h4>
+                  <p>Escolha o modelo para agentes e geração de disciplinas</p>
+                </div>
+              </div>
+              <div class="model-select" id="model-select">
+                <select class="model-select-input" id="gemini-model-select">
+                  <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
+                  <option value="gemini-flash-lite-latest">Gemini Flash Lite (Latest)</option>
+                  <option value="gemini-flash-latest">Gemini Flash (Latest)</option>
+                </select>
+              </div>
+              <div class="model-advanced-config" id="model-advanced-config">
+                <div class="config-row">
+                  <label for="config-temperature">
+                    <span>Temperature</span>
+                    <small>Controla aleatoriedade (0.0-2.0)</small>
+                  </label>
+                  <div class="config-input-group">
+                    <input type="range" id="config-temperature" min="0" max="2" step="0.1" value="1.0">
+                    <span class="config-value" id="config-temperature-value">1.0</span>
                   </div>
                 </div>
-
-                <div class="settings-section">
-                  <div class="settings-section-header">
-                    <div class="settings-section-icon">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"></path>
-                        <path d="M13 13l6 6"></path>
-                      </svg>
-                    </div>
-                    <div class="settings-section-title">
-                      <h4>Cursor Personalizado</h4>
-                      <p>Personalize o ponteiro do mouse</p>
-                    </div>
+                <div class="config-row">
+                  <label for="config-topP">
+                    <span>Top P</span>
+                    <small>Nucleus sampling (0.0-1.0)</small>
+                  </label>
+                  <div class="config-input-group">
+                    <input type="range" id="config-topP" min="0" max="1" step="0.05" value="0.95">
+                    <span class="config-value" id="config-topP-value">0.95</span>
                   </div>
+                </div>
+                <div class="config-row">
+                  <label for="config-topK">
+                    <span>Top K</span>
+                    <small>Top-K sampling (1-40)</small>
+                  </label>
+                  <div class="config-input-group">
+                    <input type="range" id="config-topK" min="1" max="40" step="1" value="40">
+                    <span class="config-value" id="config-topK-value">40</span>
+                  </div>
+                </div>
+                <div class="config-row">
+                  <label for="config-maxOutputTokens">
+                    <span>Max Output Tokens</span>
+                    <small id="maxOutputTokens-desc">Máximo de tokens na resposta (1-65536)</small>
+                  </label>
+                  <div class="config-input-group">
+                    <input type="number" id="config-maxOutputTokens" min="1" max="65536" step="1" value="65536"
+                      class="config-number-input">
+                    <input type="range" id="config-maxOutputTokens-range" min="1" max="65536" step="100" value="65536">
+                    <span class="config-value" id="config-maxOutputTokens-value">65536</span>
+                  </div>
+                </div>
+                <div class="config-row" id="config-enable-google-search-row">
+                  <label for="config-enableGoogleSearch">
+                    <span>Google Search (Embasamento)</span>
+                    <small>Permite que o modelo pesquise na web para respostas mais precisas e atualizadas</small>
+                  </label>
                   <div class="toggle-switch">
-                    <span class="toggle-switch-label">Habilitar Cursor</span>
-                    <div class="toggle-switch-input" id="cursor-enabled-toggle"></div>
-                  </div>
-                  <div class="cursor-select" id="cursor-select">
-                    <div class="cursor-option active" data-cursor="classic">Clássico</div>
-                    <div class="cursor-option" data-cursor="dot">Ponto</div>
-                    <div class="cursor-option" data-cursor="square">Quadrado</div>
-                    <div class="cursor-option" data-cursor="crosshair">Mira</div>
-                    <div class="cursor-option" data-cursor="glow">Glow</div>
-                    <div class="cursor-option" data-cursor="outline">Outline</div>
+                    <span class="toggle-switch-label">Enable Google Search</span>
+                    <div class="toggle-switch-input" id="config-enableGoogleSearch-toggle"></div>
                   </div>
                 </div>
-
-                <div class="settings-section">
-                  <div class="settings-section-header">
-                    <div class="settings-section-icon">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
-                        <path d="M2 17l10 5 10-5"></path>
-                        <path d="M2 12l10 5 10-5"></path>
-                      </svg>
-                    </div>
-                    <div class="settings-section-title">
-                      <h4>Modelo de IA</h4>
-                      <p>Escolha o modelo para agentes e geração de disciplinas</p>
-                    </div>
-                  </div>
-                  <div class="model-select" id="model-select">
-                    <select class="model-select-input" id="gemini-model-select">
-                      <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
-                      <option value="gemini-flash-lite-latest">Gemini Flash Lite (Latest)</option>
-                      <option value="gemini-flash-latest">Gemini Flash (Latest)</option>
+                <div class="config-row" id="config-image-size-row" style="display: none;">
+                  <label for="config-imageSize">
+                    <span>Image Size</span>
+                    <small>Apenas para Gemini 2.5 Pro</small>
+                  </label>
+                  <div class="config-input-group">
+                    <select id="config-imageSize" class="config-select">
+                      <option value="1K">1K</option>
+                      <option value="2K">2K</option>
+                      <option value="4K">4K</option>
                     </select>
                   </div>
-                  <div class="model-advanced-config" id="model-advanced-config">
-                    <div class="config-row">
-                      <label for="config-temperature">
-                        <span>Temperature</span>
-                        <small>Controla aleatoriedade (0.0-2.0)</small>
-                      </label>
-                      <div class="config-input-group">
-                        <input type="range" id="config-temperature" min="0" max="2" step="0.1" value="1.0">
-                        <span class="config-value" id="config-temperature-value">1.0</span>
-                      </div>
-                    </div>
-                    <div class="config-row">
-                      <label for="config-topP">
-                        <span>Top P</span>
-                        <small>Nucleus sampling (0.0-1.0)</small>
-                      </label>
-                      <div class="config-input-group">
-                        <input type="range" id="config-topP" min="0" max="1" step="0.05" value="0.95">
-                        <span class="config-value" id="config-topP-value">0.95</span>
-                      </div>
-                    </div>
-                    <div class="config-row">
-                      <label for="config-topK">
-                        <span>Top K</span>
-                        <small>Top-K sampling (1-40)</small>
-                      </label>
-                      <div class="config-input-group">
-                        <input type="range" id="config-topK" min="1" max="40" step="1" value="40">
-                        <span class="config-value" id="config-topK-value">40</span>
-                      </div>
-                    </div>
-                    <div class="config-row">
-                      <label for="config-maxOutputTokens">
-                        <span>Max Output Tokens</span>
-                        <small id="maxOutputTokens-desc">Máximo de tokens na resposta (1-65536)</small>
-                      </label>
-                      <div class="config-input-group">
-                        <input type="number" id="config-maxOutputTokens" min="1" max="65536" step="1" value="65536" class="config-number-input">
-                        <input type="range" id="config-maxOutputTokens-range" min="1" max="65536" step="100" value="65536">
-                        <span class="config-value" id="config-maxOutputTokens-value">65536</span>
-                      </div>
-                    </div>
-                      <div class="config-row" id="config-enable-google-search-row">
-                        <label for="config-enableGoogleSearch">
-                          <span>Google Search (Embasamento)</span>
-                          <small>Permite que o modelo pesquise na web para respostas mais precisas e atualizadas</small>
-                        </label>
-                        <div class="toggle-switch">
-                          <span class="toggle-switch-label">Enable Google Search</span>
-                          <div class="toggle-switch-input" id="config-enableGoogleSearch-toggle"></div>
-                        </div>
-                      </div>
-                    <div class="config-row" id="config-image-size-row" style="display: none;">
-                      <label for="config-imageSize">
-                        <span>Image Size</span>
-                        <small>Apenas para Gemini 2.5 Pro</small>
-                      </label>
-                      <div class="config-input-group">
-                        <select id="config-imageSize" class="config-select">
-                          <option value="1K">1K</option>
-                          <option value="2K">2K</option>
-                          <option value="4K">4K</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="settings-section">
-                  <div class="settings-section-header">
-                    <div class="settings-section-icon">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 20h9"></path>
-                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-                      </svg>
-                    </div>
-                    <div class="settings-section-title">
-                      <h4>Gerenciamento</h4>
-                      <p>Edite e organize as disciplinas</p>
-                    </div>
-                  </div>
-                  <div class="settings-actions">
-                    <button class="btn-admin-settings" id="btn-admin-settings">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 20h9"></path>
-                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-                      </svg>
-                      <span>Gerenciar Disciplinas</span>
-                    </button>
-                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </nav>
-      </div>
-    </header>
 
-    <main>
-      <!-- HERO SECTION -->
-      <section class="hero container">
-        <div class="hero-content">
-          <h1>Uma Nova Dimensão do Conhecimento em <span class="highlight-chroma">Ciência da Computação.</span></h1>
-          <p>Interfaces que respiram. Conceitos que se conectam. Uma experiência de aprendizado tão inteligente quanto o código que você vai escrever.</p>
-        </div>
-      </section>
-
-      <!-- DISCIPLINES SECTION -->
-      <section class="disciplines container" id="disciplinas">
-        <div class="disciplines-header">
-          <h2>O Currículo</h2>
-          <div class="view-toggle" data-view="grid">
-            <div class="view-toggle-bg"></div>
-            <button class="view-btn link" data-view="grid">Grid</button>
-            <button class="view-btn link" data-view="graph">Grafo</button>
-          </div>
-        </div>
-
-        <div class="disciplines-container">
-          <div class="disciplines-grid">
-            <!-- Cards are rendered here by JS -->
-          </div>
-          <div class="knowledge-graph">
-            <svg class="knowledge-graph-svg">
-              <!-- Lines are rendered here by JS -->
-            </svg>
-            <!-- Nodes are rendered here by JS -->
-          </div>
-        </div>
-      </section>
-    </main>
-    
-    <!-- MODAL -->
-    <div class="modal-backdrop"></div>
-    <div class="modal-container">
-      <button class="modal-close-btn link">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-      </button>
-      <div class="modal-scroll-content">
-        <div class="modal-content-inner">
-          <!-- Content is injected here by JS -->
-        </div>
-      </div>
-    </div>
-
-    <!-- DISCIPLINE CONTENT (Preparatório) -->
-    <div id="discipline-content" class="discipline-content"></div>
-
-    <!-- ADMIN PANEL -->
-    <div class="admin-panel" id="admin-panel">
-      <div class="admin-panel-content">
-        <div class="admin-header">
-          <h2>Gerenciar Disciplinas</h2>
-          <button class="admin-close-btn link" id="admin-close-btn">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
-        </div>
-        
-        <div class="admin-actions">
-          <button class="btn-primary" id="btn-add-discipline">+ Nova Disciplina</button>
-          <button class="btn-primary" id="btn-create-with-ai" style="background: rgba(65, 65, 255, 0.2) !important; border-color: rgba(65, 65, 255, 0.5) !important; color: #4141FF !important;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
-              <path d="M12 2v20M2 12h20"></path>
-              <circle cx="12" cy="12" r="5"></circle>
-            </svg>
-            Criar com IA
-          </button>
-          <button class="btn-secondary" id="btn-export-json">Exportar JSON</button>
-          <button class="btn-secondary" id="btn-import-json">Importar JSON</button>
-          <button class="btn-secondary" id="btn-export-md" style="background: rgba(65, 255, 65, 0.2) !important; border-color: rgba(65, 255, 65, 0.5) !important; color: #41FF41 !important;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px; vertical-align: middle;">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="7 10 12 15 17 10"></polyline>
-              <line x1="12" y1="15" x2="12" y2="3"></line>
-            </svg>
-            Exportar MD
-          </button>
-          <button class="btn-secondary" id="btn-import-md" style="background: rgba(65, 255, 65, 0.2) !important; border-color: rgba(65, 255, 65, 0.5) !important; color: #41FF41 !important;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px; vertical-align: middle;">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="17 8 12 3 7 8"></polyline>
-              <line x1="12" y1="3" x2="12" y2="15"></line>
-            </svg>
-            Importar MD
-          </button>
-        </div>
-
-        <div class="disciplines-list" id="disciplines-list">
-          <!-- Disciplines will be listed here -->
-        </div>
-      </div>
-    </div>
-
-    <!-- MODAL DE DISCIPLINA -->
-    <div class="discipline-modal-backdrop" id="discipline-modal-backdrop"></div>
-    <div class="discipline-modal" id="discipline-modal">
-      <div class="discipline-modal-header">
-        <h3 id="form-title">Adicionar Nova Disciplina</h3>
-        <button class="discipline-modal-close" id="discipline-modal-close" aria-label="Fechar">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
-      </div>
-      <div class="discipline-modal-content">
-        <form id="discipline-form-element">
-          <input type="hidden" id="discipline-id" name="id">
-          
-          <!-- Tabs Navigation -->
-          <div class="form-tabs" id="form-tabs">
-            <button type="button" class="form-tab active" data-tab="basic">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-              </svg>
-              Informações Básicas
-            </button>
-            <button type="button" class="form-tab" data-tab="modules">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="3" width="7" height="7"></rect>
-                <rect x="14" y="3" width="7" height="7"></rect>
-                <rect x="14" y="14" width="7" height="7"></rect>
-                <rect x="3" y="14" width="7" height="7"></rect>
-              </svg>
-              Módulos e Submódulos
-            </button>
-            <button type="button" class="form-tab" data-tab="advanced">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="3"></circle>
-                <path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"></path>
-              </svg>
-              Configurações Avançadas
-            </button>
-          </div>
-
-          <!-- Tab Content: Informações Básicas -->
-          <div class="form-tab-content active" id="tab-basic">
-            <div class="form-section">
-              <h4 class="form-section-title">Identificação</h4>
-              
-              <div class="form-group">
-                <label for="discipline-title">Título da Disciplina *</label>
-                <input type="text" id="discipline-title" name="title" required placeholder="Ex: Algoritmos e Estruturas de Dados">
-                <small class="form-hint">Nome completo da disciplina</small>
-              </div>
-
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="discipline-period">Período *</label>
-                  <input type="text" id="discipline-period" name="period" placeholder="Ex: 3º, 4º, 5º" required>
-                  <small class="form-hint">Período do curso</small>
-                </div>
-
-                <div class="form-group">
-                  <label for="discipline-code">Código</label>
-                  <input type="text" id="discipline-code" name="code" placeholder="Ex: ALG, ED, IA">
-                  <small class="form-hint">Código único (gerado automaticamente se vazio)</small>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label for="discipline-description">Descrição *</label>
-                <textarea id="discipline-description" name="description" required rows="4" placeholder="Descreva o conteúdo, objetivos e importância da disciplina..."></textarea>
-                <small class="form-hint">Ementa ou descrição detalhada da disciplina</small>
-              </div>
-            </div>
-
-            <div class="form-section">
-              <h4 class="form-section-title">Aparência</h4>
-              
-              <div class="form-group">
-                <label>Cor da Disciplina *</label>
-                <div class="color-picker-grid" id="discipline-color-picker">
-                  <button type="button" class="color-option" data-color="#41FF41" aria-label="Verde" style="background-color: #41FF41;" title="Verde"></button>
-                  <button type="button" class="color-option" data-color="#4141FF" aria-label="Azul" style="background-color: #4141FF;" title="Azul"></button>
-                  <button type="button" class="color-option" data-color="#FF41FF" aria-label="Magenta" style="background-color: #FF41FF;" title="Magenta"></button>
-                  <button type="button" class="color-option" data-color="#41FFFF" aria-label="Ciano" style="background-color: #41FFFF;" title="Ciano"></button>
-                  <button type="button" class="color-option" data-color="#F2FF41" aria-label="Amarelo" style="background-color: #F2FF41;" title="Amarelo"></button>
-                  <button type="button" class="color-option" data-color="#FF4141" aria-label="Vermelho" style="background-color: #FF4141;" title="Vermelho"></button>
-                </div>
-                <input type="hidden" id="discipline-color" name="color" value="#41FF41" required>
-              </div>
-
-              <div class="form-group">
-                <label for="discipline-progress">Progresso (%) *</label>
-                <div class="progress-input-wrapper">
-                  <input type="range" id="discipline-progress-range" name="progressRange" min="0" max="100" value="0">
-                  <input type="number" id="discipline-progress" name="progress" min="0" max="100" value="0" required>
-                  <span class="progress-display">0%</span>
-                </div>
-                <small class="form-hint">Progresso atual da disciplina</small>
-              </div>
-            </div>
-
-            <div class="form-section">
-              <h4 class="form-section-title">Pré-requisitos</h4>
-              
-              <div class="form-group">
-                <label for="prerequisites-search">Disciplinas Pré-requisitas</label>
-                <div class="prerequisites-selector">
-                  <input 
-                    type="text" 
-                    id="prerequisites-search" 
-                    class="prerequisites-search-input" 
-                    placeholder="Buscar disciplinas..."
-                    autocomplete="off"
-                  >
-                  <div class="prerequisites-dropdown" id="prerequisites-dropdown">
-                    <!-- Options will be populated by JS -->
-                  </div>
-                  <div class="prerequisites-selected" id="prerequisites-selected">
-                    <!-- Selected items will be shown here -->
-                  </div>
-                </div>
-                <input type="hidden" id="discipline-prerequisites" name="prerequisites">
-                <small class="form-hint">Selecione as disciplinas que são pré-requisitos para esta</small>
-              </div>
-            </div>
-          </div>
-
-          <!-- Tab Content: Módulos e Submódulos -->
-          <div class="form-tab-content" id="tab-modules">
-            <div class="modules-editor" id="modules-editor">
-              <div class="modules-header">
-                <h4 class="form-section-title">Estrutura de Módulos</h4>
-                <button type="button" class="btn-add-module" id="btn-add-module">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
+            <div class="settings-section">
+              <div class="settings-section-header">
+                <div class="settings-section-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 20h9"></path>
+                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
                   </svg>
-                  Adicionar Módulo
+                </div>
+                <div class="settings-section-title">
+                  <h4>Gerenciamento</h4>
+                  <p>Edite e organize as disciplinas</p>
+                </div>
+              </div>
+              <div class="settings-actions">
+                <button class="btn-admin-settings" id="btn-admin-settings">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 20h9"></path>
+                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                  </svg>
+                  <span>Gerenciar Disciplinas</span>
                 </button>
               </div>
-              <div class="modules-list" id="modules-list">
-                <!-- Módulos serão adicionados aqui dinamicamente -->
-                <div class="modules-empty-state">
-                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3">
-                    <rect x="3" y="3" width="7" height="7"></rect>
-                    <rect x="14" y="3" width="7" height="7"></rect>
-                    <rect x="14" y="14" width="7" height="7"></rect>
-                    <rect x="3" y="14" width="7" height="7"></rect>
-                  </svg>
-                  <p>Nenhum módulo adicionado ainda</p>
-                  <small>Clique em "Adicionar Módulo" para começar</small>
-                </div>
-              </div>
             </div>
+          </div>
+        </div>
+    </div>
+    </nav>
+    </div>
+  </header>
+
+  <!-- Background Elements -->
+  <canvas id="bg-canvas" class="bg-canvas"></canvas>
+  <div class="bg-grid"></div>
+  <div class="ambient-light"></div>
+  <div id="spotlight" class="spotlight"></div>
+
+  <main class="main-layout">
+    <!-- HERO SECTION -->
+    <section class="hero-section">
+      <div class="hero-container">
+        <!-- Left Column: Text Content -->
+        <div class="hero-content">
+          <div class="system-status">
+            <span class="status-dot"></span>
+            <span class="status-text">Sistema Online</span>
           </div>
 
-          <!-- Tab Content: Configurações Avançadas -->
-          <div class="form-tab-content" id="tab-advanced">
-            <div class="form-section">
-              <h4 class="form-section-title">Ícone Personalizado</h4>
-              
-              <div class="form-group">
-                <label for="discipline-icon">Código SVG do Ícone</label>
-                <textarea id="discipline-icon" name="icon" rows="6" placeholder="Cole o código SVG completo aqui (opcional)"></textarea>
-                <small class="form-hint">Opcional: Cole o código SVG completo do ícone personalizado</small>
-              </div>
-            </div>
+          <h1 class="hero-title">
+            Domine a
+            <br>
+            <span class="glitch-wrapper">
+              <span class="glitch" data-text="Arquitetura">Arquitetura</span>
+            </span>
+            <br>
+            do Futuro.
+          </h1>
+
+          <p class="hero-description">
+            Educação de elite em Ciência da Computação para os arquitetos da era digital.
+            <span class="hero-description-highlight">Algoritmos, Quantum, IA e além.</span>
+            Experimente o aprendizado na vanguarda da tecnologia.
+          </p>
+
+          <div class="hero-actions">
+            <button class="btn-glow">Iniciar Jornada</button>
+            <button class="btn-secondary-hero">Explorar Currículo</button>
           </div>
 
-          <!-- Form Actions -->
-          <div class="form-actions">
-            <div class="form-actions-left">
-              <button type="button" class="btn-secondary" id="btn-view-context" style="background: rgba(65, 255, 65, 0.2) !important; border-color: rgba(65, 255, 65, 0.5) !important; color: #41FF41 !important; display: none;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                  <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-                Ver Contexto
-              </button>
-              <button type="button" class="btn-secondary" id="btn-generate-context" style="background: rgba(65, 65, 255, 0.2) !important; border-color: rgba(65, 65, 255, 0.5) !important; color: #4141FF !important;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                  <polyline points="14 2 14 8 20 8"></polyline>
-                  <line x1="16" y1="13" x2="8" y2="13"></line>
-                  <line x1="16" y1="17" x2="8" y2="17"></line>
-                </svg>
-                Gerar Contexto Completo
-              </button>
-              <button type="button" class="btn-secondary" id="btn-generate-content" style="background: rgba(255, 65, 255, 0.2) !important; border-color: rgba(255, 65, 255, 0.5) !important; color: #FF41FF !important; display: none;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                  <polyline points="14 2 14 8 20 8"></polyline>
-                  <path d="M16 13H8M16 17H8M10 9H8"></path>
-                </svg>
-                Gerar Conteúdo Completo
-              </button>
+          <!-- Hero Stats -->
+          <div class="hero-stats">
+            <div class="stat-item">
+              <div class="stat-number">98%</div>
+              <div class="stat-label">Taxa de Conclusão</div>
             </div>
-            <div class="form-actions-right">
-              <button type="button" class="btn-secondary" id="btn-cancel-form">Cancelar</button>
-              <button type="submit" class="btn-primary">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;">
-                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-                  <polyline points="17 21 17 13 7 13 7 21"></polyline>
-                  <polyline points="7 3 7 8 15 8"></polyline>
-                </svg>
-                Salvar Disciplina
-              </button>
+            <div class="stat-item">
+              <div class="stat-number">Elite</div>
+              <div class="stat-label">Padrão da Indústria</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">24/7</div>
+              <div class="stat-label">Suporte Neural</div>
             </div>
           </div>
-        </form>
+        </div>
+
+        <!-- Right Column: 3D Brain -->
+        <div class="hero-brain-container" id="brain-canvas-container"></div>
+      </div>
+    </section>
+
+    <!-- COURSES SECTION -->
+    <section id="courses" class="courses-section">
+      <div class="courses-header">
+        <div>
+          <h2 class="courses-title">Módulos Principais</h2>
+          <p class="courses-subtitle">Selecione uma disciplina para iniciar seu treinamento especializado.</p>
+        </div>
+        <div class="courses-nav-buttons">
+          <button class="nav-button">
+            <i class="fa-solid fa-arrow-left"></i>
+          </button>
+          <button class="nav-button">
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Cards Grid -->
+      <div class="courses-grid" id="courses-grid">
+        <!-- Cards will be injected by JS -->
+      </div>
+
+      <div class="courses-load-more">
+        <button class="load-more-btn">
+          <span class="load-more-text">Carregar Base Completa</span>
+          <i class="fa-solid fa-chevron-down"></i>
+        </button>
+      </div>
+    </section>
+
+    <!-- DISCIPLINES SECTION (mantida para compatibilidade) -->
+    <section class="disciplines container" id="disciplinas" style="display: none;">
+      <div class="disciplines-header">
+        <h2>O Currículo Completo</h2>
+        <div class="view-toggle" data-view="grid">
+          <div class="view-toggle-bg"></div>
+          <button class="view-btn link" data-view="grid">Grid</button>
+          <button class="view-btn link" data-view="graph">Grafo</button>
+        </div>
+      </div>
+
+      <div class="disciplines-container">
+        <div class="disciplines-grid">
+          <!-- Cards are rendered here by JS -->
+        </div>
+        <div class="knowledge-graph">
+          <svg class="knowledge-graph-svg">
+            <!-- Lines are rendered here by JS -->
+          </svg>
+          <!-- Nodes are rendered here by JS -->
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL -->
+  <div class="modal-backdrop"></div>
+  <div class="modal-container">
+    <button class="modal-close-btn link">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+    <div class="modal-scroll-content">
+      <div class="modal-content-inner">
+        <!-- Content is injected here by JS -->
       </div>
     </div>
+  </div>
 
-    <!-- MODAL DO ASSISTENTE DE IA -->
-    <div class="ai-assistant-modal-backdrop" id="ai-assistant-modal-backdrop"></div>
-    <div class="ai-assistant-modal" id="ai-assistant-modal">
-      <div class="ai-assistant-modal-header">
-        <h3 id="ai-assistant-title">Criar Disciplina com IA</h3>
-        <button class="ai-assistant-modal-close" id="ai-assistant-modal-close" aria-label="Fechar">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <!-- DISCIPLINE CONTENT (Preparatório) -->
+  <div id="discipline-content" class="discipline-content"></div>
+
+  <!-- ADMIN PANEL -->
+  <div class="admin-panel" id="admin-panel">
+    <div class="admin-panel-content">
+      <div class="admin-header">
+        <h2>Gerenciar Disciplinas</h2>
+        <button class="admin-close-btn link" id="admin-close-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
         </button>
       </div>
-      <div class="ai-assistant-modal-content" id="ai-assistant-modal-content">
-        <!-- Conteúdo será injetado dinamicamente -->
+
+      <div class="admin-actions">
+        <button class="btn-primary" id="btn-add-discipline">+ Nova Disciplina</button>
+        <button class="btn-primary" id="btn-create-with-ai"
+          style="background: rgba(65, 65, 255, 0.2) !important; border-color: rgba(65, 65, 255, 0.5) !important; color: #4141FF !important;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+            <path d="M12 2v20M2 12h20"></path>
+            <circle cx="12" cy="12" r="5"></circle>
+          </svg>
+          Criar com IA
+        </button>
+        <button class="btn-secondary" id="btn-export-json">Exportar JSON</button>
+        <button class="btn-secondary" id="btn-import-json">Importar JSON</button>
+        <button class="btn-secondary" id="btn-export-md"
+          style="background: rgba(65, 255, 65, 0.2) !important; border-color: rgba(65, 255, 65, 0.5) !important; color: #41FF41 !important;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="margin-right: 6px; vertical-align: middle;">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          Exportar MD
+        </button>
+        <button class="btn-secondary" id="btn-import-md"
+          style="background: rgba(65, 255, 65, 0.2) !important; border-color: rgba(65, 255, 65, 0.5) !important; color: #41FF41 !important;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="margin-right: 6px; vertical-align: middle;">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          Importar MD
+        </button>
+      </div>
+
+      <div class="disciplines-list" id="disciplines-list">
+        <!-- Disciplines will be listed here -->
       </div>
     </div>
+  </div>
 
-    <!-- PRISM.JS SCRIPTS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+  <!-- MODAL DE DISCIPLINA -->
+  <div class="discipline-modal-backdrop" id="discipline-modal-backdrop"></div>
+  <div class="discipline-modal" id="discipline-modal">
+    <div class="discipline-modal-header">
+      <h3 id="form-title">Adicionar Nova Disciplina</h3>
+      <button class="discipline-modal-close" id="discipline-modal-close" aria-label="Fechar">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    <div class="discipline-modal-content">
+      <form id="discipline-form-element">
+        <input type="hidden" id="discipline-id" name="id">
 
-    <!-- SCRIPTS -->
-    <script type="module" src="./app.ts"></script>
-  </body>
+        <!-- Tabs Navigation -->
+        <div class="form-tabs" id="form-tabs">
+          <button type="button" class="form-tab active" data-tab="basic">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+            </svg>
+            Informações Básicas
+          </button>
+          <button type="button" class="form-tab" data-tab="modules">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            Módulos e Submódulos
+          </button>
+          <button type="button" class="form-tab" data-tab="advanced">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path
+                d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24">
+              </path>
+            </svg>
+            Configurações Avançadas
+          </button>
+        </div>
+
+        <!-- Tab Content: Informações Básicas -->
+        <div class="form-tab-content active" id="tab-basic">
+          <div class="form-section">
+            <h4 class="form-section-title">Identificação</h4>
+
+            <div class="form-group">
+              <label for="discipline-title">Título da Disciplina *</label>
+              <input type="text" id="discipline-title" name="title" required
+                placeholder="Ex: Algoritmos e Estruturas de Dados">
+              <small class="form-hint">Nome completo da disciplina</small>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="discipline-period">Período *</label>
+                <input type="text" id="discipline-period" name="period" placeholder="Ex: 3º, 4º, 5º" required>
+                <small class="form-hint">Período do curso</small>
+              </div>
+
+              <div class="form-group">
+                <label for="discipline-code">Código</label>
+                <input type="text" id="discipline-code" name="code" placeholder="Ex: ALG, ED, IA">
+                <small class="form-hint">Código único (gerado automaticamente se vazio)</small>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="discipline-description">Descrição *</label>
+              <textarea id="discipline-description" name="description" required rows="4"
+                placeholder="Descreva o conteúdo, objetivos e importância da disciplina..."></textarea>
+              <small class="form-hint">Ementa ou descrição detalhada da disciplina</small>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h4 class="form-section-title">Aparência</h4>
+
+            <div class="form-group">
+              <label>Cor da Disciplina *</label>
+              <div class="color-picker-grid" id="discipline-color-picker">
+                <button type="button" class="color-option" data-color="#41FF41" aria-label="Verde"
+                  style="background-color: #41FF41;" title="Verde"></button>
+                <button type="button" class="color-option" data-color="#4141FF" aria-label="Azul"
+                  style="background-color: #4141FF;" title="Azul"></button>
+                <button type="button" class="color-option" data-color="#FF41FF" aria-label="Magenta"
+                  style="background-color: #FF41FF;" title="Magenta"></button>
+                <button type="button" class="color-option" data-color="#41FFFF" aria-label="Ciano"
+                  style="background-color: #41FFFF;" title="Ciano"></button>
+                <button type="button" class="color-option" data-color="#F2FF41" aria-label="Amarelo"
+                  style="background-color: #F2FF41;" title="Amarelo"></button>
+                <button type="button" class="color-option" data-color="#FF4141" aria-label="Vermelho"
+                  style="background-color: #FF4141;" title="Vermelho"></button>
+              </div>
+              <input type="hidden" id="discipline-color" name="color" value="#41FF41" required>
+            </div>
+
+            <div class="form-group">
+              <label for="discipline-progress">Progresso (%) *</label>
+              <div class="progress-input-wrapper">
+                <input type="range" id="discipline-progress-range" name="progressRange" min="0" max="100" value="0">
+                <input type="number" id="discipline-progress" name="progress" min="0" max="100" value="0" required>
+                <span class="progress-display">0%</span>
+              </div>
+              <small class="form-hint">Progresso atual da disciplina</small>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h4 class="form-section-title">Pré-requisitos</h4>
+
+            <div class="form-group">
+              <label for="prerequisites-search">Disciplinas Pré-requisitas</label>
+              <div class="prerequisites-selector">
+                <input type="text" id="prerequisites-search" class="prerequisites-search-input"
+                  placeholder="Buscar disciplinas..." autocomplete="off">
+                <div class="prerequisites-dropdown" id="prerequisites-dropdown">
+                  <!-- Options will be populated by JS -->
+                </div>
+                <div class="prerequisites-selected" id="prerequisites-selected">
+                  <!-- Selected items will be shown here -->
+                </div>
+              </div>
+              <input type="hidden" id="discipline-prerequisites" name="prerequisites">
+              <small class="form-hint">Selecione as disciplinas que são pré-requisitos para esta</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Content: Módulos e Submódulos -->
+        <div class="form-tab-content" id="tab-modules">
+          <div class="modules-editor" id="modules-editor">
+            <div class="modules-header">
+              <h4 class="form-section-title">Estrutura de Módulos</h4>
+              <button type="button" class="btn-add-module" id="btn-add-module">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Adicionar Módulo
+              </button>
+            </div>
+            <div class="modules-list" id="modules-list">
+              <!-- Módulos serão adicionados aqui dinamicamente -->
+              <div class="modules-empty-state">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                  opacity="0.3">
+                  <rect x="3" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="14" width="7" height="7"></rect>
+                  <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+                <p>Nenhum módulo adicionado ainda</p>
+                <small>Clique em "Adicionar Módulo" para começar</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Content: Configurações Avançadas -->
+        <div class="form-tab-content" id="tab-advanced">
+          <div class="form-section">
+            <h4 class="form-section-title">Ícone Personalizado</h4>
+
+            <div class="form-group">
+              <label for="discipline-icon">Código SVG do Ícone</label>
+              <textarea id="discipline-icon" name="icon" rows="6"
+                placeholder="Cole o código SVG completo aqui (opcional)"></textarea>
+              <small class="form-hint">Opcional: Cole o código SVG completo do ícone personalizado</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <div class="form-actions-left">
+            <button type="button" class="btn-secondary" id="btn-view-context"
+              style="background: rgba(65, 255, 65, 0.2) !important; border-color: rgba(65, 255, 65, 0.5) !important; color: #41FF41 !important; display: none;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                style="margin-right: 8px;">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              Ver Contexto
+            </button>
+            <button type="button" class="btn-secondary" id="btn-generate-context"
+              style="background: rgba(65, 65, 255, 0.2) !important; border-color: rgba(65, 65, 255, 0.5) !important; color: #4141FF !important;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                style="margin-right: 8px;">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+              </svg>
+              Gerar Contexto Completo
+            </button>
+            <button type="button" class="btn-secondary" id="btn-generate-content"
+              style="background: rgba(255, 65, 255, 0.2) !important; border-color: rgba(255, 65, 255, 0.5) !important; color: #FF41FF !important; display: none;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                style="margin-right: 8px;">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <path d="M16 13H8M16 17H8M10 9H8"></path>
+              </svg>
+              Gerar Conteúdo Completo
+            </button>
+          </div>
+          <div class="form-actions-right">
+            <button type="button" class="btn-secondary" id="btn-cancel-form">Cancelar</button>
+            <button type="submit" class="btn-primary">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                style="margin-right: 8px;">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                <polyline points="7 3 7 8 15 8"></polyline>
+              </svg>
+              Salvar Disciplina
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL DO ASSISTENTE DE IA -->
+  <div class="ai-assistant-modal-backdrop" id="ai-assistant-modal-backdrop"></div>
+  <div class="ai-assistant-modal" id="ai-assistant-modal">
+    <div class="ai-assistant-modal-header">
+      <h3 id="ai-assistant-title">Criar Disciplina com IA</h3>
+      <button class="ai-assistant-modal-close" id="ai-assistant-modal-close" aria-label="Fechar">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    <div class="ai-assistant-modal-content" id="ai-assistant-modal-content">
+      <!-- Conteúdo será injetado dinamicamente -->
+    </div>
+  </div>
+
+  <!-- PRISM.JS SCRIPTS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.js"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+
+  <!-- SCRIPTS -->
+  <script type="module" src="./app.ts"></script>
+
+  <!-- 3D BRAIN COMPONENT -->
+  <script type="module">
+    import * as THREE from 'three';
+    import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+    import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+    import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+
+    // Wait for DOM to be ready
+    function initBrain3D() {
+      const container = document.getElementById('brain-canvas-container');
+      if (!container) {
+        setTimeout(initBrain3D, 100);
+        return;
+      }
+
+      const canvas = document.createElement('canvas');
+      // Canvas fits exactly within container - no overflow
+      canvas.style.width = '100%';
+      canvas.style.height = '100%';
+      canvas.style.display = 'block';
+      container.appendChild(canvas);
+
+      const scene = new THREE.Scene();
+      // Fog removed to prevent background artifacts
+      // scene.fog = new THREE.FogExp2(0x030303, 0.02);
+
+      // Canvas matches container size exactly
+      const canvasWidth = container.offsetWidth;
+      const canvasHeight = container.offsetHeight;
+
+      const camera = new THREE.PerspectiveCamera(45, canvasWidth / canvasHeight, 0.1, 100);
+      camera.position.set(0, 0, 3.5); // Further back to make brain appear smaller
+
+      const renderer = new THREE.WebGLRenderer({
+        canvas: canvas,
+        antialias: true,
+        alpha: true,
+        preserveDrawingBuffer: false
+      });
+      renderer.setSize(canvasWidth, canvasHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.toneMapping = THREE.ReinhardToneMapping;
+      renderer.setClearColor(0x000000, 0); // Transparent background
+
+      // Brain Geometry Generation
+      const geometry = new THREE.IcosahedronGeometry(1, 70);
+      const posAttribute = geometry.attributes.position;
+      const vertex = new THREE.Vector3();
+
+      function pseudoNoise(x, y, z) {
+        return Math.sin(x * 3.5 + Math.cos(y * 2.5)) * Math.cos(z * 3.5 + Math.sin(x * 2.5));
+      }
+
+      for (let i = 0; i < posAttribute.count; i++) {
+        vertex.fromBufferAttribute(posAttribute, i);
+        vertex.normalize();
+
+        const nx = vertex.x;
+        const ny = vertex.y;
+        const nz = vertex.z;
+
+        // Macro Structure
+        vertex.x *= 0.85;
+        vertex.y *= 0.75;
+        vertex.z *= 1.10;
+
+        // Temporal Lobes
+        const temporalFactor = Math.exp(-Math.pow(ny + 0.3, 2) * 3.0) * Math.exp(-Math.pow(nz - 0.1, 2) * 2.0) * Math.abs(nx);
+        vertex.x += Math.sign(nx) * temporalFactor * 0.35;
+        vertex.y -= temporalFactor * 0.15;
+
+        // Frontal Lobes
+        if (nz < -0.5) {
+          const frontTaper = ((-nz - 0.5) * 0.3);
+          vertex.x *= (1.0 - frontTaper * 0.5);
+          vertex.y *= (1.0 - frontTaper * 0.3);
+        }
+
+        // Cerebellum
+        const cerebellumMask = Math.exp(-Math.pow(nz - 0.75, 2) * 5.0) * Math.exp(-Math.pow(ny + 0.4, 2) * 5.0);
+        if (cerebellumMask > 0.01) {
+          vertex.addScaledVector(vertex.clone().normalize(), cerebellumMask * 0.25);
+        }
+
+        // Brain Stem
+        const stemMask = Math.exp(-Math.pow(nx, 2) * 10.0) * Math.exp(-Math.pow(nz - 0.1, 2) * 10.0) * Math.exp(-Math.pow(ny + 0.6, 2) * 5.0);
+        if (stemMask > 0.01 && ny < -0.3) {
+          vertex.y -= stemMask * 0.4;
+        }
+
+        // Longitudinal Fissure
+        const xAbs = Math.abs(vertex.x);
+        const fissureDepth = 0.15;
+        const fissureProtection = cerebellumMask * 0.8 + stemMask;
+
+        if (xAbs < fissureDepth) {
+          const indent = Math.pow(xAbs / fissureDepth, 0.5);
+          const blend = Math.max(0, 1.0 - fissureProtection);
+          vertex.x *= (indent * blend + (1.0 - blend));
+        }
+
+        // Gyrification
+        const warpFreq = 2.5;
+        const wx = nx + Math.sin(ny * warpFreq + nz * warpFreq) * 0.2;
+        const wy = ny + Math.cos(nz * warpFreq + nx * warpFreq) * 0.2;
+        const wz = nz + Math.sin(nx * warpFreq + ny * warpFreq) * 0.2;
+
+        const foldFreq = 8.0;
+        let foldNoise = pseudoNoise(wx * foldFreq, wy * foldFreq, wz * foldFreq);
+        foldNoise += pseudoNoise(wx * 18.0, wy * 18.0, wz * 18.0) * 0.3;
+
+        let displacement = 0;
+
+        if (cerebellumMask > 0.1) {
+          displacement = Math.sin(ny * 60.0 + Math.sin(nx * 10.0)) * 0.02;
+        } else {
+          displacement = (Math.pow(Math.sin(wx * 7.0) * Math.sin(wy * 7.0) * Math.sin(wz * 7.0), 2) + foldNoise * 0.4) * 0.07;
+          if (xAbs < 0.05) displacement *= (xAbs / 0.05);
+        }
+
+        const dir = new THREE.Vector3(vertex.x, vertex.y, vertex.z).normalize();
+        vertex.addScaledVector(dir, displacement);
+
+        posAttribute.setXYZ(i, vertex.x, vertex.y, vertex.z);
+      }
+
+      geometry.computeVertexNormals();
+
+      // Shaders with RGB Chroma colors
+      const vertexShader = `
+        varying vec3 vNormal;
+        varying vec3 vPosition;
+        varying vec2 vUv;
+        uniform float time;
+
+        void main() {
+          vNormal = normalize(normalMatrix * normal);
+          vPosition = position;
+          vUv = uv;
+          
+          vec3 p = position;
+          float breath = sin(time * 2.0) * 0.005;
+          p += normal * breath;
+          
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
+        }
+      `;
+
+      const fragmentShader = `
+        varying vec3 vNormal;
+        varying vec3 vPosition;
+        varying vec2 vUv;
+        uniform float time;
+        uniform vec3 color1;
+        uniform vec3 color2;
+        uniform vec3 color3;
+        
+        float random(vec2 st) {
+          return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
+        }
+        
+        void main() {
+          vec3 viewDir = normalize(cameraPosition - vPosition);
+          float viewDot = dot(vNormal, viewDir);
+          float rim = 1.0 - max(0.0, abs(viewDot));
+          rim = pow(rim, 2.5);
+          
+          float scan = sin(vPosition.y * 2.5 - time * 0.8);
+          scan = smoothstep(0.4, 0.5, scan) * (1.0 - smoothstep(0.5, 0.6, scan));
+          
+          float pulses = sin(vPosition.z * 20.0 + vPosition.x * 10.0 + time * 3.0);
+          pulses = smoothstep(0.95, 1.0, pulses);
+          
+          float grid = sin(vPosition.x * 40.0) * sin(vPosition.y * 40.0) * sin(vPosition.z * 40.0);
+          grid = smoothstep(0.9, 1.0, grid);
+
+          // Dynamic RGB Chroma color cycling
+          float colorCycle = sin(time * 0.3) * 0.5 + 0.5;
+          vec3 chromaColor1 = mix(color1, color2, colorCycle);
+          vec3 chromaColor2 = mix(color2, color3, colorCycle);
+          vec3 baseColor = mix(chromaColor1, chromaColor2, vPosition.y * 0.5 + 0.5);
+          
+          vec3 finalColor = baseColor * 0.5;
+          finalColor += chromaColor1 * rim * 0.4;
+          finalColor += chromaColor2 * scan * 0.5;
+          finalColor += color3 * pulses * 0.2;
+          finalColor += vec3(0.65, 1.0, 1.0) * grid * 0.1;
+          
+          float alpha = 0.01 + rim * 0.3 + scan * 0.1 + pulses * 0.1;
+          
+          gl_FragColor = vec4(finalColor, alpha);
+        }
+      `;
+
+      // RGB Chroma colors - using platform colors with dynamic color cycling
+      const customMaterial = new THREE.ShaderMaterial({
+        uniforms: {
+          time: { value: 0 },
+          color1: { value: new THREE.Color(0x41FF41) }, // Verde RGB Chroma
+          color2: { value: new THREE.Color(0x4141FF) },  // Azul RGB Chroma
+          color3: { value: new THREE.Color(0xFF41FF) }   // Magenta RGB Chroma
+        },
+        vertexShader: vertexShader,
+        fragmentShader: fragmentShader,
+        wireframe: true,
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+      });
+
+      // Particle shaders
+      const particleVertexShader = `
+        attribute float size;
+        varying vec3 vColor;
+        uniform float time;
+        
+        void main() {
+          vColor = vec3(1.0, 1.0, 1.0);
+          vec3 p = position;
+          p.y += sin(time + position.x) * 0.05;
+          vec4 mvPosition = modelViewMatrix * vec4(p, 1.0);
+          gl_PointSize = size * (300.0 / -mvPosition.z);
+          gl_Position = projectionMatrix * mvPosition;
+        }
+      `;
+
+      const particleFragmentShader = `
+        varying vec3 vColor;
+        
+        void main() {
+          vec2 xy = gl_PointCoord.xy - vec2(0.5);
+          float ll = length(xy);
+          if(ll > 0.5) discard;
+          float alpha = (0.5 - ll) * 2.0;
+          gl_FragColor = vec4(vColor, alpha);
+        }
+      `;
+
+      geometry.setAttribute('size', new THREE.BufferAttribute(new Float32Array(geometry.attributes.position.count).fill(0.5), 1));
+      const sizes = geometry.attributes.size.array;
+      for (let i = 0; i < sizes.length; i++) {
+        sizes[i] = Math.random() * 0.05 + 0.01;
+      }
+
+      const customPointsMaterial = new THREE.ShaderMaterial({
+        uniforms: { time: { value: 0 } },
+        vertexShader: particleVertexShader,
+        fragmentShader: particleFragmentShader,
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+      });
+
+      const blackMaterial = new THREE.MeshBasicMaterial({ color: 0x030303 });
+
+      const brainMesh = new THREE.Mesh(geometry, customMaterial);
+      const brainPoints = new THREE.Points(geometry, customPointsMaterial);
+      const brainOcclusion = new THREE.Mesh(geometry, blackMaterial);
+      brainOcclusion.scale.set(0.97, 0.97, 0.97);
+
+      const brainGroup = new THREE.Group();
+      brainGroup.add(brainOcclusion);
+      brainGroup.add(brainMesh);
+      brainGroup.add(brainPoints);
+      brainGroup.scale.set(0.65, 0.65, 0.65); // Start smaller - more margin from edges
+      brainGroup.position.set(0, 0.3, 0); // Move brain up for better visual positioning
+      scene.add(brainGroup);
+
+      // Synapse System
+      const synapseCount = 60;
+      const synapseGeometry = new THREE.BufferGeometry();
+      const synapsePositions = new Float32Array(synapseCount * 2 * 3);
+      synapseGeometry.setAttribute('position', new THREE.BufferAttribute(synapsePositions, 3));
+
+      // Dynamic synapse color cycling
+      const synapseMaterial = new THREE.LineBasicMaterial({
+        color: 0x41FF41, // RGB Chroma green (will be animated)
+        transparent: true,
+        opacity: 0.8,
+        blending: THREE.AdditiveBlending
+      });
+
+      const synapseLines = new THREE.LineSegments(synapseGeometry, synapseMaterial);
+      brainGroup.add(synapseLines);
+
+      const synapses = [];
+      for (let i = 0; i < synapseCount; i++) {
+        synapses.push({ active: false, life: 0, startIndex: 0, endIndex: 0 });
+      }
+
+      function updateSynapses(dt) {
+        const positions = brainMesh.geometry.attributes.position;
+        const count = positions.count;
+        const linePos = synapseLines.geometry.attributes.position.array;
+
+        synapses.forEach((synapse, i) => {
+          if (!synapse.active) {
+            if (Math.random() < 0.05) {
+              synapse.active = true;
+              synapse.life = 1.0;
+              synapse.startIndex = Math.floor(Math.random() * count);
+              let offset = Math.floor((Math.random() - 0.5) * 3000);
+              synapse.endIndex = (synapse.startIndex + offset + count) % count;
+            }
+          } else {
+            synapse.life -= dt * 2.0;
+
+            if (synapse.life <= 0) {
+              synapse.active = false;
+              for (let j = 0; j < 6; j++) linePos[i * 6 + j] = 0;
+            } else {
+              const v1 = new THREE.Vector3();
+              v1.fromBufferAttribute(positions, synapse.startIndex);
+              const v2 = new THREE.Vector3();
+              v2.fromBufferAttribute(positions, synapse.endIndex);
+
+              linePos[i * 6] = v1.x;
+              linePos[i * 6 + 1] = v1.y;
+              linePos[i * 6 + 2] = v1.z;
+              linePos[i * 6 + 3] = v2.x;
+              linePos[i * 6 + 4] = v2.y;
+              linePos[i * 6 + 5] = v2.z;
+            }
+          }
+        });
+
+        synapseLines.geometry.attributes.position.needsUpdate = true;
+        synapseMaterial.opacity = 0.3 + Math.sin(Date.now() * 0.005) * 0.2;
+
+        // Dynamic color cycling for synapses (RGB Chroma)
+        const colorCycle = Math.sin(Date.now() * 0.001) * 0.5 + 0.5;
+        if (colorCycle < 0.33) {
+          synapseMaterial.color.setHex(0x41FF41); // Green
+        } else if (colorCycle < 0.66) {
+          synapseMaterial.color.setHex(0x4141FF); // Blue
+        } else {
+          synapseMaterial.color.setHex(0xFF41FF); // Magenta
+        }
+      }
+
+      // Particles
+      const particlesGeometry = new THREE.BufferGeometry();
+      const particlesCount = 300;
+      const posArray = new Float32Array(particlesCount * 3);
+
+      for (let i = 0; i < particlesCount * 3; i++) {
+        posArray[i] = (Math.random() - 0.5) * 5;
+      }
+
+      particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+      const particlesMaterial = new THREE.PointsMaterial({
+        size: 0.01,
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.2,
+        blending: THREE.AdditiveBlending
+      });
+
+      const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+      scene.add(particlesMesh);
+
+      // Lighting - Increased intensity to compensate for lack of bloom
+      const ambientLight = new THREE.AmbientLight(0x404040);
+      scene.add(ambientLight);
+
+      const pointLight1 = new THREE.PointLight(0x41FF41, 1.0, 10); // Increased from 0.6
+      pointLight1.position.set(2, 2, 2);
+      scene.add(pointLight1);
+
+      const pointLight2 = new THREE.PointLight(0x4141FF, 1.0, 10); // Increased from 0.6
+      pointLight2.position.set(-2, -1, 2);
+      scene.add(pointLight2);
+
+      const pointLight3 = new THREE.PointLight(0xFF41FF, 0.8, 10); // Increased from 0.4
+      pointLight3.position.set(0, -2, 3);
+      scene.add(pointLight3);
+
+      // Animation
+      let mouseX = 0;
+      let mouseY = 0;
+      let targetMouseX = 0;
+      let targetMouseY = 0;
+      
+      // Scroll animation variables with smooth interpolation
+      let scrollProgress = 0;
+      let targetScrollProgress = 0;
+      let scrollVelocity = 0;
+      let targetScrollVelocity = 0;
+      let lastScrollY = window.scrollY;
+      let scrollHistory = [];
+
+      // Easing functions for smooth animations
+      function easeOutCubic(t) {
+        return 1 - Math.pow(1 - t, 3);
+      }
+      
+      function easeInOutCubic(t) {
+        return t < 0.5 
+          ? 4 * t * t * t 
+          : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      }
+      
+      function lerp(start, end, factor) {
+        return start + (end - start) * factor;
+      }
+
+      document.addEventListener('mousemove', (event) => {
+        targetMouseX = (event.clientX - window.innerWidth / 2) * 0.0005;
+        targetMouseY = (event.clientY - window.innerHeight / 2) * 0.0005;
+      });
+
+      // Scroll event listener for brain animation
+      let scrollTimeout;
+      function handleScroll() {
+        const currentScrollY = window.scrollY;
+        const maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+        
+        // Calculate scroll progress (0 to 1) with easing
+        const rawProgress = Math.min(currentScrollY / maxScroll, 1);
+        targetScrollProgress = easeOutCubic(rawProgress);
+        
+        // Calculate scroll velocity with smoothing
+        const velocity = Math.abs(currentScrollY - lastScrollY);
+        scrollHistory.push(velocity);
+        if (scrollHistory.length > 5) scrollHistory.shift();
+        
+        const avgVelocity = scrollHistory.reduce((a, b) => a + b, 0) / scrollHistory.length;
+        targetScrollVelocity = avgVelocity;
+        lastScrollY = currentScrollY;
+        
+        // Clear timeout and reset after scroll stops
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+          targetScrollVelocity = 0;
+        }, 200);
+      }
+
+      // Optimized scroll listener with passive flag
+      let ticking = false;
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          window.requestAnimationFrame(() => {
+            handleScroll();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }, { passive: true });
+
+      const clock = new THREE.Clock();
+
+      // Smooth interpolation values
+      let smoothScrollProgress = 0;
+      let smoothRotationX = 0;
+      let smoothRotationY = 0;
+      let smoothRotationZ = 0;
+      let smoothScale = 0.65; // Start smaller - more margin from edges
+      let smoothCameraZ = 3.5;
+      let smoothCameraY = 0;
+      let smoothLightIntensity = { l1: 0.8, l2: 0.8, l3: 0.6 };
+
+      function animate() {
+        requestAnimationFrame(animate);
+
+        const elapsedTime = clock.getElapsedTime();
+        const dt = Math.min(clock.getDelta(), 0.1); // Cap delta time for stability
+
+        // Ultra-smooth scroll progress interpolation with easing
+        const scrollLerpFactor = 0.08; // Slower for ultra-smooth transitions
+        smoothScrollProgress = lerp(smoothScrollProgress, targetScrollProgress, scrollLerpFactor);
+        scrollProgress = smoothScrollProgress;
+        
+        // Smooth velocity interpolation
+        scrollVelocity = lerp(scrollVelocity, targetScrollVelocity, 0.15);
+
+        // Smooth mouse interpolation
+        mouseX = lerp(mouseX, targetMouseX, 0.1);
+        mouseY = lerp(mouseY, targetMouseY, 0.1);
+
+        updateSynapses(dt);
+
+        // Enhanced rotation with scroll-based animation - ultra smooth
+        const parallaxX = mouseY * 0.5;
+        const parallaxY = mouseX * 0.5;
+        const idleY = elapsedTime * 0.05;
+        
+        // Scroll-based rotation with easing for fluid motion
+        const easedProgress = easeInOutCubic(scrollProgress);
+        const scrollRotationX = Math.sin(easedProgress * Math.PI * 2) * 0.3 * easedProgress;
+        const scrollRotationY = easedProgress * 1.5; // Continuous rotation based on scroll
+        const scrollRotationZ = Math.cos(easedProgress * Math.PI * 1.5) * 0.2 * easedProgress;
+
+        // Ultra-smooth rotation interpolation
+        const rotationLerpFactor = 0.06;
+        const targetX = 0.2 + parallaxX + scrollRotationX;
+        const targetY = 0.5 + parallaxY + idleY + scrollRotationY;
+        const targetZ = 0.1 + scrollRotationZ;
+
+        smoothRotationX = lerp(smoothRotationX, targetX, rotationLerpFactor);
+        smoothRotationY = lerp(smoothRotationY, targetY, rotationLerpFactor);
+        smoothRotationZ = lerp(smoothRotationZ, targetZ, rotationLerpFactor);
+
+        brainGroup.rotation.x = smoothRotationX;
+        brainGroup.rotation.y = smoothRotationY;
+        brainGroup.rotation.z = smoothRotationZ;
+
+        // Dynamic scale based on scroll - limited to stay well within bounds
+        // Start smaller (0.65) and grow to max 0.75 to ensure it never touches edges
+        const baseScale = 0.65; // Smaller initial size - more margin from edges
+        const maxScale = 0.75; // Maximum scale - reduced to prevent any edge visibility
+        const scrollScale = baseScale + (easedProgress * (maxScale - baseScale)); // Grows from 0.65 to 0.75
+        const velocityScale = 1.0 + Math.min(scrollVelocity * 0.003, 0.03); // Further reduced velocity scale
+        const pulse = (1 + Math.sin(elapsedTime * 2.5) * 0.008); // Reduced pulse
+        
+        smoothScale = lerp(smoothScale, scrollScale * velocityScale, 0.1);
+        // Clamp final scale to never exceed maxScale
+        const finalScale = Math.min(pulse * smoothScale, maxScale);
+        
+        brainGroup.scale.set(finalScale, finalScale, finalScale);
+        brainPoints.scale.set(finalScale, finalScale, finalScale);
+
+        // Enhanced particle animation with smooth scroll
+        particlesMesh.rotation.y = -elapsedTime * 0.02 - easedProgress * 0.5;
+        particlesMesh.position.y = Math.sin(elapsedTime * 0.5) * 0.1 + easedProgress * 0.3;
+
+        // Dynamic RGB Chroma lighting - smooth intensity transitions
+        const lightCycle = Math.sin(elapsedTime * 0.5) * 0.5 + 0.5;
+        const scrollIntensity = 0.5 + easedProgress * 0.5; // Increases from 0.5 to 1.0
+        const velocityIntensity = Math.min(scrollVelocity * 0.015, 0.25); // Smoother flash effect
+        
+        const targetL1 = (0.8 + lightCycle * 0.4) * scrollIntensity + velocityIntensity;
+        const targetL2 = (0.8 + (1.0 - lightCycle) * 0.4) * scrollIntensity + velocityIntensity;
+        const targetL3 = (0.6 + Math.sin(elapsedTime * 0.7) * 0.2) * scrollIntensity + velocityIntensity * 0.8;
+        
+        smoothLightIntensity.l1 = lerp(smoothLightIntensity.l1, targetL1, 0.12);
+        smoothLightIntensity.l2 = lerp(smoothLightIntensity.l2, targetL2, 0.12);
+        smoothLightIntensity.l3 = lerp(smoothLightIntensity.l3, targetL3, 0.12);
+        
+        pointLight1.intensity = smoothLightIntensity.l1;
+        pointLight2.intensity = smoothLightIntensity.l2;
+        pointLight3.intensity = smoothLightIntensity.l3;
+
+        // Enhanced shader time with smooth scroll-based speed boost
+        const scrollTimeMultiplier = 1.0 + easedProgress * 0.5; // Speeds up animations as you scroll
+        customMaterial.uniforms.time.value = elapsedTime * scrollTimeMultiplier;
+        customPointsMaterial.uniforms.time.value = elapsedTime * scrollTimeMultiplier;
+
+        // Camera position parallax effect - limited movement to keep brain within bounds
+        const targetCameraZ = 3.5 - easedProgress * 0.3; // Moves closer but limited (3.5 to 3.2)
+        const targetCameraY = easedProgress * 0.15; // Reduced vertical movement
+        
+        smoothCameraZ = lerp(smoothCameraZ, targetCameraZ, 0.08);
+        smoothCameraY = lerp(smoothCameraY, targetCameraY, 0.08);
+        
+        camera.position.z = smoothCameraZ;
+        camera.position.y = smoothCameraY;
+
+        // Enhanced synapse activity during scroll - smooth transitions
+        const synapseBoost = Math.min(scrollVelocity * 0.08, 0.8);
+        const baseOpacity = 0.3 + Math.sin(Date.now() * 0.005) * 0.2;
+        synapseMaterial.opacity = lerp(synapseMaterial.opacity, baseOpacity * (1 + synapseBoost), 0.15);
+
+        // Render directly without composer to ensure transparency
+        renderer.render(scene, camera);
+      }
+
+      window.addEventListener('resize', () => {
+        const width = container.offsetWidth;
+        const height = container.offsetHeight;
+
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(width, height);
+        // composer.setSize(width, height); // Removed
+      });
+
+      animate();
+    }
+
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initBrain3D);
+    } else {
+      initBrain3D();
+    }
+  </script>
+</body>
+
 </html>
-
